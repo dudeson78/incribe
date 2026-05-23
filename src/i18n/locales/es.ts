@@ -1,0 +1,342 @@
+import type { TranslationTree } from './ko';
+
+export const es: TranslationTree = {
+  common: {
+    ok: 'OK',
+    success: 'Listo',
+  },
+  tabs: {
+    appTitle: '📖 Memorizar la Escritura',
+    appSubtitle: 'Palabra en el corazón',
+    home: 'Inicio',
+    quiz: 'Cuestionario',
+    verses: 'Gestionar',
+    settings: 'Ajustes',
+  },
+  verses: {
+    listTitle: 'Mis versículos',
+    addButton: 'Añadir',
+    emptyTitle: 'Aún no hay versículos',
+    emptyBody: 'Pulsa «Añadir» arriba a la derecha para crear uno.',
+    edit: 'Editar',
+    delete: 'Eliminar',
+    deleteTitle: 'Eliminar versículo',
+    deleteConfirm: '¿Eliminar «{{ref}}»?',
+    cancel: 'Cancelar',
+    errorDelete: 'No se pudo eliminar',
+    headerAddA11y: 'Añadir versículo',
+    a11yEdit: 'Editar {{ref}}',
+    a11yDelete: 'Eliminar {{ref}}',
+    deleteSuccess: 'Versículo eliminado.',
+    historyTitle: 'Historial de práctica',
+    historyColCategory: 'Tipo',
+    historySession: '{{n}}.ª vez',
+    historyShort: 'Corto (7)',
+    historyLong: 'Largo',
+    historyDateCompleted: '(completado)',
+    historyDateScheduled: '(programado)',
+    jumpToLong: 'Largo',
+    jumpToLongA11y:
+      'Simula corta terminada para {{ref}} y pasa a práctica larga.',
+    jumpToLongTitle: 'Pasar a pista larga',
+    jumpToLongMessage:
+      'Se borrarán todos los registros de repaso de este versículo y se crearán siete éxitos ficticios cortos. Quedará en pista larga para revisar hoy (intervalo 7 días).',
+    jumpToLongConfirm: 'Continuar',
+    jumpToLongSuccess: 'Pasado a pista larga.',
+  },
+  verseForm: {
+    titleAdd: 'Añadir versículo',
+    titleEdit: 'Editar versículo',
+    reference: 'Referencia',
+    body: 'Texto',
+    meditationOptional: 'Reflexión (opcional)',
+    phReference: 'p. ej. Romanos 8:28',
+    phBody: 'Escribe el versículo para memorizar',
+    phMeditation: 'Notas o reflexión',
+    hintShortTrack:
+      'Los versículos nuevos empiezan en la pista corta; la revisión empieza hoy.',
+    save: 'Guardar',
+    saveEdit: 'Guardar cambios',
+    saving: 'Guardando…',
+    requiredFields: 'Referencia y texto son obligatorios.',
+    accessibilityRef: 'Referencia bíblica',
+    bodyA11y: 'Cuerpo del versículo',
+    remaA11y: 'Reflexión',
+    saveA11y: 'Guardar versículo',
+    saveEditA11y: 'Guardar cambios',
+    saveSuccess: 'El versículo se guardó.',
+  },
+  review: {
+    modeFull: 'Vista completa',
+    modeVerseOnly: 'Solo versículo',
+    nextLabel: 'Sig.',
+    phaseShort: 'Corto',
+    phaseLong: 'Largo',
+    recited: 'Recitado',
+    meta: 'Sig.: {{date}} · {{phase}} ({{count}}/7)',
+    emptyTitle: 'No hay revisiones para hoy',
+    emptyBody: 'Añade un versículo o revisa la próxima fecha.',
+    loading: 'Revisión de hoy',
+    loadingA11y: 'Cargando la revisión de hoy',
+    successA11y: 'Revisión exitosa',
+    correctA11y: 'Recitado',
+  },
+  celebration: {
+    title: '¡7 repeticiones con éxito!',
+    subtitle:
+      'No se pudo obtener la siguiente fecha prevista. Pulsa OK para guardar.',
+    subtitleShortNextTraining:
+      'Próxima sesión: {{dateDisplay}}, dentro de {{days}} días.',
+    subtitleShortNextTrainingToday:
+      'La próxima sesión es hoy ({{dateDisplay}}).',
+    later: 'Más tarde (mantener marcas)',
+    closeA11y: 'Cerrar',
+    congratsA11y: 'Felicidades',
+    dismissA11y: 'Hacerlo después',
+    longTitle: 'Pista larga — revisión de hoy',
+    longSubtitle:
+      'Tras los 7 toques: ¿cumples el nivel para este espaciado?',
+    longPass: 'Sí — registrar éxito',
+    longFail: 'No — repetir 7 declamaciones y reprogramar',
+    longPassA11y: 'Registrar revisión espaciada positiva',
+    longFailA11y: 'Iniciar repaso tras fallar la revisión espaciada',
+    remedialTitle: 'Repaso de 7 listo',
+    remedialSubtitle:
+      'Programa la próxima revisión después del mismo espaciado desde hoy.',
+    remedialAck: 'Aplicar calendario',
+    remedialAckA11y: 'Confirmar fin del repaso y reprogramación',
+  },
+  seven: {
+    sectionLabel: '7 casillas',
+    sectionLabelLongRemedial: 'Repaso declarado (×7)',
+    captionRecite:
+      'Solo marca abajo cuando lo tengas perfecto de memoria y sigue declarando. En esta ronda hay 7 repeticiones.',
+    captionLongRemedial:
+      'Repaso tras fallar el control a {{days}} día(s). Solo marca cuando hayas repetido bien.',
+    progress: '{{done}} / {{total}} hecho',
+    rep: 'Rep. {{n}}',
+    statusDone: 'hecho',
+    statusCheck: 'turno',
+    statusWait: 'espera',
+    a11yCell: '{{rep}} {{status}}',
+    verifyScriptureBtn: 'Ver el versículo',
+    verifyScriptureA11y:
+      'Abre la referencia y el texto completo para comprobar la memorización.',
+  },
+  rema: {
+    label: 'Reflexión',
+    viewAction: 'Ver reflexión',
+    modalCloseA11y: 'Cerrar',
+  },
+  quiz: {
+    accuracy: 'Precisión',
+    correctCount: 'Aciertos',
+    refPromptShort: '¿Cuál es la referencia de este versículo?',
+    stats: '{{correct}} / {{total}} aciertos',
+    verseBody: 'Texto del versículo',
+    refPrompt: 'Referencia (recita)',
+    phRef: 'Escribe la referencia bíblica',
+    hint: 'Pista',
+    correct: '¡Correcto!',
+    wrong: 'Casi',
+    answerLabel: 'Respuesta',
+    answerLine: '{{label}}: {{ref}}',
+    emptyTitle: 'No hay versículos para el cuestionario',
+    emptyBody: 'Primero añade versículos en la pestaña Versículos.',
+    hintBtn: 'Pista',
+    check: 'Comprobar',
+    next: 'Siguiente',
+    a11yRefInput: 'Entrada de referencia',
+    a11yVerify: 'Comprobar respuesta',
+    a11yNextQ: 'Siguiente pregunta',
+  },
+  reference: {
+    label: 'Referencia',
+  },
+  errors: {
+    title: 'Error',
+    notAuthenticated: 'Inicio de sesión necesario.',
+    emailNotConfirmed:
+      'El correo aún no está verificado. Usa el enlace del mensaje de registro (revisa spam) y vuelve a entrar. En desarrollo desactiva “Confirm email” en Supabase → Authentication → Providers → Email.',
+    emailRateLimitExceeded:
+      'Se superó el límite de envío de correos de autenticación de Supabase. Suele pasar tras muchos intentos de registro o “reenviar correo”. Vuelve a intentarlo en unos minutos u hora(s). Para desarrollo, desactiva “Confirm email”.',
+    verseNotFound: 'Versículo no encontrado.',
+    scheduleNotFound: 'Calendario de revisión no encontrado.',
+    insertFailed: 'No se pudo guardar.',
+    unknown: 'Ocurrió un error desconocido.',
+    loadFailed: 'Error al cargar',
+    saveFailed: 'Error al guardar',
+    reviewScheduleSchemaOutOfDate:
+      'Falta la columna `long_success_count` en `review_schedule`. En Supabase → SQL Editor ejecuta la migración `supabase/migrations/20260517000000_review_schedule_long_success_count.sql` del repositorio y reintenta.',
+  },
+  auth: {
+    bootstrapFailed: 'No se pudo preparar la app para iniciar.',
+    bootstrapHint:
+      'Revisa EXPO_PUBLIC_SUPABASE_URL / EXPO_PUBLIC_SUPABASE_ANON_KEY en .env y activa Email en Dashboard → Authentication → Providers.',
+    emailGateTitle: 'Registro · Entrar',
+    emailGateBody:
+      'Regístrate o entra con correo para guardar versículos y sincronizar entre dispositivos.',
+    emailGateBodySignIn:
+      'Al entrar, Inicio y Versículos muestran solo los datos guardados en esta cuenta.',
+    devAllowedUserHint:
+      '[Compilación de desarrollo] Solo se permite "{{part}}" como parte local antes del @. Borra `EXPO_PUBLIC_DEV_EMAIL_LOCAL_PART_ONLY` en `.env` para permitir otros.',
+    devAllowedUser:
+      '[Dev] El correo debe usar "{{part}}" como id local antes del @.',
+    signInWorking: 'Iniciando sesión…',
+    signUpWorking: 'Enviando el registro al servidor…',
+    signUpConfirmingSession: 'Finalizando el registro y comprobando la cuenta…',
+    signInReadingSession: 'Cargando sesión…',
+    signInProceedHint: 'Pulsa OK para entrar.',
+    afterLoginNoSession:
+      'El inicio de sesión pareció tener éxito, pero no hay sesión guardada.',
+    afterSignUpNoSession:
+      'El registro tuvo éxito, pero no se pudo crear la sesión. Revisa correo de verificación y Supabase.',
+    technicalDetail: 'Detalle:',
+    retry: 'Reintentar',
+    welcomeBlurb:
+      'Guarda versículos y mejora tu memorización con revisiones a corto y largo plazo. Al registrarte puedes continuar en otros dispositivos con la misma cuenta.',
+    backToWelcome: 'Volver al inicio',
+    signUpIntro:
+      'Solo tres datos: nombre, correo (será tu usuario) y la contraseña que elijas.',
+    privacySignUpNotice:
+      'El registro pide nombre, correo (ID de usuario) y contraseña. Nombre y correo sirven para identificación, recuperación y avisos (incl. verificación de correo). Los datos de versículos y repasos se sincronizan con tu cuenta. Solo recogemos lo mínimo; consulta la política del proveedor del servicio sobre conservación y terceros.',
+    privacyConsentCheck:
+      'He leído el aviso y acepto la recogida y el uso de mis datos.',
+    privacyConsentRequired:
+      'Marca la casilla de conformidad después de leer el aviso para poder registrarte.',
+    signUpNeedConsentHint:
+      'Marca primero la casilla de consentimiento inferior y prueba de nuevo.',
+  },
+  home: {
+    title: 'Inscribe',
+    annualTitle: 'Meta anual de memorización',
+    annualUnit: 'versículos',
+    annualCaption: '~{{weeks}} vers./sem. ({{goal}}/año)',
+    reviewSection: 'Revisión de hoy',
+    reviewHint: 'Muestra versículos con revisión hoy o antes.',
+    yearlyGoalCaption: 'Meta del año',
+    goalPct: '{{pct}} %',
+    goalVersesSuffix: '',
+    sectionShort: 'Grupo corto',
+    sectionLong: 'Grupo largo',
+    todayTrainingVersesBadge: 'Versículos para practicar hoy',
+    reviewListColKind: 'Grupo',
+    reviewListColVerse: 'Versículo',
+    reviewListColSession: 'Sesión',
+    reviewListColLastPractice: 'Última práctica',
+    reviewListColStatus: 'Estado',
+    reviewListFirstPractice: 'Primera práctica',
+    reviewListRowA11y:
+      '{{phase}}. {{ref}}. {{session}}. {{lastPractice}}. {{status}}.',
+    reviewListSessionPractice: 'Sesión {{n}} práctica',
+    reviewListTrainingDoneStatus: 'Hecha',
+    reviewListTrainingPendingStatus: 'Pendiente',
+    sectionLongRetrain: 'Pista larga — repaso ×7 antes de reprogramar',
+    badgeShortDay: 'Día {{n}}',
+    badgeLongInterval: 'Cada {{days}} días',
+    badgeLongRetrain: 'Reintentar cada {{days}} días',
+    emptyVersesHint:
+      'No hay versículos guardados aún, nada que practicar. En la pestaña «{{tab}}» abajo añade textos para memorizar.',
+    emptyVersesCta: 'Abrir {{tab}}',
+    loadError: 'No se pudo cargar',
+    loadErrorHint:
+      '(Revisa el inicio de sesión, migraciones de Supabase y RLS.)',
+  },
+  memorize: {
+    badgeRecite: 'Memorizar — solo referencia (recitar el texto)',
+    badgeReciteSession: 'Memorizar — solo referencia (recitar el texto)',
+    trainingCardTitle: 'Tarjeta {{n}}',
+    trainingCardTitleA11y: 'Tarjeta de práctica {{n}}',
+    noMoreVersesToday: 'Ya no hay versículos para practicar hoy.',
+    allSessionsDoneForToday:
+      'Has completado todas las sesiones previstas para hoy. Mañana vuelve a revisar.',
+  },
+  summary: {
+    donePrefix: 'Hecho hoy ',
+    doneSuffix: ' repasos',
+    duePrefix: 'Para hoy ',
+    dueSuffix: ' pendientes',
+  },
+  settings: {
+    title: 'Ajustes',
+    annualGoal: 'Meta anual',
+    annualGoalHint: 'Versículos a añadir este año (predeterminado 52)',
+    apply: 'Aplicar',
+    reviewCycle: 'Ciclo de repaso',
+    rcShort:
+      'Corto: 7 repeticiones al día durante 7 días, luego pasa a largo.',
+    rcLong:
+      'Largo: la primera revisión espaciada es ~7 días tras cerrar corto; tras la n‑ésima revisión aprobada, la siguiente espera 7 × 2^(n-1) días (1.ª vez: 7; 2.ª: 14; luego 28…). Fallar ⇒ ronda ×7 y la misma regla de intervalo; tres fallos contados ⇒ mitad del intervalo (mín 7).',
+    resetPracticeSection: 'Reinicio de práctica',
+    resetPracticeHint:
+      'Borra registros de práctica y reinicia agendas de repetición para versículos activos; el texto y la referencia se conservan.',
+    resetPracticeBtn: 'Reiniciar práctica',
+    resetPracticeA11y:
+      'Restablece pista corta/larga para todos los versículos activos.',
+    resetPracticeTitle: 'Reiniciar práctica',
+    resetPracticeMessage:
+      'Todos los versículos activos vuelven al día 1 de la pista corta (para hoy) y se borran los registros. El texto se conserva. Solo para pruebas.',
+    resetPracticeConfirm: 'Reiniciar',
+    resetPracticeDone: 'Práctica reiniciada.',
+    resetPracticeNothingTitle: 'Nada que reiniciar',
+    resetPracticeNothingBody:
+      'No hay versículos activos guardados. Añádelos en Versículos y vuelve a intentarlo.',
+    language: 'Idioma',
+    langKo: '한국어',
+    langEn: 'English',
+    langEs: 'Español',
+    langPt: 'Português',
+    langZh: '中文',
+    notifications: 'Notificaciones',
+    notifyEnable: 'Recordatorio diario',
+    notifyTime: 'Hora del recordatorio',
+    notifyTimeWebHint:
+      'En la web, usa formato 24 h HH:mm (ej. 09:05). Pulsa OK para guardar.',
+    sync: 'Datos y sincronización',
+    syncBody:
+      'Los versículos y registros se sincronizan entre dispositivos con Supabase.',
+    syncOk: 'Sincronización en la nube activada',
+    syncNeedAuth: 'Inicia sesión para sincronizar.',
+    signedInAs: 'Cuenta',
+    syncAnonCaption:
+      'Sesión anónima. Crea una cuenta con correo para conservar los mismos versículos en todos tus dispositivos.',
+  },
+  account: {
+    section: 'Cuenta',
+    nameLabel: 'Nombre',
+    phName: 'p. ej. María García',
+    fullNameA11y: 'Nombre',
+    email: 'Correo',
+    password: 'Contraseña',
+    phEmail: 'tu@correo.com',
+    emailIdHint: 'Tu correo es el usuario para entrar.',
+    phPassword: '6 o más caracteres',
+    signIn: 'Entrar',
+    signUp: 'Registro',
+    signOut: 'Cerrar sesión',
+    working: 'Procesando…',
+    signUpSuccessTitle: 'Registro completado',
+    signUpSuccessLoggedIn:
+      'Tu cuenta se creó correctamente y has iniciado sesión.',
+    signUpSuccessVerifyEmail:
+      'Tu cuenta se creó correctamente. Abre el enlace del correo y luego entra desde aquí.',
+    signedInWithEmail: 'Sesión con correo',
+    anonSession: 'Modo anónimo',
+    hintAfterSignOut:
+      'Tras cerrar sesión tendrás que volver a entrar para seguir usando la app.',
+    weakPassword: 'La contraseña debe tener al menos 6 caracteres.',
+    fillBoth: 'Introduce correo y contraseña.',
+    fillSignUp:
+      'Introduce nombre, correo y contraseña.',
+    badEmail: 'Comprueba el formato del correo.',
+    signedInOk: 'Sesión iniciada.',
+    signedOutOk: 'Sesión cerrada.',
+    headerSignedInAsA11y: 'Sesión como {{name}}',
+  },
+  notifications: {
+    dailyTitle: 'Revisión de hoy',
+    dailyBody: 'Es hora de practicar tus versículos.',
+    dueCountBody:
+      'Tienes {{count}} versículo(s) para repasar hoy 📖',
+  },
+};
