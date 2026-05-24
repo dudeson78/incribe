@@ -155,8 +155,6 @@ export const zh: TranslationTree = {
     modeDescReference: '只看正文写出圣经引用（从已保存经文随机）。',
     modeDescBlank: '从今日操练列表选一个经文，把遮住的词填满。',
     modeDescOrder: '选择经文并把打乱的段落排回正确顺序。',
-    todayTrainingTitle: '今日操练经文',
-    todayTrainingSubtitle: '点选一个引用开始这一关。',
     noTrainingToday: '今天没有操练项',
     noTrainingTodayHint:
       '与本页操练列表同源的是首页今天要复习的经文；若无则可能没有今日任务。',

@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import type { ViewStyle } from 'react-native';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
@@ -14,6 +15,17 @@ import { colors, typography } from '../theme/colors';
 import { touchTarget } from '../theme/layout';
 import type { RootTabParamList } from './tabParams';
 import type { VersesStackParamList } from './types';
+
+/** RN Web 타입에는 없지만 브라우저에서 뷰포트 하단 고정에 필요 */
+const WEB_TAB_BAR_VIEWPORT_FIXED = {
+  position: 'fixed',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  width: '100%',
+  zIndex: 100,
+  overflow: 'visible',
+} as unknown as ViewStyle;
 
 /** 픽토그램 줄 · 아래 줄에 탭 이름 */
 const TAB_ICON_PX = 20;
@@ -36,6 +48,8 @@ function VersesStackNavigator() {
         },
         headerShadowVisible: false,
         contentStyle: { backgroundColor: colors.background },
+        /** 전체 화면 뒤로 스와이프(iOS 최신 기본값) 시 탭·씬 레이아웃이 같이 움직이는 느낌을 줄이기 위해 에지 제스처만 허용 */
+        ...(Platform.OS === 'ios' ? ({ fullScreenGestureEnabled: false } as const) : null),
       }}
     >
       <VersesStack.Screen
@@ -62,6 +76,8 @@ function MainTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
+        /** 탭 전환 시 씬이 좌우로 밀리는 애니메이션 비활성 — 스와이프·스크롤과 겹치면 탭바가 따라 움직이는 듯 보일 수 있음 */
+        animation: 'none',
         headerShown: false,
         tabBarActiveTintColor: colors.forest,
         tabBarInactiveTintColor: colors.textSecondary,
@@ -100,10 +116,7 @@ function MainTabs() {
           borderTopWidth: 0.5,
           borderTopColor: colors.borderTertiary,
           ...(Platform.OS === 'web'
-            ? ({
-                width: '100%' as const,
-                overflow: 'visible' as const,
-              } as const)
+            ? WEB_TAB_BAR_VIEWPORT_FIXED
             : Platform.OS === 'ios' || Platform.OS === 'android'
               ? ({
                   position: 'absolute' as const,

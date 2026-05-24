@@ -163,8 +163,6 @@ export const en: TranslationTree = {
       'Pick a verse from today’s drill list and fill words hidden as blanks.',
     modeDescOrder:
       'Pick a verse and restore shuffled snippets to their original order.',
-    todayTrainingTitle: 'Today’s drill verses',
-    todayTrainingSubtitle: 'Tap a reference to begin this quiz game.',
     noTrainingToday: 'No verses drilled today yet',
     noTrainingTodayHint:
       'This list mirrors Home drills when something is scheduled for today. If nothing appears, check review dates or add a verse.',

@@ -165,8 +165,6 @@ export const pt: TranslationTree = {
       'Escolha um versículo do treino de hoje e preencha lacunas criadas pelo app.',
     modeDescOrder:
       'Escolha o texto e reorganize fragmentos até combinar com o versículo.',
-    todayTrainingTitle: 'Treino de hoje',
-    todayTrainingSubtitle: 'Toque em uma referência para começar.',
     noTrainingToday: 'Sem treinos para hoje',
     noTrainingTodayHint:
       'A lista igual à da Home aparece apenas quando há versículos com revisão hoje.',

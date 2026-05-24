@@ -163,8 +163,6 @@ export const es: TranslationTree = {
       'Elige un versículo de la lista de práctica del día y rellena los huecos.',
     modeDescOrder:
       'Elige versículo y coloca fragmentos revueltos en el orden correcto.',
-    todayTrainingTitle: 'Práctica de hoy',
-    todayTrainingSubtitle: 'Toca la referencia para empezar el juego.',
     noTrainingToday: 'No tienes práctica lista para hoy',
     noTrainingTodayHint:
       'Aquí están los mismos versículos que en Inicio cuando su fecha es de hoy. Si no aparece nadie, abre tus revisiones.',

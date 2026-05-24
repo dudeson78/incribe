@@ -45,17 +45,6 @@ export function QuizTodayVerseList({
     );
   }
 
-  const titleBlock = (
-    <>
-      <Text style={[styles.listTitle, embedded && styles.listTitleEmbedded]}>
-        {t('quiz.todayTrainingTitle')}
-      </Text>
-      <Text style={[styles.listSub, embedded && styles.listSubEmbedded]}>
-        {t('quiz.todayTrainingSubtitle')}
-      </Text>
-    </>
-  );
-
   const verseRowCards = rows.map((row) => {
     const selected = selectedVerseId === row.verse.id;
     return (
@@ -123,7 +112,6 @@ export function QuizTodayVerseList({
   if (embedded && compactChipRow) {
     return (
       <View style={styles.embeddedWrap}>
-        {titleBlock}
         {verseChipRow}
       </View>
     );
@@ -132,7 +120,6 @@ export function QuizTodayVerseList({
   if (embedded) {
     return (
       <View style={styles.embeddedWrap}>
-        {titleBlock}
         <View style={styles.embeddedRows}>{verseRowCards}</View>
       </View>
     );
@@ -145,7 +132,6 @@ export function QuizTodayVerseList({
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
     >
-      {titleBlock}
       {verseRowCards}
     </ScrollView>
   );
@@ -208,27 +194,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 28,
     gap: 8,
-  },
-  listTitle: {
-    fontSize: typography.refLarge,
-    fontWeight: '800',
-    color: colors.forest,
-    marginTop: 4,
-    marginBottom: 6,
-  },
-  listTitleEmbedded: {
-    fontSize: typography.body,
-    marginTop: 0,
-    marginBottom: 2,
-  },
-  listSub: {
-    fontSize: typography.min,
-    lineHeight: 20,
-    color: colors.textSecondary,
-    marginBottom: 14,
-  },
-  listSubEmbedded: {
-    marginBottom: 8,
   },
   rowCard: {
     flexDirection: 'row',

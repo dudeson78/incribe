@@ -161,8 +161,6 @@ export const ko = {
       '오늘 훈련 대상 구절을 선택한 뒤, 일부 단어가 가려진 본문의 빈칸을 채웁니다.',
     modeDescOrder:
       '오늘 훈련 구절을 고른 뒤, 섞여 있는 문장 조각들을 원래 순서로 맞춥니다.',
-    todayTrainingTitle: '오늘 훈련 구절',
-    todayTrainingSubtitle: '항목을 눌러 해당 본문으로 퀴즈를 시작하세요.',
     noTrainingToday: '오늘 훈련할 구절이 없습니다',
     noTrainingTodayHint:
       '홈 「말씀훈련」에 오늘 예정 구절이 없으면 이 목록이 비게 됩니다. 새 구절을 추가했거나 다음 복습일만 남았다면, 내일 다시 확인해 보세요.',
