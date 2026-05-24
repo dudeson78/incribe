@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 
 import { ReferenceSuggestInput } from '../components/ReferenceSuggestInput';
+import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
 import { useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import type { VersesStackParamList } from '../navigation/types';
@@ -24,6 +25,7 @@ import { useTranslation } from 'react-i18next';
 type Props = NativeStackScreenProps<VersesStackParamList, 'VerseForm'>;
 
 export function VerseFormScreen({ navigation, route }: Props) {
+  const tabScrollPadding = useBottomTabScrollPadding(40);
   const { t } = useTranslation();
   const verseId = route.params?.verseId;
   const { addVerse, updateVerse, getAllVerses } = useVerses();
@@ -120,7 +122,10 @@ export function VerseFormScreen({ navigation, route }: Props) {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
       <ScrollView
-        contentContainerStyle={styles.scroll}
+        contentContainerStyle={[
+          styles.scroll,
+          { paddingBottom: tabScrollPadding },
+        ]}
         keyboardShouldPersistTaps="handled"
       >
         {error ? (
@@ -194,8 +199,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   scroll: {
-    padding: 20,
-    paddingBottom: 40,
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   centered: {
     flex: 1,

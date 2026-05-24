@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Text } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { HomeScreen } from '../screens/HomeScreen';
@@ -72,22 +72,53 @@ function MainTabs() {
           marginBottom: 2,
         },
         tabBarLabelStyle: {
-          fontSize: typography.chip - 1,
+          fontSize: typography.caption,
           fontWeight: '500',
           marginTop: 2,
-          lineHeight: 14,
+          lineHeight: typography.caption + 4,
           textAlign: 'center',
         },
         tabBarItemStyle: {
           paddingVertical: 4,
+          /** 웹·좁은 창에서 플렉스로 탭 줄이 접히거나 밀려 보이지 않게 */
+          ...(Platform.OS === 'web'
+            ? ({
+                flexGrow: 1,
+                flexShrink: 1,
+                minWidth: 0,
+              } as const)
+            : {}),
         },
         tabBarStyle: {
+          /** 탭 줄이 세로 flex 배치에서 0 높이로 접히지 않도록 */
+          flexShrink: 0,
           minHeight: touchTarget.min + 2,
-          paddingTop: 6,
-          paddingBottom: 10,
+          /** BottomTabBar가 `paddingBottom: insets.bottom`을 적용하지만 `tabBarStyle`이 마지막이라 여기서 paddingBottom을 주면 그 값으로 덮여 세이프에리어가 깨져 하단에 빈 공간이 보일 수 있음. 네이티브는 라이브러리 패딩만 쓴다. */
+          paddingTop: Platform.OS === 'web' ? 6 : 4,
+          ...(Platform.OS === 'web' ? ({ paddingBottom: 10 } as const) : null),
           backgroundColor: colors.backgroundPrimary,
           borderTopWidth: 0.5,
           borderTopColor: colors.borderTertiary,
+          ...(Platform.OS === 'web'
+            ? ({
+                width: '100%' as const,
+                overflow: 'visible' as const,
+              } as const)
+            : Platform.OS === 'ios' || Platform.OS === 'android'
+              ? ({
+                  position: 'absolute' as const,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  zIndex: 100,
+                  elevation: Platform.OS === 'android' ? 16 : undefined,
+                  shadowColor: Platform.OS === 'ios' ? '#000000' : undefined,
+                  shadowOffset:
+                    Platform.OS === 'ios' ? { width: 0, height: -2 } : undefined,
+                  shadowOpacity: Platform.OS === 'ios' ? 0.08 : undefined,
+                  shadowRadius: Platform.OS === 'ios' ? 6 : undefined,
+                } as const)
+              : {}),
         },
       }}
     >
@@ -141,8 +172,18 @@ function MainTabs() {
 
 export function RootNavigator() {
   return (
-    <NavigationContainer>
-      <MainTabs />
-    </NavigationContainer>
+    <View style={styles.navigationRoot}>
+      <NavigationContainer>
+        <MainTabs />
+      </NavigationContainer>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  /** RN Web 탭바는 상위 높이 체인이 깨지면 접힘 — 안전 플렉스 래퍼 */
+  navigationRoot: {
+    flex: 1,
+    ...(Platform.OS === 'web' ? ({ minHeight: 0 } as const) : null),
+  },
+});

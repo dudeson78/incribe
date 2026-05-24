@@ -38,7 +38,9 @@ export default function App() {
       <AppAuthGate>
         <SettingsProvider>
           <NotificationAppStateSync />
-          <RootNavigator />
+          <View style={styles.flexFillMinZero}>
+            <RootNavigator />
+          </View>
         </SettingsProvider>
       </AppAuthGate>
     </>
@@ -64,5 +66,10 @@ export default function App() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+  },
+  /** 하단 탭 네비·씬 플렉스 체인 (웹 좁은 창 포함) */
+  flexFillMinZero: {
+    flex: 1,
+    minHeight: 0,
   },
 });

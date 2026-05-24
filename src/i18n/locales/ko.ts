@@ -7,7 +7,7 @@ export const ko = {
   tabs: {
     appTitle: '📖 말씀 암송',
     appSubtitle: 'Memory Scripture',
-    home: '말씀훈련',
+    home: '암송훈련',
     quiz: '퀴즈',
     verses: '말씀관리',
     settings: 'MY',

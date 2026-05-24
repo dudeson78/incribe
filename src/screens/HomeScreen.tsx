@@ -22,6 +22,7 @@ import {
   type DashboardSummary,
   type ScheduledRow,
 } from '../hooks/useVerses';
+import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
 import { mapAppError } from '../i18n/mapAppError';
 import type { RootTabParamList } from '../navigation/tabParams';
 import { useSettings } from '../context/SettingsContext';
@@ -31,6 +32,7 @@ import { colors, typography } from '../theme/colors';
 import { useTranslation } from 'react-i18next';
 
 export function HomeScreen() {
+  const tabScrollPadding = useBottomTabScrollPadding(20);
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp<RootTabParamList>>();
   const { annualGoal, loaded: settingsLoaded } = useSettings();
@@ -164,7 +166,10 @@ export function HomeScreen() {
       <ScrollView
         ref={scrollRef}
         style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: tabScrollPadding },
+        ]}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -275,7 +280,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 20,
     flexGrow: 1,
   },
   banner: {

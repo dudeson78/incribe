@@ -20,6 +20,7 @@ import {
   developmentEmailAccepted,
   getDevEmailLocalPartRestriction,
 } from '../lib/devEmailAllowlist';
+import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
 import { useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import { supabase } from '../supabase/client';
@@ -66,6 +67,7 @@ const LANGS = [
 ] as const;
 
 export function SettingsScreen() {
+  const tabScrollPadding = useBottomTabScrollPadding(40);
   const { t } = useTranslation();
   const authProfile = useAuthProfile();
   const { resetAllPracticeToNewVerseState } = useVerses();
@@ -386,7 +388,12 @@ export function SettingsScreen() {
           </Pressable>
         </View>
       ) : null}
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scroll,
+          { paddingBottom: tabScrollPadding },
+        ]}
+      >
         <Text style={styles.section}>{t('settings.annualGoal')}</Text>
         <Text style={styles.hint}>{t('settings.annualGoalHint')}</Text>
         <View style={styles.row}>
@@ -716,7 +723,6 @@ const styles = StyleSheet.create({
   scroll: {
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 40,
     flexGrow: 1,
   },
   section: {

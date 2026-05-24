@@ -18,10 +18,12 @@ import {
 import { QuizOrderMode } from '../components/quiz/QuizOrderMode';
 import { QuizReferenceMode } from '../components/quiz/QuizReferenceMode';
 import { QuizTodayVerseList } from '../components/quiz/QuizTodayVerseList';
+import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
 import { useVerses, type ScheduledRow } from '../hooks/useVerses';
 import { colors, typography } from '../theme/colors';
 
 export function QuizScreen() {
+  const tabScrollPadding = useBottomTabScrollPadding(24);
   const { t } = useTranslation();
   const { getScheduledToday } = useVerses();
   const [mode, setMode] = useState<QuizSurfaceMode>('reference');
@@ -77,7 +79,10 @@ export function QuizScreen() {
       >
         <ScrollView
           style={styles.scrollOuter}
-          contentContainerStyle={styles.scrollOuterContent}
+          contentContainerStyle={[
+            styles.scrollOuterContent,
+            { paddingBottom: tabScrollPadding },
+          ]}
           keyboardShouldPersistTaps="handled"
           nestedScrollEnabled
           showsVerticalScrollIndicator={false}
@@ -151,7 +156,6 @@ const styles = StyleSheet.create({
   },
   scrollOuterContent: {
     flexGrow: 1,
-    paddingBottom: 24,
   },
   loader: {
     paddingVertical: 28,

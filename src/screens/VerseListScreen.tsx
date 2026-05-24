@@ -16,6 +16,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import { VersePracticeHistoryTable } from '../components/VersePracticeHistoryTable';
 import type { ReviewLogRow, VerseWithSchedule } from '../types/verses';
+import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
 import { normalizeSchedule, useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import type { VersesStackParamList } from '../navigation/types';
@@ -29,6 +30,7 @@ const REF_ICON_SZ = typography.caption + 2;
 type Props = NativeStackScreenProps<VersesStackParamList, 'VerseList'>;
 
 export function VerseListScreen({ navigation }: Props) {
+  const tabScrollPadding = useBottomTabScrollPadding(32);
   const { t } = useTranslation();
   const { getAllVerses, getReviewLogsForVerseIds, deleteVerse, simulateShortCompleteMoveToLong } =
     useVerses();
@@ -286,7 +288,10 @@ export function VerseListScreen({ navigation }: Props) {
       data={rows}
       keyExtractor={(item) => item.id}
       renderItem={renderItem}
-      contentContainerStyle={styles.listContent}
+      contentContainerStyle={[
+        styles.listContent,
+        { paddingBottom: tabScrollPadding },
+      ]}
       ListEmptyComponent={
         <View style={styles.empty}>
           <Text style={styles.emptyTitle}>{t('verses.emptyTitle')}</Text>
@@ -305,7 +310,6 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 16,
-    paddingBottom: 32,
     flexGrow: 1,
   },
   headerBtn: {
