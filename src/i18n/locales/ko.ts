@@ -128,11 +128,13 @@ export const ko = {
   quiz: {
     accuracy: '정확도',
     correctCount: '맞춘 수',
+    refInstructionBanner:
+      '다음 성경 말씀의 구절을 약어형태로 입력해서 맞추세요.',
     refPromptShort: '이 말씀의 성경 구절은?',
     stats: '{{correct}} / {{total}} 맞춤',
     verseBody: '구절 본문',
     refPrompt: '참조 (암송)',
-    phRef: '이 구절의 성경 참조를 입력하세요',
+    phRef: '입력예시: 벧전 1:1',
     hint: '힌트',
     correct: '정답입니다',
     wrong: '아쉬워요',
@@ -150,9 +152,9 @@ export const ko = {
     loadingToday: '오늘 훈련 목록 불러오는 중…',
     back: '돌아가기',
     backToList: '목록으로',
-    modeReference: '성경 참조',
-    modeBlank: '빈칸',
-    modeOrder: '순서',
+    modeReference: '구절 맞추기',
+    modeBlank: '빈칸넣기',
+    modeOrder: '순서 맞추기',
     modeDescReference:
       '본문만 보고 성경 참조를 입력합니다. 활성 저장 구절이 무작위로 출제됩니다.',
     modeDescBlank:
@@ -258,7 +260,7 @@ export const ko = {
     reviewListColKind: '구분',
     reviewListColVerse: '구절',
     reviewListColSession: '연습회차',
-    reviewListColStatus: '훈련상태',
+    reviewListColStatus: '암송상태',
     reviewListColRemark: '훈련정보',
     reviewListRemarkNext: '다음 훈련: {{date}}',
     reviewListRemarkPrev: '이전 훈련: {{date}}',

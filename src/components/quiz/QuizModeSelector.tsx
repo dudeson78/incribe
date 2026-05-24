@@ -1,8 +1,12 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import type { ComponentProps } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import { colors, typography } from '../../theme/colors';
 
 export type QuizSurfaceMode = 'reference' | 'blank' | 'order';
+
+type IonName = ComponentProps<typeof Ionicons>['name'];
 
 type Props = {
   active: QuizSurfaceMode;
@@ -14,6 +18,16 @@ type Props = {
   };
 };
 
+const ICON_BOX = 72;
+const ICON_RADIUS = 16;
+const ICON_GLYPH = 34;
+
+const MODE_META: Record<QuizSurfaceMode, { icon: IonName }> = {
+  reference: { icon: 'book-outline' },
+  blank: { icon: 'document-text-outline' },
+  order: { icon: 'reorder-three-outline' },
+};
+
 export function QuizModeSelector({ active, onChange, labels }: Props) {
   const items: { mode: QuizSurfaceMode; title: string }[] = [
     { mode: 'reference', title: labels.reference },
@@ -22,64 +36,94 @@ export function QuizModeSelector({ active, onChange, labels }: Props) {
   ];
 
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.row}
-    >
+    <View style={styles.row}>
       {items.map(({ mode, title }) => {
         const on = active === mode;
+        const { icon } = MODE_META[mode];
         return (
           <Pressable
             key={mode}
             onPress={() => onChange(mode)}
-            hitSlop={{ top: 10, bottom: 10, left: 8, right: 8 }}
-            style={[styles.pill, on ? styles.pillOn : styles.pillOff]}
+            hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
+            style={({ pressed }) => [
+              styles.cell,
+              pressed && styles.cellPressed,
+            ]}
             accessibilityRole="button"
             accessibilityState={{ selected: on }}
+            accessibilityLabel={title}
           >
-            <Text style={[styles.pillText, on ? styles.pillTextOn : styles.pillTextOff]}>
+            <View
+              pointerEvents="none"
+              style={[
+                styles.iconBox,
+                on ? styles.iconBoxOn : styles.iconBoxOff,
+              ]}
+            >
+              <Ionicons
+                name={icon}
+                size={ICON_GLYPH}
+                color={on ? colors.white : colors.forest}
+              />
+            </View>
+            <Text
+              style={[styles.label, on ? styles.labelOn : styles.labelOff]}
+              numberOfLines={2}
+            >
               {title}
             </Text>
           </Pressable>
         );
       })}
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   row: {
+    flexDirection: 'row',
     paddingHorizontal: 12,
-    paddingVertical: 4,
-    gap: 6,
-    alignItems: 'center',
-    flexGrow: 0,
+    paddingVertical: 8,
+    gap: 8,
+    alignItems: 'flex-start',
   },
-  pill: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
+  cell: {
+    flex: 1,
+    minWidth: 0,
+    alignItems: 'center',
+  },
+  cellPressed: {
+    opacity: 0.88,
+  },
+  iconBox: {
+    width: ICON_BOX,
+    height: ICON_BOX,
+    borderRadius: ICON_RADIUS,
+    alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
   },
-  pillOn: {
-    backgroundColor: colors.forest,
-    borderColor: colors.forest,
-  },
-  pillOff: {
+  iconBoxOff: {
     backgroundColor: colors.backgroundPrimary,
     borderColor: colors.borderSecondary,
   },
-  pillText: {
+  iconBoxOn: {
+    backgroundColor: colors.forest,
+    borderColor: colors.forest,
+  },
+  label: {
+    marginTop: 8,
     fontSize: typography.caption,
     fontWeight: '600',
-    letterSpacing: 0.15,
+    textAlign: 'center',
+    width: '100%',
+    letterSpacing: 0.1,
   },
-  pillTextOn: {
-    color: colors.white,
-  },
-  pillTextOff: {
+  labelOn: {
     color: colors.forest,
+  },
+  labelOff: {
+    color: colors.textSecondary,
+    fontWeight: '500',
   },
 });

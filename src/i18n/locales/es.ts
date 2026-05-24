@@ -130,11 +130,13 @@ export const es: TranslationTree = {
   quiz: {
     accuracy: 'Precisión',
     correctCount: 'Aciertos',
+    refInstructionBanner:
+      'Escribe en forma abreviada la referencia del versículo siguiente.',
     refPromptShort: '¿Cuál es la referencia de este versículo?',
     stats: '{{correct}} / {{total}} aciertos',
     verseBody: 'Texto del versículo',
     refPrompt: 'Referencia (recita)',
-    phRef: 'Escribe la referencia bíblica',
+    phRef: 'Ej.: Ef 1:1',
     hint: 'Pista',
     correct: '¡Correcto!',
     wrong: 'Casi',
@@ -152,9 +154,9 @@ export const es: TranslationTree = {
     loadingToday: 'Cargando la práctica de hoy…',
     back: 'Volver',
     backToList: 'Volver a la lista',
-    modeReference: 'Referencia',
-    modeBlank: 'Huecos',
-    modeOrder: 'Orden',
+    modeReference: 'Adivina la cita',
+    modeBlank: 'Completar huecos',
+    modeOrder: 'Orden correcto',
     modeDescReference:
       'Escribe solo la referencia mientras ves el texto. Los versículos activos salen aleatorios.',
     modeDescBlank:

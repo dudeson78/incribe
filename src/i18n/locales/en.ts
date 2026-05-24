@@ -130,11 +130,13 @@ export const en: TranslationTree = {
   quiz: {
     accuracy: 'Accuracy',
     correctCount: 'Correct',
+    refInstructionBanner:
+      'Enter the abbreviated Bible reference for the verse below.',
     refPromptShort: 'What’s the Bible reference for this verse?',
     stats: '{{correct}} / {{total}} correct',
     verseBody: 'Verse text',
     refPrompt: 'Reference (recite)',
-    phRef: 'Type the Bible reference for this verse',
+    phRef: 'Example: 1 Thess 1:1',
     hint: 'Hint',
     correct: 'Correct!',
     wrong: 'Not quite',
@@ -152,9 +154,9 @@ export const en: TranslationTree = {
     loadingToday: 'Loading today’s drills…',
     back: 'Back',
     backToList: 'Back to list',
-    modeReference: 'Reference',
-    modeBlank: 'Blanks',
-    modeOrder: 'Order',
+    modeReference: 'Match verse',
+    modeBlank: 'Fill blanks',
+    modeOrder: 'Reorder',
     modeDescReference:
       'Type the reference while only the verse body is visible. Saved active verses shuffle at random.',
     modeDescBlank:

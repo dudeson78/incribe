@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   },
   headCell: {
     paddingVertical: 0,
-    paddingHorizontal: 3,
+    paddingHorizontal: 1,
     minWidth: 0,
     flexGrow: 1,
     flexBasis: 0,
@@ -313,13 +313,13 @@ const styles = StyleSheet.create({
   rowDone: {
     opacity: 0.72,
   },
-  /** 균등 5열 — 구분·연습회차·훈련상태·훈련정보는 가운데 · 구절만 왼쪽 */
+  /** 균등 5열 — 구분·연습회차·암송상태·훈련정보는 가운데 · 구절만 왼쪽 */
   col: {
     flex: 1,
     flexBasis: 0,
     minWidth: 0,
     justifyContent: 'flex-start',
-    paddingHorizontal: 3,
+    paddingHorizontal: 1,
     paddingVertical: 1,
   },
   colCentered: {
