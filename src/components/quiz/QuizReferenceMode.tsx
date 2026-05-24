@@ -40,8 +40,8 @@ function buildHint(reference: string, level: number): string {
 
 type Phase = 'input' | 'feedback';
 
-/** 성경 참조 맞히기 퀴즈 (무작위 활성 구절 풀) */
-export function QuizReferenceMode() {
+/** 성경 참조 맞히기 퀴즈 (무작위 활성 구절 풀) · `embedded`면 상위 스크롤에 붙임 */
+export function QuizReferenceMode({ embedded = false }: { embedded?: boolean }) {
   const { t } = useTranslation();
   const { getAllVerses } = useVerses();
   const [pool, setPool] = useState<VerseWithSchedule[]>([]);
@@ -110,7 +110,7 @@ export function QuizReferenceMode() {
 
   if (loading) {
     return (
-      <View style={styles.loader}>
+      <View style={[styles.loader, embedded && styles.embeddedSection]}>
         <ActivityIndicator size="large" color={colors.forest} />
         <Text style={styles.loaderTxt}>{t('quiz.loadingVerses')}</Text>
       </View>
@@ -119,22 +119,15 @@ export function QuizReferenceMode() {
 
   if (!current || pool.length === 0) {
     return (
-      <View style={styles.emptyBox}>
+      <View style={[styles.emptyBox, embedded && styles.embeddedSection]}>
         <Text style={styles.emptyTitle}>{t('quiz.emptyTitle')}</Text>
         <Text style={styles.emptyBody}>{t('quiz.emptyBody')}</Text>
       </View>
     );
   }
 
-  return (
-    <KeyboardAvoidingView
-      style={styles.flex}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        keyboardShouldPersistTaps="handled"
-      >
+  const body = (
+    <>
         <View style={styles.scoreRow}>
           <View style={styles.scoreCard}>
             <Text style={styles.scoreNum}>{correctCount}</Text>
@@ -230,6 +223,25 @@ export function QuizReferenceMode() {
             total: attemptCount,
           })}
         </Text>
+    </>
+  );
+
+  if (embedded) {
+    return (
+      <View style={[styles.scroll, styles.embeddedSection]}>{body}</View>
+    );
+  }
+
+  return (
+    <KeyboardAvoidingView
+      style={styles.flex}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        keyboardShouldPersistTaps="handled"
+      >
+        {body}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -417,5 +429,8 @@ const styles = StyleSheet.create({
   },
   btnDisabled: {
     opacity: 0.45,
+  },
+  embeddedSection: {
+    paddingBottom: 8,
   },
 });

@@ -127,30 +127,35 @@ export function HomeGroupedReview({
       <View style={styles.card}>
         <View style={styles.tableHeader}>
           <View style={styles.headRow}>
-            <View style={[styles.col, styles.headCell]}>
-              <Text style={styles.headLabel}>
+            <View style={[styles.col, styles.headCell, styles.colHeadCentered]}>
+              <Text style={[styles.headLabel, styles.cellTextCentered]}>
                 {t('home.reviewListColKind')}
               </Text>
             </View>
-            <View style={[styles.col, styles.headCell]}>
-              <Text style={styles.headLabel}>
+            <View style={[styles.col, styles.headCell, styles.colHeadVerse]}>
+              <Text style={[styles.headLabel, styles.cellTextVerse]}>
                 {t('home.reviewListColVerse')}
               </Text>
             </View>
-            <View style={[styles.col, styles.headCell]}>
-              <Text style={styles.headLabel}>
+            <View style={[styles.col, styles.headCell, styles.colHeadCentered]}>
+              <Text style={[styles.headLabel, styles.cellTextCentered]}>
                 {t('home.reviewListColSession')}
               </Text>
             </View>
-            <View style={[styles.col, styles.headCell]}>
-              <Text style={styles.headLabel}>
+            <View style={[styles.col, styles.headCell, styles.colHeadCentered]}>
+              <Text style={[styles.headLabel, styles.cellTextCentered]}>
                 {t('home.reviewListColStatus')}
               </Text>
             </View>
             <View
-              style={[styles.col, styles.headCell, styles.headCellLast, styles.remarkHeadCell]}
+              style={[
+                styles.col,
+                styles.headCell,
+                styles.headCellLast,
+                styles.colHeadRemark,
+              ]}
             >
-              <Text style={styles.headLabel}>
+              <Text style={[styles.headLabel, styles.cellTextCentered]}>
                 {t('home.reviewListColRemark')}
               </Text>
             </View>
@@ -203,37 +208,40 @@ export function HomeGroupedReview({
               accessibilityLabel={a11y}
               accessibilityState={{ disabled: recorded }}
             >
-              <View style={styles.col}>
-                <Text style={styles.colPhase} numberOfLines={2}>
+              <View style={[styles.col, styles.colCentered]}>
+                <Text style={[styles.colPhase, styles.cellTextCentered]} numberOfLines={2}>
                   {phaseText}
                 </Text>
               </View>
-              <View style={styles.col}>
+              <View style={[styles.col, styles.colVerse]}>
                 <Text
-                  style={styles.colRef}
+                  style={[styles.colRef, styles.cellTextVerse]}
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
                   {verse.reference}
                 </Text>
               </View>
-              <View style={styles.col}>
+              <View style={[styles.col, styles.colCentered]}>
                 <Text
-                  style={styles.colSession}
+                  style={[styles.colSession, styles.cellTextCentered]}
                   numberOfLines={2}
                   ellipsizeMode="tail"
                 >
                   {sessionText}
                 </Text>
               </View>
-              <View style={[styles.col, styles.statusCol]}>
+              <View style={[styles.col, styles.colCentered, styles.statusCol]}>
                 <SessionStatusColumn
                   recorded={recorded}
                   statusLabel={statusLabel}
                 />
               </View>
-              <View style={[styles.col, styles.remarkCol]}>
-                <Text style={styles.remarkText} numberOfLines={2}>
+              <View style={[styles.col, styles.colCentered, styles.remarkCol]}>
+                <Text
+                  style={[styles.remarkText, styles.cellTextCentered]}
+                  numberOfLines={2}
+                >
                   {remarkLine}
                 </Text>
               </View>
@@ -254,7 +262,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 0.5,
     borderColor: colors.borderTertiary,
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     paddingVertical: 4,
   },
   /** 헤더 + 하단 구분선 하나 */
@@ -270,15 +278,24 @@ const styles = StyleSheet.create({
   },
   headCell: {
     paddingVertical: 0,
-    paddingHorizontal: 6,
+    paddingHorizontal: 3,
     minWidth: 0,
     flexGrow: 1,
     flexBasis: 0,
   },
-  headCellLast: {},
-  remarkHeadCell: {
-    alignItems: 'flex-end',
+  colHeadCentered: {
+    alignItems: 'center',
+    justifyContent: 'flex-end',
   },
+  colHeadVerse: {
+    alignItems: 'flex-start',
+    justifyContent: 'flex-end',
+  },
+  colHeadRemark: {
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  headCellLast: {},
   headLabel: {
     fontSize: typography.caption,
     fontWeight: '700',
@@ -296,14 +313,30 @@ const styles = StyleSheet.create({
   rowDone: {
     opacity: 0.72,
   },
-  /** 균등 5열 — 구분 / 참조 / 연습회차 / 훈련상태 / 비고 */
+  /** 균등 5열 — 구분·연습회차·훈련상태·훈련정보는 가운데 · 구절만 왼쪽 */
   col: {
     flex: 1,
     flexBasis: 0,
     minWidth: 0,
     justifyContent: 'flex-start',
-    paddingHorizontal: 6,
+    paddingHorizontal: 3,
     paddingVertical: 1,
+  },
+  colCentered: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  colVerse: {
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+  },
+  cellTextCentered: {
+    textAlign: 'center',
+    width: '100%',
+  },
+  cellTextVerse: {
+    textAlign: 'left',
+    width: '100%',
   },
   colPhase: {
     fontSize: typography.caption,
@@ -324,9 +357,9 @@ const styles = StyleSheet.create({
     lineHeight: 17,
   },
   statusCol: {
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 2,
+    paddingHorizontal: 1,
     paddingVertical: 0,
   },
   statusColInner: {
@@ -335,14 +368,13 @@ const styles = StyleSheet.create({
   },
   remarkCol: {
     justifyContent: 'center',
-    alignItems: 'flex-end',
-    paddingHorizontal: 2,
+    alignItems: 'center',
+    paddingHorizontal: 1,
   },
   remarkText: {
     fontSize: typography.caption,
     lineHeight: 17,
     color: colors.textSecondary,
-    textAlign: 'right',
     width: '100%',
   },
   statusBadgeBase: {

@@ -9,9 +9,18 @@ type Props = {
   rows: ScheduledRow[];
   loading: boolean;
   onPick: (row: ScheduledRow) => void;
+  /** 상위 스크롤과 묶일 때 내부 스크롤 생략 */
+  embedded?: boolean;
+  selectedVerseId?: string | null;
 };
 
-export function QuizTodayVerseList({ rows, loading, onPick }: Props) {
+export function QuizTodayVerseList({
+  rows,
+  loading,
+  onPick,
+  embedded = false,
+  selectedVerseId = null,
+}: Props) {
   const { t } = useTranslation();
 
   if (loading) {
@@ -31,6 +40,52 @@ export function QuizTodayVerseList({ rows, loading, onPick }: Props) {
     );
   }
 
+  const titleBlock = (
+    <>
+      <Text style={[styles.listTitle, embedded && styles.listTitleEmbedded]}>
+        {t('quiz.todayTrainingTitle')}
+      </Text>
+      <Text style={[styles.listSub, embedded && styles.listSubEmbedded]}>
+        {t('quiz.todayTrainingSubtitle')}
+      </Text>
+    </>
+  );
+
+  const rowList = rows.map((row) => {
+    const selected = selectedVerseId === row.verse.id;
+    return (
+      <Pressable
+        key={row.verse.id}
+        onPress={() => onPick(row)}
+        style={({ pressed }) => [
+          styles.rowCard,
+          embedded && styles.rowCardEmbedded,
+          selected && styles.rowCardSelected,
+          pressed && styles.rowCardPressed,
+        ]}
+        accessibilityRole="button"
+        accessibilityState={{ selected }}
+        accessibilityLabel={t('quiz.pickVerseA11y', {
+          ref: row.verse.reference,
+        })}
+      >
+        <Text style={styles.refText} numberOfLines={2}>
+          {row.verse.reference}
+        </Text>
+        <Text style={styles.chev}>›</Text>
+      </Pressable>
+    );
+  });
+
+  if (embedded) {
+    return (
+      <View style={styles.embeddedWrap}>
+        {titleBlock}
+        <View style={styles.embeddedRows}>{rowList}</View>
+      </View>
+    );
+  }
+
   return (
     <ScrollView
       style={styles.flex}
@@ -38,33 +93,23 @@ export function QuizTodayVerseList({ rows, loading, onPick }: Props) {
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.listTitle}>{t('quiz.todayTrainingTitle')}</Text>
-      <Text style={styles.listSub}>{t('quiz.todayTrainingSubtitle')}</Text>
-      {rows.map((row) => (
-        <Pressable
-          key={row.verse.id}
-          onPress={() => onPick(row)}
-          style={({ pressed }) => [
-            styles.rowCard,
-            pressed && styles.rowCardPressed,
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={t('quiz.pickVerseA11y', {
-            ref: row.verse.reference,
-          })}
-        >
-          <Text style={styles.refText} numberOfLines={2}>
-            {row.verse.reference}
-          </Text>
-          <Text style={styles.chev}>›</Text>
-        </Pressable>
-      ))}
+      {titleBlock}
+      {rowList}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
+  embeddedWrap: {
+    paddingHorizontal: 16,
+    paddingTop: 2,
+    paddingBottom: 4,
+    gap: 6,
+  },
+  embeddedRows: {
+    gap: 6,
+  },
   pad: {
     padding: 24,
     alignItems: 'center',
@@ -85,11 +130,19 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginBottom: 6,
   },
+  listTitleEmbedded: {
+    fontSize: typography.body,
+    marginTop: 0,
+    marginBottom: 2,
+  },
   listSub: {
     fontSize: typography.min,
     lineHeight: 20,
     color: colors.textSecondary,
     marginBottom: 14,
+  },
+  listSubEmbedded: {
+    marginBottom: 8,
   },
   rowCard: {
     flexDirection: 'row',
@@ -104,6 +157,16 @@ const styles = StyleSheet.create({
     minHeight: touchTarget.min + 4,
     marginBottom: 4,
     gap: 10,
+  },
+  rowCardEmbedded: {
+    minHeight: touchTarget.min,
+    paddingVertical: 11,
+    marginBottom: 0,
+  },
+  rowCardSelected: {
+    borderWidth: 2,
+    borderColor: colors.orange,
+    backgroundColor: `${colors.orange}10`,
   },
   rowCardPressed: {
     opacity: 0.92,

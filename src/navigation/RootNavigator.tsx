@@ -15,6 +15,10 @@ import { touchTarget } from '../theme/layout';
 import type { RootTabParamList } from './tabParams';
 import type { VersesStackParamList } from './types';
 
+/** 픽토그램 줄 · 아래 줄에 탭 이름 */
+const TAB_ICON_PX = 20;
+const TAB_TEXT_ICON_PX = 17;
+
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const VersesStack = createNativeStackNavigator<VersesStackParamList>();
 
@@ -23,12 +27,12 @@ function VersesStackNavigator() {
   return (
     <VersesStack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: colors.forest },
-        headerTintColor: colors.white,
+        headerStyle: { backgroundColor: colors.background },
+        headerTintColor: colors.forest,
         headerTitleStyle: {
           fontWeight: '500',
           fontSize: typography.refLarge,
-          color: colors.white,
+          color: colors.forest,
         },
         headerShadowVisible: false,
         contentStyle: { backgroundColor: colors.background },
@@ -37,7 +41,7 @@ function VersesStackNavigator() {
       <VersesStack.Screen
         name="VerseList"
         component={VerseListScreen}
-        /** 홈·퀴즈·설정과 동일한 상단 브랜드 제목(AppHeader ↔ 스택 헤더) */
+        /** 스택 헤더는 바탕(밝은 회색)·제목 초록 글자 */
         options={{ title: t('tabs.appTitle') }}
       />
       <VersesStack.Screen
@@ -61,14 +65,26 @@ function MainTabs() {
         headerShown: false,
         tabBarActiveTintColor: colors.forest,
         tabBarInactiveTintColor: colors.textSecondary,
+        /** 아이콘 다음 줄에 라벨 */
+        tabBarLabelPosition: 'below-icon',
+        tabBarShowLabel: true,
+        tabBarIconStyle: {
+          marginBottom: 2,
+        },
         tabBarLabelStyle: {
-          fontSize: typography.chip,
+          fontSize: typography.chip - 1,
           fontWeight: '500',
+          marginTop: 2,
+          lineHeight: 14,
+          textAlign: 'center',
+        },
+        tabBarItemStyle: {
+          paddingVertical: 4,
         },
         tabBarStyle: {
-          minHeight: touchTarget.min + 8,
-          paddingTop: 8,
-          paddingBottom: 12,
+          minHeight: touchTarget.min + 2,
+          paddingTop: 6,
+          paddingBottom: 10,
           backgroundColor: colors.backgroundPrimary,
           borderTopWidth: 0.5,
           borderTopColor: colors.borderTertiary,
@@ -81,12 +97,8 @@ function MainTabs() {
         options={{
           title: t('tabs.home'),
           tabBarLabel: t('tabs.home'),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name="bulb-outline"
-              size={(size ?? 24) + 2}
-              color={color}
-            />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="bulb-outline" size={TAB_ICON_PX} color={color} />
           ),
         }}
       />
@@ -97,7 +109,7 @@ function MainTabs() {
           title: t('tabs.quiz'),
           tabBarLabel: t('tabs.quiz'),
           tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: 22 }}>?</Text>
+            <Text style={{ color, fontSize: TAB_TEXT_ICON_PX }}>?</Text>
           ),
         }}
       />
@@ -108,7 +120,7 @@ function MainTabs() {
           title: t('tabs.verses'),
           tabBarLabel: t('tabs.verses'),
           tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: 22 }}>☰</Text>
+            <Text style={{ color, fontSize: TAB_TEXT_ICON_PX }}>☰</Text>
           ),
         }}
       />
@@ -119,7 +131,7 @@ function MainTabs() {
           title: t('tabs.settings'),
           tabBarLabel: t('tabs.settings'),
           tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: 22 }}>⚙</Text>
+            <Text style={{ color, fontSize: TAB_TEXT_ICON_PX }}>⚙</Text>
           ),
         }}
       />

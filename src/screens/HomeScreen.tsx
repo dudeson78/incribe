@@ -9,8 +9,7 @@ import {
   Text,
   View,
 } from 'react-native';
-
-import { AppHeader } from '../components/AppHeader';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { AnnualGoalCard } from '../components/AnnualGoalCard';
 import { HomeGroupedReview } from '../components/HomeGroupedReview';
 import { TodayPracticeVerseBadge } from '../components/TodayPracticeVerseBadge';
@@ -161,8 +160,7 @@ export function HomeScreen() {
   }, [trainingFocusVerseId]);
 
   return (
-    <View style={styles.root}>
-      <AppHeader />
+    <SafeAreaView style={styles.root} edges={['top']}>
       <ScrollView
         ref={scrollRef}
         style={styles.scroll}
@@ -262,7 +260,7 @@ export function HomeScreen() {
           <UserTodayVerseCard verse={verseOfDay} />
         ) : null}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

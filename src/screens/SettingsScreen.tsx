@@ -11,9 +11,9 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { ReviewCycleDisplay } from '../components/ReviewCycleDisplay';
-import { AppHeader } from '../components/AppHeader';
 import { useAuthProfile } from '../hooks/useAuthProfile';
 import { useSettings } from '../context/SettingsContext';
 import {
@@ -355,8 +355,7 @@ export function SettingsScreen() {
     authProfile.displayName.trim().length > 0;
 
   return (
-    <View style={styles.shell}>
-      <AppHeader />
+    <SafeAreaView style={styles.shell} edges={['top']}>
       {showMyAccountBar ? (
         <View style={styles.myProfileBar}>
           <Text
@@ -676,7 +675,7 @@ export function SettingsScreen() {
           ) : null}
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

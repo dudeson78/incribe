@@ -21,10 +21,12 @@ import { radius, touchTarget } from '../../theme/layout';
 
 type Props = {
   row: ScheduledRow;
+  /** 목록 초기화(비움)·짧은 본문일 때 에러 처리 */
   onBack: () => void;
+  embedded?: boolean;
 };
 
-export function QuizBlankMode({ row, onBack }: Props) {
+export function QuizBlankMode({ row, onBack, embedded = false }: Props) {
   const { t } = useTranslation();
   const text = row.verse.text ?? '';
   const [roundKey, setRoundKey] = useState(0);
@@ -95,16 +97,9 @@ export function QuizBlankMode({ row, onBack }: Props) {
 
   const blankChip = feedback === 'bad';
 
-  return (
-    <KeyboardAvoidingView
-      style={styles.flexKB}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView
-        style={styles.flex}
-        contentContainerStyle={styles.scroll}
-        keyboardShouldPersistTaps="handled"
-      >
+  const blankInner = (
+    <>
+      {!embedded ? (
         <View style={styles.topBar}>
           <Pressable
             onPress={onBack}
@@ -119,69 +114,94 @@ export function QuizBlankMode({ row, onBack }: Props) {
             {row.verse.reference}
           </Text>
         </View>
+      ) : (
+        <Text style={[styles.refBadge, styles.refBadgeEmbedded]} numberOfLines={2}>
+          {row.verse.reference}
+        </Text>
+      )}
 
-        <Text style={styles.hint}>{t('quiz.blankHint')}</Text>
+      <Text style={styles.hint}>{t('quiz.blankHint')}</Text>
 
-        <View
-          style={[
-            styles.versePaper,
-            blankChip && styles.versePaperBad,
-          ]}
-        >
-          <View style={styles.tokenFlow}>
-            {C.tokens.map((tok, ti) => {
-              if (!blankSet.has(ti)) {
-                return (
-                  <Text key={`t-${ti}`} style={styles.tokenWord}>
-                    {tok}
-                  </Text>
-                );
-              }
-              const si = slotAtToken.get(ti) ?? 0;
+      <View
+        style={[
+          styles.versePaper,
+          blankChip && styles.versePaperBad,
+        ]}
+      >
+        <View style={styles.tokenFlow}>
+          {C.tokens.map((tok, ti) => {
+            if (!blankSet.has(ti)) {
               return (
-                <TextInput
-                  key={`b-slot-${si}-r-${roundKey}`}
-                  style={[
-                    styles.blankInput,
-                    feedback === 'ok' && styles.blankInputOk,
-                    feedback === 'bad' && styles.blankInputBad,
-                  ]}
-                  value={guesses[si] ?? ''}
-                  onChangeText={(v) => setGuess(si, v)}
-                  placeholder="···"
-                  placeholderTextColor={`${colors.muted}88`}
-                  autoCorrect={false}
-                  autoCapitalize="none"
-                  accessibilityLabel={t('quiz.blankInputA11y', {
-                    n: si + 1,
-                  })}
-                />
+                <Text key={`t-${ti}`} style={styles.tokenWord}>
+                  {tok}
+                </Text>
               );
-            })}
-          </View>
+            }
+            const si = slotAtToken.get(ti) ?? 0;
+            return (
+              <TextInput
+                key={`b-slot-${si}-r-${roundKey}`}
+                style={[
+                  styles.blankInput,
+                  feedback === 'ok' && styles.blankInputOk,
+                  feedback === 'bad' && styles.blankInputBad,
+                ]}
+                value={guesses[si] ?? ''}
+                onChangeText={(v) => setGuess(si, v)}
+                placeholder="···"
+                placeholderTextColor={`${colors.muted}88`}
+                autoCorrect={false}
+                autoCapitalize="none"
+                accessibilityLabel={t('quiz.blankInputA11y', {
+                  n: si + 1,
+                })}
+              />
+            );
+          })}
         </View>
+      </View>
 
-        {feedback === 'ok' ? (
-          <View style={[styles.fb, styles.fbOk]}>
-            <Text style={styles.fbOkTxt}>{t('quiz.blankCorrect')}</Text>
-          </View>
-        ) : null}
-        {feedback === 'bad' ? (
-          <View style={[styles.fb, styles.fbBad]}>
-            <Text style={styles.fbBadTitle}>{t('quiz.blankWrong')}</Text>
-            <Text style={styles.fbReveal} selectable>
-              {text}
-            </Text>
-          </View>
-        ) : null}
+      {feedback === 'ok' ? (
+        <View style={[styles.fb, styles.fbOk]}>
+          <Text style={styles.fbOkTxt}>{t('quiz.blankCorrect')}</Text>
+        </View>
+      ) : null}
+      {feedback === 'bad' ? (
+        <View style={[styles.fb, styles.fbBad]}>
+          <Text style={styles.fbBadTitle}>{t('quiz.blankWrong')}</Text>
+          <Text style={styles.fbReveal} selectable>
+            {text}
+          </Text>
+        </View>
+      ) : null}
 
-        <Pressable style={styles.btnPri} onPress={verify}>
-          <Text style={styles.btnPriTxt}>{t('quiz.blankCheck')}</Text>
-        </Pressable>
+      <Pressable style={styles.btnPri} onPress={verify}>
+        <Text style={styles.btnPriTxt}>{t('quiz.blankCheck')}</Text>
+      </Pressable>
 
-        <Pressable style={styles.btnSec} onPress={reshuffleBlanks}>
-          <Text style={styles.btnSecTxt}>{t('quiz.blankRegenerate')}</Text>
-        </Pressable>
+      <Pressable style={styles.btnSec} onPress={reshuffleBlanks}>
+        <Text style={styles.btnSecTxt}>{t('quiz.blankRegenerate')}</Text>
+      </Pressable>
+    </>
+  );
+
+  if (embedded) {
+    return (
+      <View style={[styles.scroll, styles.embeddedBlock]}>{blankInner}</View>
+    );
+  }
+
+  return (
+    <KeyboardAvoidingView
+      style={styles.flexKB}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView
+        style={styles.flex}
+        contentContainerStyle={styles.scroll}
+        keyboardShouldPersistTaps="handled"
+      >
+        {blankInner}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -192,7 +212,11 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   scroll: {
     padding: 16,
-    paddingBottom: 40,
+    paddingBottom: 28,
+    gap: 12,
+  },
+  embeddedBlock: {
+    paddingBottom: 8,
     gap: 12,
   },
   wrap: { padding: 24, gap: 16 },
@@ -219,6 +243,10 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.forest,
     lineHeight: 28,
+  },
+  refBadgeEmbedded: {
+    marginBottom: 2,
+    marginTop: 4,
   },
   hint: {
     fontSize: typography.min,

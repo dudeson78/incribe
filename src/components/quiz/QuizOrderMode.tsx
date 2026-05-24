@@ -13,6 +13,7 @@ import { radius, touchTarget } from '../../theme/layout';
 type Props = {
   row: ScheduledRow;
   onBack: () => void;
+  embedded?: boolean;
 };
 
 function arraysEqualOrder(a: string[], b: string[]): boolean {
@@ -23,7 +24,7 @@ function arraysEqualOrder(a: string[], b: string[]): boolean {
   return true;
 }
 
-export function QuizOrderMode({ row, onBack }: Props) {
+export function QuizOrderMode({ row, onBack, embedded = false }: Props) {
   const { t } = useTranslation();
   const text = row.verse.text ?? '';
   const [roundKey, setRoundKey] = useState(0);
@@ -89,26 +90,28 @@ export function QuizOrderMode({ row, onBack }: Props) {
     setRoundKey((k) => k + 1);
   }
 
-  return (
-    <ScrollView
-      style={styles.flex}
-      contentContainerStyle={styles.scroll}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View style={styles.topBar}>
-        <Pressable
-          onPress={onBack}
-          style={styles.backChip}
-          hitSlop={8}
-          accessibilityRole="button"
-          accessibilityLabel={t('quiz.backToList')}
-        >
-          <Text style={styles.backChipTxt}>{'‹ '} {t('quiz.back')}</Text>
-        </Pressable>
-        <Text style={styles.refBadge} numberOfLines={2}>
+  const orderInner = (
+    <>
+      {!embedded ? (
+        <View style={styles.topBar}>
+          <Pressable
+            onPress={onBack}
+            style={styles.backChip}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={t('quiz.backToList')}
+          >
+            <Text style={styles.backChipTxt}>{'‹ '} {t('quiz.back')}</Text>
+          </Pressable>
+          <Text style={styles.refBadge} numberOfLines={2}>
+            {row.verse.reference}
+          </Text>
+        </View>
+      ) : (
+        <Text style={[styles.refBadge, styles.refBadgeEmbedded]} numberOfLines={2}>
           {row.verse.reference}
         </Text>
-      </View>
+      )}
 
       <Text style={styles.hint}>{t('quiz.orderHint')}</Text>
       <Text style={styles.subHint}>{t('quiz.orderSwapHint')}</Text>
@@ -174,6 +177,22 @@ export function QuizOrderMode({ row, onBack }: Props) {
       <Pressable style={styles.btnSec} onPress={reshuffle}>
         <Text style={styles.btnSecTxt}>{t('quiz.orderReshuffle')}</Text>
       </Pressable>
+    </>
+  );
+
+  if (embedded) {
+    return (
+      <View style={[styles.scroll, styles.embeddedBlock]}>{orderInner}</View>
+    );
+  }
+
+  return (
+    <ScrollView
+      style={styles.flex}
+      contentContainerStyle={styles.scroll}
+      keyboardShouldPersistTaps="handled"
+    >
+      {orderInner}
     </ScrollView>
   );
 }
@@ -188,7 +207,11 @@ const styles = StyleSheet.create({
   },
   scroll: {
     padding: 16,
-    paddingBottom: 44,
+    paddingBottom: 32,
+    gap: 10,
+  },
+  embeddedBlock: {
+    paddingBottom: 8,
     gap: 10,
   },
   err: {
@@ -220,6 +243,10 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.forest,
     lineHeight: 28,
+  },
+  refBadgeEmbedded: {
+    marginBottom: 4,
+    marginTop: 4,
   },
   hint: {
     fontSize: typography.min,
