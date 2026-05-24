@@ -1,6 +1,6 @@
 export type RootTabParamList = {
   HomeTab: undefined;
-  VersesTab: undefined;
   QuizTab: undefined;
+  VersesTab: undefined;
   SettingsTab: undefined;
 };

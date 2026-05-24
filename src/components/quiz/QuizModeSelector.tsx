@@ -1,7 +1,6 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { colors, typography } from '../../theme/colors';
-import { touchTarget } from '../../theme/layout';
 
 export type QuizSurfaceMode = 'reference' | 'blank' | 'order';
 
@@ -34,6 +33,7 @@ export function QuizModeSelector({ active, onChange, labels }: Props) {
           <Pressable
             key={mode}
             onPress={() => onChange(mode)}
+            hitSlop={{ top: 10, bottom: 10, left: 8, right: 8 }}
             style={[styles.pill, on ? styles.pillOn : styles.pillOff]}
             accessibilityRole="button"
             accessibilityState={{ selected: on }}
@@ -50,19 +50,18 @@ export function QuizModeSelector({ active, onChange, labels }: Props) {
 
 const styles = StyleSheet.create({
   row: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    gap: 6,
     alignItems: 'center',
     flexGrow: 0,
   },
   pill: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: 999,
-    minHeight: touchTarget.min,
     justifyContent: 'center',
-    borderWidth: 1.5,
+    borderWidth: 1,
   },
   pillOn: {
     backgroundColor: colors.forest,
@@ -73,8 +72,9 @@ const styles = StyleSheet.create({
     borderColor: colors.borderSecondary,
   },
   pillText: {
-    fontSize: typography.min,
-    fontWeight: '700',
+    fontSize: typography.caption,
+    fontWeight: '600',
+    letterSpacing: 0.15,
   },
   pillTextOn: {
     color: colors.white,

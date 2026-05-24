@@ -14,7 +14,6 @@ export const zh: TranslationTree = {
     settings: '设置',
   },
   verses: {
-    listTitle: '我的经文',
     addButton: '添加',
     emptyTitle: '还没有保存的经文',
     emptyBody: '点右上角「添加」创建经文。',
@@ -250,11 +249,12 @@ export const zh: TranslationTree = {
     reviewListColVerse: '经文',
     reviewListColSession: '练习场次',
     reviewListColStatus: '训练状态',
-    reviewListNextPracticeParens: '（下次练习：{{date}}）',
-    reviewListPrevPracticeParens: '（上次练习：{{date}}）',
+    reviewListColRemark: '备注',
+    reviewListRemarkNext: '下次：{{date}}',
+    reviewListRemarkPrev: '上次：{{date}}',
     reviewListPrevPracticeNever: '首次',
     reviewListRowA11y:
-      '{{phase}}。{{ref}}。{{session}}。{{status}}。{{statusSchedule}}。',
+      '{{phase}}。{{ref}}。{{session}}。{{status}}。{{remark}}。',
     reviewListSessionPractice: '第{{n}}轮',
     reviewListTrainingDoneStatus: '已完成',
     reviewListTrainingPendingStatus: '未完成',

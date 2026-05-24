@@ -36,7 +36,8 @@ function VersesStackNavigator() {
       <VersesStack.Screen
         name="VerseList"
         component={VerseListScreen}
-        options={{ title: t('verses.listTitle') }}
+        /** 홈·퀴즈·설정과 동일한 상단 브랜드 제목(AppHeader ↔ 스택 헤더) */
+        options={{ title: t('tabs.appTitle') }}
       />
       <VersesStack.Screen
         name="VerseForm"
@@ -85,17 +86,6 @@ function MainTabs() {
         }}
       />
       <Tab.Screen
-        name="VersesTab"
-        component={VersesStackNavigator}
-        options={{
-          title: t('tabs.verses'),
-          tabBarLabel: t('tabs.verses'),
-          tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: 22 }}>☰</Text>
-          ),
-        }}
-      />
-      <Tab.Screen
         name="QuizTab"
         component={QuizScreen}
         options={{
@@ -103,6 +93,17 @@ function MainTabs() {
           tabBarLabel: t('tabs.quiz'),
           tabBarIcon: ({ color }) => (
             <Text style={{ color, fontSize: 22 }}>?</Text>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="VersesTab"
+        component={VersesStackNavigator}
+        options={{
+          title: t('tabs.verses'),
+          tabBarLabel: t('tabs.verses'),
+          tabBarIcon: ({ color }) => (
+            <Text style={{ color, fontSize: 22 }}>☰</Text>
           ),
         }}
       />

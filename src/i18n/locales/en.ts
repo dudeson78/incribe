@@ -14,7 +14,6 @@ export const en: TranslationTree = {
     settings: 'Settings',
   },
   verses: {
-    listTitle: 'My verses',
     addButton: 'Add',
     emptyTitle: 'No saved verses yet',
     emptyBody: 'Tap “Add” in the top-right to create a verse.',
@@ -265,11 +264,12 @@ export const en: TranslationTree = {
     reviewListColVerse: 'Verse',
     reviewListColSession: 'Practice round',
     reviewListColStatus: 'Training status',
-    reviewListNextPracticeParens: '(Next practice: {{date}})',
-    reviewListPrevPracticeParens: '(Previous practice: {{date}})',
+    reviewListColRemark: 'Notes',
+    reviewListRemarkNext: 'Next: {{date}}',
+    reviewListRemarkPrev: 'Prev: {{date}}',
     reviewListPrevPracticeNever: 'Never',
     reviewListRowA11y:
-      '{{phase}}. {{ref}}. {{session}}. {{status}}. {{statusSchedule}}.',
+      '{{phase}}. {{ref}}. {{session}}. {{status}}. {{remark}}.',
     reviewListSessionPractice: 'Round {{n}}',
     reviewListTrainingDoneStatus: 'Done',
     reviewListTrainingPendingStatus: 'Not done',

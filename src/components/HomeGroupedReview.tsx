@@ -19,18 +19,24 @@ type ListedRow = {
   lineKind: 'short' | 'long';
 };
 
-/** 스케줄 `yyyy-MM-dd` → `2026.5.25` (월·일 앞자리 0 없음) */
-function formatScheduleYmdDots(ymd: string): string {
+/** `yyyy-MM-dd` → 로캘별 월·일만 (예: ko의 5월 26일) */
+function formatYmdMonthDay(locale: string, ymd: string): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ymd.trim());
   if (!m) return ymd.trim();
-  return `${Number(m[1])}.${Number(m[2])}.${Number(m[3])}`;
+  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  return new Intl.DateTimeFormat(locale, {
+    month: 'long',
+    day: 'numeric',
+  }).format(d);
 }
 
-/** ISO 시간 → 현지 yyyy.m.d */
-function formatIsoLocalDots(iso: string): string | null {
+function formatIsoMonthDay(locale: string, iso: string): string | null {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return null;
-  return `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}`;
+  return new Intl.DateTimeFormat(locale, {
+    month: 'long',
+    day: 'numeric',
+  }).format(d);
 }
 
 function listedRowLineKind(row: ScheduledRow): 'short' | 'long' {
@@ -74,15 +80,13 @@ function sessionChipLabel(
   return t('home.reviewListSessionPractice', { n });
 }
 
-/** 상태 칩 + 그 아래 다음/이전 연습일 한 줄 */
+/** 상태 칩만 */
 function SessionStatusColumn({
   recorded,
   statusLabel,
-  scheduleLine,
 }: {
   recorded: boolean;
   statusLabel: string;
-  scheduleLine: string;
 }) {
   return (
     <View style={styles.statusColInner}>
@@ -105,12 +109,6 @@ function SessionStatusColumn({
           {statusLabel}
         </Text>
       </View>
-      <Text
-        style={styles.statusScheduleLine}
-        numberOfLines={2}
-      >
-        {scheduleLine}
-      </Text>
     </View>
   );
 }
@@ -119,7 +117,9 @@ export function HomeGroupedReview({
   items,
   onSelectVerse,
 }: HomeGroupedReviewProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dateLocale =
+    i18n.resolvedLanguage ?? i18n.language ?? Intl.DateTimeFormat().resolvedOptions().locale;
 
   const entries = useMemo((): ListedRow[] => {
     return orderTodayScheduledRows(items).map((row) => ({
@@ -150,9 +150,16 @@ export function HomeGroupedReview({
                 {t('home.reviewListColSession')}
               </Text>
             </View>
-            <View style={[styles.col, styles.headCell, styles.headCellLast]}>
+            <View style={[styles.col, styles.headCell]}>
               <Text style={styles.headLabel}>
                 {t('home.reviewListColStatus')}
+              </Text>
+            </View>
+            <View
+              style={[styles.col, styles.headCell, styles.headCellLast, styles.remarkHeadCell]}
+            >
+              <Text style={styles.headLabel}>
+                {t('home.reviewListColRemark')}
               </Text>
             </View>
           </View>
@@ -169,25 +176,25 @@ export function HomeGroupedReview({
           const statusLabel = recorded
             ? t('home.reviewListTrainingDoneStatus')
             : t('home.reviewListTrainingPendingStatus');
-          const scheduleLine = recorded
-            ? t('home.reviewListNextPracticeParens', {
-                date: formatScheduleYmdDots(row.schedule.next_review_date),
+          const remarkLine = recorded
+            ? t('home.reviewListRemarkNext', {
+                date: formatYmdMonthDay(
+                  dateLocale,
+                  row.schedule.next_review_date,
+                ),
               })
-            : (() => {
-                const dots = row.lastPracticedAtIso
-                  ? formatIsoLocalDots(row.lastPracticedAtIso)
-                  : null;
-                return t('home.reviewListPrevPracticeParens', {
-                  date:
-                    dots ?? t('home.reviewListPrevPracticeNever'),
-                });
-              })();
+            : t('home.reviewListRemarkPrev', {
+                date:
+                  (row.lastPracticedAtIso
+                    ? formatIsoMonthDay(dateLocale, row.lastPracticedAtIso)
+                    : null) ?? t('home.reviewListPrevPracticeNever'),
+              });
           const a11y = t('home.reviewListRowA11y', {
             phase: phaseText,
             ref: verse.reference,
             session: sessionText,
             status: statusLabel,
-            statusSchedule: scheduleLine,
+            remark: remarkLine,
           });
           return (
             <Pressable
@@ -230,8 +237,12 @@ export function HomeGroupedReview({
                 <SessionStatusColumn
                   recorded={recorded}
                   statusLabel={statusLabel}
-                  scheduleLine={scheduleLine}
                 />
+              </View>
+              <View style={[styles.col, styles.remarkCol]}>
+                <Text style={styles.remarkText} numberOfLines={2}>
+                  {remarkLine}
+                </Text>
               </View>
             </Pressable>
           );
@@ -271,8 +282,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexBasis: 0,
   },
-  headCellLast: {
-    alignItems: 'center',
+  headCellLast: {},
+  remarkHeadCell: {
+    alignItems: 'flex-end',
   },
   headLabel: {
     fontSize: typography.caption,
@@ -291,7 +303,7 @@ const styles = StyleSheet.create({
   rowDone: {
     opacity: 0.72,
   },
-  /** 균등 4열 — 구분 / 참조 / 연습회차 / 훈련상태(다음·이전 연습일) */
+  /** 균등 5열 — 구분 / 참조 / 연습회차 / 훈련상태 / 비고 */
   col: {
     flex: 1,
     flexBasis: 0,
@@ -326,14 +338,18 @@ const styles = StyleSheet.create({
   },
   statusColInner: {
     alignItems: 'center',
-    gap: 6,
     maxWidth: '100%',
   },
-  statusScheduleLine: {
-    fontSize: 11,
-    lineHeight: 15,
+  remarkCol: {
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    paddingHorizontal: 2,
+  },
+  remarkText: {
+    fontSize: typography.caption,
+    lineHeight: 17,
     color: colors.textSecondary,
-    textAlign: 'center',
+    textAlign: 'right',
     width: '100%',
   },
   statusBadgeBase: {

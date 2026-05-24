@@ -14,7 +14,6 @@ export const pt: TranslationTree = {
     settings: 'Configurações',
   },
   verses: {
-    listTitle: 'Meus versículos',
     addButton: 'Adicionar',
     emptyTitle: 'Nenhum versículo ainda',
     emptyBody: 'Toque em «Adicionar» no canto superior direito.',
@@ -265,11 +264,12 @@ export const pt: TranslationTree = {
     reviewListColVerse: 'Versículo',
     reviewListColSession: 'Sessão',
     reviewListColStatus: 'Situação',
-    reviewListNextPracticeParens: '(Próxima prática: {{date}})',
-    reviewListPrevPracticeParens: '(Prática anterior: {{date}})',
+    reviewListColRemark: 'Obs.',
+    reviewListRemarkNext: 'Próx.: {{date}}',
+    reviewListRemarkPrev: 'Ant.: {{date}}',
     reviewListPrevPracticeNever: 'Inicial',
     reviewListRowA11y:
-      '{{phase}}. {{ref}}. {{session}}. {{status}}. {{statusSchedule}}.',
+      '{{phase}}. {{ref}}. {{session}}. {{status}}. {{remark}}.',
     reviewListSessionPractice: '{{n}}ª sessão',
     reviewListTrainingDoneStatus: 'Concluído',
     reviewListTrainingPendingStatus: 'Pendente',

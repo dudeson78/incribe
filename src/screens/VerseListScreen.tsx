@@ -204,6 +204,31 @@ export function VerseListScreen({ navigation }: Props) {
                 />
               </Pressable>
               <Pressable
+                onPress={() => confirmDelete(item.id, item.reference)}
+                style={({ pressed }) => [
+                  styles.iconHit,
+                  pressed && styles.iconHitPressed,
+                ]}
+                accessibilityLabel={t('verses.a11yDelete', {
+                  ref: item.reference,
+                })}
+                accessibilityRole="button"
+                hitSlop={hitSlopComfortable}
+                disabled={blocked}
+              >
+                {deletingId === item.id ? (
+                  <ActivityIndicator size="small" color={colors.forest} />
+                ) : (
+                  <Ionicons
+                    name="trash-outline"
+                    size={REF_ICON_SZ}
+                    color={
+                      blocked ? `${colors.forest}55` : `${colors.forest}b3`
+                    }
+                  />
+                )}
+              </Pressable>
+              <Pressable
                 onPress={() =>
                   confirmJumpToLong(item.id)}
                 style={({ pressed }) => [
@@ -229,31 +254,6 @@ export function VerseListScreen({ navigation }: Props) {
                   >
                     {t('verses.jumpToLong')}
                   </Text>
-                )}
-              </Pressable>
-              <Pressable
-                onPress={() => confirmDelete(item.id, item.reference)}
-                style={({ pressed }) => [
-                  styles.iconHit,
-                  pressed && styles.iconHitPressed,
-                ]}
-                accessibilityLabel={t('verses.a11yDelete', {
-                  ref: item.reference,
-                })}
-                accessibilityRole="button"
-                hitSlop={hitSlopComfortable}
-                disabled={blocked}
-              >
-                {deletingId === item.id ? (
-                  <ActivityIndicator size="small" color={colors.forest} />
-                ) : (
-                  <Ionicons
-                    name="trash-outline"
-                    size={REF_ICON_SZ}
-                    color={
-                      blocked ? `${colors.forest}55` : `${colors.forest}b3`
-                    }
-                  />
                 )}
               </Pressable>
             </View>

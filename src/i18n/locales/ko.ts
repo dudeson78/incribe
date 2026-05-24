@@ -13,7 +13,6 @@ export const ko = {
     settings: '설정',
   },
   verses: {
-    listTitle: '말씀관리',
     addButton: '추가',
     emptyTitle: '저장된 구절이 없습니다',
     emptyBody: '우측 상단 「추가」로 구절을 넣어 보세요.',
@@ -260,11 +259,12 @@ export const ko = {
     reviewListColVerse: '구절',
     reviewListColSession: '연습회차',
     reviewListColStatus: '훈련상태',
-    reviewListNextPracticeParens: '(다음연습: {{date}})',
-    reviewListPrevPracticeParens: '(이전연습: {{date}})',
+    reviewListColRemark: '비고',
+    reviewListRemarkNext: '다음: {{date}}',
+    reviewListRemarkPrev: '이전: {{date}}',
     reviewListPrevPracticeNever: '최초',
     reviewListRowA11y:
-      '{{phase}}. {{ref}}. {{session}}. {{status}}. {{statusSchedule}}.',
+      '{{phase}}. {{ref}}. {{session}}. {{status}}. {{remark}}.',
     reviewListSessionPractice: '{{n}}회차',
     reviewListTrainingDoneStatus: '완료',
     reviewListTrainingPendingStatus: '미완료',
@@ -282,8 +282,8 @@ export const ko = {
   memorize: {
     badgeRecite: '암송 — 참조만 표시 · 본문은 떠올리기',
     badgeReciteSession: '암송 — 참조만 표시 · 본문은 떠올리기',
-    trainingCardTitle: '{{n}}번째 훈련카드',
-    trainingCardTitleA11y: '오늘 훈련 카드 {{n}}번째',
+    trainingCardTitle: '오늘 훈련 {{n}}번째 카드',
+    trainingCardTitleA11y: '오늘 훈련 {{n}}번째 카드',
     noMoreVersesToday: '오늘은 더 이상 훈련할 구절이 없습니다',
     allSessionsDoneForToday:
       '축하합니다. 오늘 훈련을 마쳤습니다.',
