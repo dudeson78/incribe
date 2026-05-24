@@ -10,7 +10,10 @@ import { useTranslation } from 'react-i18next';
 
 import { EmailAuthLanding } from './EmailAuthLanding';
 import { primeAuthSession } from '../lib/primeAuthSession';
-import { supabase } from '../supabase/client';
+import {
+  isSupabaseConfigured,
+  supabase,
+} from '../supabase/client';
 import { colors, typography } from '../theme/colors';
 import { touchTarget } from '../theme/layout';
 
@@ -34,6 +37,7 @@ export function AppAuthGate({ children }: { children: ReactNode }) {
     'loading',
   );
   const [primeDetail, setPrimeDetail] = useState<string | undefined>();
+  const [bootstrapMissingEnv, setBootstrapMissingEnv] = useState(false);
   const [bootstrapNonce, setBootstrapNonce] = useState(0);
 
   useEffect(() => {
@@ -43,6 +47,14 @@ export function AppAuthGate({ children }: { children: ReactNode }) {
     void (async () => {
       setPhase('loading');
       setPrimeDetail(undefined);
+      setBootstrapMissingEnv(false);
+
+      if (!isSupabaseConfigured) {
+        if (!mounted) return;
+        setBootstrapMissingEnv(true);
+        setPhase('error');
+        return;
+      }
 
       const r = await primeAuthSession();
       if (!mounted) return;
@@ -116,8 +128,12 @@ export function AppAuthGate({ children }: { children: ReactNode }) {
     return (
       <View style={gateStyles.fill}>
         <Text style={gateStyles.title}>{t('auth.bootstrapFailed')}</Text>
-        <Text style={gateStyles.body}>{t('auth.bootstrapHint')}</Text>
-        {primeDetail ? (
+        <Text style={gateStyles.body}>
+          {bootstrapMissingEnv
+            ? t('auth.supabaseEnvMissing')
+            : t('auth.bootstrapHint')}
+        </Text>
+        {!bootstrapMissingEnv && primeDetail ? (
           <Text style={gateStyles.detail} selectable>
             {t('auth.technicalDetail')} {primeDetail}
           </Text>

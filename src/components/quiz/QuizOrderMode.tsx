@@ -1,0 +1,365 @@
+import { useEffect, useMemo, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+
+import type { ScheduledRow } from '../../hooks/useVerses';
+import {
+  shuffleSegments,
+  splitVerseIntoSegments,
+} from '../../lib/quizTextUtils';
+import { colors, typography } from '../../theme/colors';
+import { radius, touchTarget } from '../../theme/layout';
+
+type Props = {
+  row: ScheduledRow;
+  onBack: () => void;
+};
+
+function arraysEqualOrder(a: string[], b: string[]): boolean {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
+
+export function QuizOrderMode({ row, onBack }: Props) {
+  const { t } = useTranslation();
+  const text = row.verse.text ?? '';
+  const [roundKey, setRoundKey] = useState(0);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [feedback, setFeedback] = useState<'idle' | 'ok' | 'bad'>('idle');
+
+  const correctSegments = useMemo(
+    () => splitVerseIntoSegments(text),
+    [text],
+  );
+
+  const [order, setOrder] = useState<string[]>([]);
+
+  useEffect(() => {
+    const segs = splitVerseIntoSegments(text);
+    setOrder(shuffleSegments(segs));
+    setSelected(null);
+    setFeedback('idle');
+  }, [text, roundKey]);
+
+  if (correctSegments.length < 2) {
+    return (
+      <View style={styles.pad}>
+        <Text style={styles.err}>{t('quiz.orderTooShort')}</Text>
+        <Pressable style={styles.ghostBtn} onPress={onBack}>
+          <Text style={styles.ghostTxt}>{t('quiz.backToList')}</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  function move(idx: number, dir: -1 | 1) {
+    const j = idx + dir;
+    if (j < 0 || j >= order.length) return;
+    const next = [...order];
+    [next[idx], next[j]] = [next[j]!, next[idx]!];
+    setOrder(next);
+    setFeedback('idle');
+    setSelected(null);
+  }
+
+  function onRowPress(i: number) {
+    setFeedback('idle');
+    if (selected === null) {
+      setSelected(i);
+      return;
+    }
+    if (selected === i) {
+      setSelected(null);
+      return;
+    }
+    const next = [...order];
+    [next[selected], next[i]] = [next[i]!, next[selected]!];
+    setOrder(next);
+    setSelected(null);
+  }
+
+  function checkOrder() {
+    setFeedback(arraysEqualOrder(order, correctSegments) ? 'ok' : 'bad');
+  }
+
+  function reshuffle() {
+    setRoundKey((k) => k + 1);
+  }
+
+  return (
+    <ScrollView
+      style={styles.flex}
+      contentContainerStyle={styles.scroll}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View style={styles.topBar}>
+        <Pressable
+          onPress={onBack}
+          style={styles.backChip}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel={t('quiz.backToList')}
+        >
+          <Text style={styles.backChipTxt}>{'‹ '} {t('quiz.back')}</Text>
+        </Pressable>
+        <Text style={styles.refBadge} numberOfLines={2}>
+          {row.verse.reference}
+        </Text>
+      </View>
+
+      <Text style={styles.hint}>{t('quiz.orderHint')}</Text>
+      <Text style={styles.subHint}>{t('quiz.orderSwapHint')}</Text>
+
+      {order.map((seg, idx) => {
+        const highlighted = selected === idx;
+        return (
+          <View key={`${roundKey}-${idx}`} style={styles.segmentRowOuter}>
+            <View style={styles.arrows}>
+              <Pressable
+                style={[styles.miniBtn, idx === 0 && styles.miniBtnDisabled]}
+                onPress={() => move(idx, -1)}
+                disabled={idx === 0}
+                accessibilityLabel={t('quiz.orderMoveUpA11y')}
+              >
+                <Text style={styles.miniBtnTxt}>▲</Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.miniBtn,
+                  idx >= order.length - 1 && styles.miniBtnDisabled,
+                ]}
+                onPress={() => move(idx, 1)}
+                disabled={idx >= order.length - 1}
+                accessibilityLabel={t('quiz.orderMoveDownA11y')}
+              >
+                <Text style={styles.miniBtnTxt}>▼</Text>
+              </Pressable>
+            </View>
+            <Pressable
+              onPress={() => onRowPress(idx)}
+              style={[
+                styles.segmentCard,
+                highlighted && styles.segmentCardSel,
+              ]}
+              accessibilityRole="button"
+              accessibilityState={{ selected: highlighted }}
+            >
+              <Text style={styles.segIx}>{idx + 1}</Text>
+              <Text style={styles.segTxt}>{seg}</Text>
+            </Pressable>
+          </View>
+        );
+      })}
+
+      {feedback === 'ok' ? (
+        <View style={[styles.fb, styles.fbOk]}>
+          <Text style={styles.fbOkTxt}>{t('quiz.orderCorrect')}</Text>
+        </View>
+      ) : null}
+      {feedback === 'bad' ? (
+        <View style={[styles.fb, styles.fbBad]}>
+          <Text style={styles.fbBadTitle}>{t('quiz.orderWrong')}</Text>
+          <Text style={styles.fbReveal} selectable>
+            {correctSegments.join(' ')}
+          </Text>
+        </View>
+      ) : null}
+
+      <Pressable style={styles.btnPri} onPress={checkOrder}>
+        <Text style={styles.btnPriTxt}>{t('quiz.orderCheck')}</Text>
+      </Pressable>
+      <Pressable style={styles.btnSec} onPress={reshuffle}>
+        <Text style={styles.btnSecTxt}>{t('quiz.orderReshuffle')}</Text>
+      </Pressable>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  flex: { flex: 1 },
+  pad: {
+    padding: 24,
+    gap: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scroll: {
+    padding: 16,
+    paddingBottom: 44,
+    gap: 10,
+  },
+  err: {
+    fontSize: typography.body,
+    color: colors.textPrimary,
+    textAlign: 'center',
+  },
+  ghostBtn: { paddingVertical: 12 },
+  ghostTxt: {
+    fontSize: typography.body,
+    fontWeight: '700',
+    color: colors.orange,
+  },
+  topBar: { gap: 10, marginBottom: 6 },
+  backChip: {
+    alignSelf: 'flex-start',
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    minHeight: touchTarget.min,
+    justifyContent: 'center',
+  },
+  backChipTxt: {
+    fontSize: typography.min,
+    fontWeight: '700',
+    color: colors.orange,
+  },
+  refBadge: {
+    fontSize: typography.refLarge,
+    fontWeight: '800',
+    color: colors.forest,
+    lineHeight: 28,
+  },
+  hint: {
+    fontSize: typography.min,
+    lineHeight: 21,
+    color: colors.textSecondary,
+    marginBottom: 6,
+    fontWeight: '600',
+  },
+  subHint: {
+    fontSize: typography.caption,
+    lineHeight: 18,
+    color: colors.textSecondary,
+    marginBottom: 12,
+    opacity: 0.92,
+  },
+  segmentRowOuter: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    gap: 10,
+    marginBottom: 6,
+  },
+  arrows: {
+    justifyContent: 'center',
+    gap: 4,
+    paddingVertical: 4,
+    width: 44,
+  },
+  miniBtn: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.backgroundSecondary,
+    borderRadius: 8,
+    borderWidth: 0.5,
+    borderColor: colors.borderSecondary,
+    minHeight: 36,
+    flex: 1,
+  },
+  miniBtnDisabled: {
+    opacity: 0.35,
+  },
+  miniBtnTxt: {
+    fontSize: 13,
+    color: colors.forest,
+    fontWeight: '700',
+  },
+  segmentCard: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    backgroundColor: colors.backgroundPrimary,
+    borderRadius: radius.lg,
+    borderWidth: 0.5,
+    borderColor: colors.borderTertiary,
+    padding: 14,
+    minHeight: touchTarget.min + 10,
+    marginBottom: 2,
+  },
+  segmentCardSel: {
+    borderColor: colors.orange,
+    borderWidth: 2,
+    backgroundColor: `${colors.orange}12`,
+  },
+  segIx: {
+    fontSize: typography.min,
+    fontWeight: '800',
+    color: colors.white,
+    backgroundColor: colors.forest,
+    minWidth: 26,
+    textAlign: 'center',
+    lineHeight: 22,
+    borderRadius: 8,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    overflow: 'hidden',
+  },
+  segTxt: {
+    flex: 1,
+    fontSize: typography.min,
+    lineHeight: 22,
+    color: colors.textPrimary,
+  },
+  fb: {
+    padding: 14,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    marginTop: 8,
+  },
+  fbOk: {
+    backgroundColor: colors.successBg,
+    borderColor: colors.successBorder,
+  },
+  fbOkTxt: {
+    fontSize: typography.min,
+    fontWeight: '700',
+    color: colors.successBorder,
+    textAlign: 'center',
+  },
+  fbBad: {
+    backgroundColor: colors.errorBg,
+    borderColor: colors.errorBorder,
+  },
+  fbBadTitle: {
+    fontWeight: '700',
+    fontSize: typography.min,
+    color: colors.errorBorder,
+    marginBottom: 6,
+  },
+  fbReveal: {
+    fontSize: typography.min,
+    lineHeight: 22,
+    color: colors.textPrimary,
+    fontStyle: 'italic',
+  },
+  btnPri: {
+    backgroundColor: colors.forest,
+    borderRadius: radius.lg,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginTop: 8,
+    minHeight: touchTarget.min,
+  },
+  btnPriTxt: {
+    color: colors.white,
+    fontSize: typography.body,
+    fontWeight: '700',
+  },
+  btnSec: {
+    paddingVertical: 14,
+    alignItems: 'center',
+    borderRadius: radius.lg,
+    borderWidth: 0.5,
+    borderColor: colors.borderSecondary,
+    backgroundColor: colors.backgroundSecondary,
+    minHeight: touchTarget.min,
+    justifyContent: 'center',
+  },
+  btnSecTxt: {
+    fontSize: typography.min,
+    fontWeight: '600',
+    color: colors.forest,
+  },
+});

@@ -31,8 +31,8 @@ export const en: TranslationTree = {
     historyTitle: 'Practice history',
     historyColCategory: 'Track',
     historySession: 'Session {{n}}',
-    historyShort: 'Short track',
-    historyLong: 'Long track',
+    historyShort: 'Short',
+    historyLong: 'Long',
     historyDateCompleted: '(done)',
     historyDateScheduled: '(scheduled)',
     jumpToLong: 'Long',
@@ -149,6 +149,44 @@ export const en: TranslationTree = {
     a11yRefInput: 'Reference answer entry',
     a11yVerify: 'Check answer',
     a11yNextQ: 'Next question',
+    loadingVerses: 'Loading verses…',
+    loadingToday: 'Loading today’s drills…',
+    back: 'Back',
+    backToList: 'Back to list',
+    modeReference: 'Reference',
+    modeBlank: 'Blanks',
+    modeOrder: 'Order',
+    modeDescReference:
+      'Type the reference while only the verse body is visible. Saved active verses shuffle at random.',
+    modeDescBlank:
+      'Pick a verse from today’s drill list and fill words hidden as blanks.',
+    modeDescOrder:
+      'Pick a verse and restore shuffled snippets to their original order.',
+    todayTrainingTitle: 'Today’s drill verses',
+    todayTrainingSubtitle: 'Tap a reference to begin this quiz game.',
+    noTrainingToday: 'No verses drilled today yet',
+    noTrainingTodayHint:
+      'This list mirrors Home drills when something is scheduled for today. If nothing appears, check review dates or add a verse.',
+    pickVerseA11y: 'Start quiz {{ref}}',
+    blankHint:
+      'Restore each hidden token exactly as written (spacing, punctuation).',
+    blankCheck: 'Check answers',
+    blankCorrect: 'Great — every blank matches!',
+    blankWrong: 'Some blanks miss. See the verse below.',
+    blankRegenerate: 'New blanks',
+    blankTooShort: 'Verse too short for a blank drill.',
+    blankInputA11y: 'Blank answer {{n}}',
+    orderHint: 'Reorder the snippets like the verse.',
+    orderSwapHint:
+      'Use ▲/▼ arrows or tap two rows to swap their positions.',
+    orderCheck: 'Check order',
+    orderCorrect: 'Perfect order!',
+    orderWrong: 'Still out of sequence. Peek at the answer.',
+    orderTooShort:
+      'We could not split the verse cleanly for an ordering quiz.',
+    orderReshuffle: 'Shuffle again',
+    orderMoveUpA11y: 'Move snippet up',
+    orderMoveDownA11y: 'Move snippet down',
   },
   reference: {
     label: 'Reference',
@@ -173,6 +211,8 @@ export const en: TranslationTree = {
     bootstrapFailed: 'Could not prepare the app to start.',
     bootstrapHint:
       'Check EXPO_PUBLIC_SUPABASE_URL / EXPO_PUBLIC_SUPABASE_ANON_KEY in .env, and enable the Email provider under Dashboard → Authentication → Providers.',
+    supabaseEnvMissing:
+      'EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY are missing or empty on this deployment. In Vercel: Project → Settings → Environment Variables, add both, then Redeploy. For local dev, use project root .env with the same names.',
     emailGateTitle: 'Sign up · Sign in',
     emailGateBody:
       'Create an email account or sign in to save verses and sync them across devices.',
@@ -218,8 +258,8 @@ export const en: TranslationTree = {
     yearlyGoalCaption: 'Yearly goal',
     goalPct: '{{pct}}%',
     goalVersesSuffix: '',
-    sectionShort: 'Short-track group',
-    sectionLong: 'Long-track group',
+    sectionShort: 'Short',
+    sectionLong: 'Long',
     todayTrainingVersesBadge: 'Today’s practice verses',
     reviewListColKind: 'Track',
     reviewListColVerse: 'Verse',
@@ -229,10 +269,10 @@ export const en: TranslationTree = {
     reviewListFirstPractice: 'First session',
     reviewListRowA11y:
       '{{phase}}. {{ref}}. {{session}}. {{lastPractice}}. {{status}}.',
-    reviewListSessionPractice: 'Session {{n}} practice',
+    reviewListSessionPractice: 'Round {{n}}',
     reviewListTrainingDoneStatus: 'Done',
     reviewListTrainingPendingStatus: 'Not done',
-    sectionLongRetrain: 'Long track — remedial reps (×7)',
+    sectionLongRetrain: 'Long — remedial reps (×7)',
     badgeShortDay: 'Day {{n}}',
     badgeLongInterval: 'Every {{days}} d',
     badgeLongRetrain: '{{days}}‑day interval retry',

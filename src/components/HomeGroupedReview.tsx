@@ -15,7 +15,7 @@ type HomeGroupedReviewProps = {
 
 type ListedRow = {
   row: ScheduledRow;
-  /** 일반 단기는 단기기억 줄, 재연습·장기는 장기기억 줄 */
+  /** 일반 단기는 단기 줄, 재연습·장기는 장기 줄 */
   lineKind: 'short' | 'long';
 };
 
@@ -62,22 +62,30 @@ function listedRowLineKind(row: ScheduledRow): 'short' | 'long' {
 function sessionChipLabel(
   row: ScheduledRow,
   lineKind: 'short' | 'long',
+  recordedToday: boolean,
   t: TFunction,
 ): string {
   const { schedule } = row;
   if (lineKind === 'short') {
-    const n = Math.min(schedule.short_success_count + 1, 7);
+    const s = schedule.short_success_count;
+    const n = recordedToday
+      ? Math.min(Math.max(s, 1), 7)
+      : Math.min(s + 1, 7);
     return t('home.reviewListSessionPractice', { n });
   }
-  /** 재연습(단기이지만 교정 간격)·장기 회차 패널 */
+  /** 재연습(단기이지만 교정 간격) · 장기 회차 */
   if (
     schedule.review_phase === 'short' &&
     schedule.current_interval_days > 1
   ) {
-    const n = Math.min(schedule.short_success_count + 1, 7);
+    const s = schedule.short_success_count;
+    const n = recordedToday
+      ? Math.min(Math.max(s, 1), 7)
+      : Math.min(s + 1, 7);
     return t('home.reviewListSessionPractice', { n });
   }
-  const n = Math.max(1, (schedule.long_success_count ?? 0) + 1);
+  const lc = schedule.long_success_count ?? 0;
+  const n = recordedToday ? Math.max(1, lc) : Math.max(1, lc + 1);
   return t('home.reviewListSessionPractice', { n });
 }
 
@@ -164,7 +172,7 @@ export function HomeGroupedReview({
             lineKind === 'short'
               ? t('home.sectionShort')
               : t('home.sectionLong');
-          const sessionText = sessionChipLabel(row, lineKind, t);
+          const sessionText = sessionChipLabel(row, lineKind, recorded, t);
           const statusLabel = recorded
             ? t('home.reviewListTrainingDoneStatus')
             : t('home.reviewListTrainingPendingStatus');
