@@ -11,7 +11,7 @@ export const zh: TranslationTree = {
     home: '首页',
     quiz: '测验',
     verses: '管理',
-    settings: '设置',
+    settings: 'MY',
   },
   verses: {
     addButton: '添加',
@@ -250,9 +250,9 @@ export const zh: TranslationTree = {
     reviewListColSession: '练习场次',
     reviewListColStatus: '训练状态',
     reviewListColRemark: '备注',
-    reviewListRemarkNext: '下次：{{date}}',
-    reviewListRemarkPrev: '上次：{{date}}',
-    reviewListPrevPracticeNever: '首次',
+    reviewListRemarkNext: '下次训练：{{date}}',
+    reviewListRemarkPrev: '上次训练：{{date}}',
+    reviewListRemarkFirstPractice: '首次训练',
     reviewListRowA11y:
       '{{phase}}。{{ref}}。{{session}}。{{status}}。{{remark}}。',
     reviewListSessionPractice: '第{{n}}轮',
@@ -284,7 +284,7 @@ export const zh: TranslationTree = {
     dueSuffix: ' 项',
   },
   settings: {
-    title: '设置',
+    title: 'MY',
     annualGoal: '年度目标',
     annualGoalHint: '今年计划添加的经节数（默认 52）',
     apply: '应用',

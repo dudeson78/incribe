@@ -14,6 +14,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { ReviewCycleDisplay } from '../components/ReviewCycleDisplay';
 import { AppHeader } from '../components/AppHeader';
+import { useAuthProfile } from '../hooks/useAuthProfile';
 import { useSettings } from '../context/SettingsContext';
 import {
   developmentEmailAccepted,
@@ -66,6 +67,7 @@ const LANGS = [
 
 export function SettingsScreen() {
   const { t } = useTranslation();
+  const authProfile = useAuthProfile();
   const { resetAllPracticeToNewVerseState } = useVerses();
   const {
     annualGoal,
@@ -347,10 +349,44 @@ export function SettingsScreen() {
   }
 
   const sessionOk = authSlice.sessionOk;
+  const showMyAccountBar =
+    authProfile.ready &&
+    authProfile.signedIn &&
+    authProfile.displayName.trim().length > 0;
 
   return (
     <View style={styles.shell}>
       <AppHeader />
+      {showMyAccountBar ? (
+        <View style={styles.myProfileBar}>
+          <Text
+            style={styles.myProfileName}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            accessibilityLabel={t('account.headerSignedInAsA11y', {
+              name: authProfile.displayName,
+            })}
+          >
+            {authProfile.displayName}
+          </Text>
+          <Pressable
+            onPress={() => void handleSignOut()}
+            hitSlop={10}
+            style={({ pressed }) => [
+              styles.myProfileSignOut,
+              pressed && { opacity: 0.82 },
+              authBusy && styles.authBtnGhost,
+            ]}
+            disabled={authBusy}
+            accessibilityRole="button"
+            accessibilityLabel={t('account.signOut')}
+          >
+            <Text style={styles.myProfileSignOutText}>
+              {t('account.signOut')}
+            </Text>
+          </Pressable>
+        </View>
+      ) : null}
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={styles.section}>{t('settings.annualGoal')}</Text>
         <Text style={styles.hint}>{t('settings.annualGoalHint')}</Text>
@@ -603,22 +639,6 @@ export function SettingsScreen() {
             </Pressable>
           </View>
 
-          {sessionOk ? (
-            <Pressable
-              style={({ pressed }) => [
-                styles.signOutBtn,
-                pressed && styles.pressed,
-                authBusy && styles.authBtnGhost,
-              ]}
-              onPress={() => void handleSignOut()}
-              disabled={authBusy}
-              accessibilityRole="button"
-              accessibilityLabel={t('account.signOut')}
-            >
-              <Text style={styles.signOutBtnText}>{t('account.signOut')}</Text>
-            </Pressable>
-          ) : null}
-
           <Text style={styles.accountHintFoot}>{t('account.hintAfterSignOut')}</Text>
 
           {authBusy ? (
@@ -664,6 +684,35 @@ const styles = StyleSheet.create({
   shell: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  myProfileBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    gap: 12,
+    backgroundColor: colors.backgroundPrimary,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.borderTertiary,
+  },
+  myProfileName: {
+    flex: 1,
+    minWidth: 0,
+    fontSize: typography.min,
+    fontWeight: '700',
+    color: colors.forest,
+  },
+  myProfileSignOut: {
+    flexShrink: 0,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  myProfileSignOutText: {
+    fontSize: typography.caption,
+    fontWeight: '700',
+    color: colors.forest,
+    textDecorationLine: 'underline',
   },
   scroll: {
     paddingHorizontal: 16,
@@ -770,22 +819,6 @@ const styles = StyleSheet.create({
   },
   authBtnGhost: {
     opacity: 0.45,
-  },
-  signOutBtn: {
-    minHeight: touchTarget.min,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: `${colors.forest}44`,
-    backgroundColor: `${colors.backgroundSecondary}`,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    marginTop: 4,
-  },
-  signOutBtnText: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.muted,
   },
   accountHintFoot: {
     fontSize: typography.caption,

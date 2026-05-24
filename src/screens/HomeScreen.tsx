@@ -1,6 +1,6 @@
 import type { NavigationProp } from '@react-navigation/native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   Pressable,
   RefreshControl,
@@ -54,6 +54,8 @@ export function HomeScreen() {
   const [trainingFocusVerseId, setTrainingFocusVerseId] = useState<
     string | null
   >(null);
+  const scrollRef = useRef<ScrollView>(null);
+  const trainingAnchorYRef = useRef<number | null>(null);
 
   const load = useCallback(async () => {
     setError(null);
@@ -138,10 +140,31 @@ export function HomeScreen() {
     return [picked, ...base.slice(0, ix), ...base.slice(ix + 1)];
   }, [pendingSessions, trainingFocusVerseId]);
 
+  useLayoutEffect(() => {
+    if (!trainingFocusVerseId) return;
+    const scrollToCard = (): boolean => {
+      const y = trainingAnchorYRef.current;
+      if (y == null || scrollRef.current == null) return false;
+      scrollRef.current.scrollTo({
+        y: Math.max(0, y - 12),
+        animated: true,
+      });
+      return true;
+    };
+    if (!scrollToCard()) {
+      const id = requestAnimationFrame(() => {
+        void scrollToCard();
+      });
+      return () => cancelAnimationFrame(id);
+    }
+    return undefined;
+  }, [trainingFocusVerseId]);
+
   return (
     <View style={styles.root}>
       <AppHeader />
       <ScrollView
+        ref={scrollRef}
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         refreshControl={
@@ -207,25 +230,32 @@ export function HomeScreen() {
         ) : null}
 
         {!error && (loading || savedVerses.length > 0) ? (
-          <TodaysReviewList
-            key={
-              trainingFocusVerseId
-                ? `focus-${trainingFocusVerseId}`
-                : 'today-queue'
-            }
-            items={itemsForTraining}
-            loading={loading}
-            plannedSessionTotal={scheduled.length}
-            homeTrainingOrderVerseIds={
-              homeTrainingOrderVerseIds.length > 0
-                ? homeTrainingOrderVerseIds
-                : undefined
-            }
-            logReview={logReview}
-            completeLongRemediation={completeLongRemediation}
-            alternateEmptyCaption={trainingEmptyCaption}
-            onLogged={() => void onTrainingLogged()}
-          />
+          <View
+            collapsable={false}
+            onLayout={(e) => {
+              trainingAnchorYRef.current = e.nativeEvent.layout.y;
+            }}
+          >
+            <TodaysReviewList
+              key={
+                trainingFocusVerseId
+                  ? `focus-${trainingFocusVerseId}`
+                  : 'today-queue'
+              }
+              items={itemsForTraining}
+              loading={loading}
+              plannedSessionTotal={scheduled.length}
+              homeTrainingOrderVerseIds={
+                homeTrainingOrderVerseIds.length > 0
+                  ? homeTrainingOrderVerseIds
+                  : undefined
+              }
+              logReview={logReview}
+              completeLongRemediation={completeLongRemediation}
+              alternateEmptyCaption={trainingEmptyCaption}
+              onLogged={() => void onTrainingLogged()}
+            />
+          </View>
         ) : null}
 
         {!loading && verseOfDay ? (

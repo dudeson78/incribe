@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -80,8 +81,12 @@ function MainTabs() {
         options={{
           title: t('tabs.home'),
           tabBarLabel: t('tabs.home'),
-          tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: 22 }}>⌂</Text>
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              name="bulb-outline"
+              size={(size ?? 24) + 2}
+              color={color}
+            />
           ),
         }}
       />

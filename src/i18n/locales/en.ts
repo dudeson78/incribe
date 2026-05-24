@@ -11,7 +11,7 @@ export const en: TranslationTree = {
     home: 'Home',
     quiz: 'Quiz',
     verses: 'Manage',
-    settings: 'Settings',
+    settings: 'MY',
   },
   verses: {
     addButton: 'Add',
@@ -265,9 +265,9 @@ export const en: TranslationTree = {
     reviewListColSession: 'Practice round',
     reviewListColStatus: 'Training status',
     reviewListColRemark: 'Notes',
-    reviewListRemarkNext: 'Next: {{date}}',
-    reviewListRemarkPrev: 'Prev: {{date}}',
-    reviewListPrevPracticeNever: 'Never',
+    reviewListRemarkNext: 'Next practice: {{date}}',
+    reviewListRemarkPrev: 'Previous practice: {{date}}',
+    reviewListRemarkFirstPractice: 'First practice',
     reviewListRowA11y:
       '{{phase}}. {{ref}}. {{session}}. {{status}}. {{remark}}.',
     reviewListSessionPractice: 'Round {{n}}',
@@ -299,7 +299,7 @@ export const en: TranslationTree = {
     dueSuffix: ' items',
   },
   settings: {
-    title: 'Settings',
+    title: 'MY',
     annualGoal: 'Annual goal',
     annualGoalHint: 'Verses to add this year (default 52)',
     apply: 'Apply',

@@ -10,7 +10,7 @@ export const ko = {
     home: '말씀훈련',
     quiz: '퀴즈',
     verses: '말씀관리',
-    settings: '설정',
+    settings: 'MY',
   },
   verses: {
     addButton: '추가',
@@ -260,9 +260,9 @@ export const ko = {
     reviewListColSession: '연습회차',
     reviewListColStatus: '훈련상태',
     reviewListColRemark: '비고',
-    reviewListRemarkNext: '다음: {{date}}',
-    reviewListRemarkPrev: '이전: {{date}}',
-    reviewListPrevPracticeNever: '최초',
+    reviewListRemarkNext: '다음 훈련: {{date}}',
+    reviewListRemarkPrev: '이전 훈련: {{date}}',
+    reviewListRemarkFirstPractice: '최초훈련',
     reviewListRowA11y:
       '{{phase}}. {{ref}}. {{session}}. {{status}}. {{remark}}.',
     reviewListSessionPractice: '{{n}}회차',
@@ -295,7 +295,7 @@ export const ko = {
     dueSuffix: '건',
   },
   settings: {
-    title: '설정',
+    title: 'MY',
     annualGoal: '연간 목표',
     annualGoalHint: '올해 추가할 암송 구절 목표 (기본 52)',
     apply: '적용',

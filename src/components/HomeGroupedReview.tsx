@@ -19,24 +19,18 @@ type ListedRow = {
   lineKind: 'short' | 'long';
 };
 
-/** `yyyy-MM-dd` → 로캘별 월·일만 (예: ko의 5월 26일) */
-function formatYmdMonthDay(locale: string, ymd: string): string {
+/** 스케줄 `yyyy-MM-dd` → `5.23` (월·일, 앞자리 0 없음) */
+function formatMdDotsFromYmd(ymd: string): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ymd.trim());
   if (!m) return ymd.trim();
-  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
-  return new Intl.DateTimeFormat(locale, {
-    month: 'long',
-    day: 'numeric',
-  }).format(d);
+  return `${Number(m[2])}.${Number(m[3])}`;
 }
 
-function formatIsoMonthDay(locale: string, iso: string): string | null {
+/** ISO 시각 → 현지 달력 기준 `5.23` */
+function formatMdDotsFromIso(iso: string): string | null {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return null;
-  return new Intl.DateTimeFormat(locale, {
-    month: 'long',
-    day: 'numeric',
-  }).format(d);
+  return `${d.getMonth() + 1}.${d.getDate()}`;
 }
 
 function listedRowLineKind(row: ScheduledRow): 'short' | 'long' {
@@ -117,9 +111,7 @@ export function HomeGroupedReview({
   items,
   onSelectVerse,
 }: HomeGroupedReviewProps) {
-  const { t, i18n } = useTranslation();
-  const dateLocale =
-    i18n.resolvedLanguage ?? i18n.language ?? Intl.DateTimeFormat().resolvedOptions().locale;
+  const { t } = useTranslation();
 
   const entries = useMemo((): ListedRow[] => {
     return orderTodayScheduledRows(items).map((row) => ({
@@ -176,19 +168,20 @@ export function HomeGroupedReview({
           const statusLabel = recorded
             ? t('home.reviewListTrainingDoneStatus')
             : t('home.reviewListTrainingPendingStatus');
-          const remarkLine = recorded
-            ? t('home.reviewListRemarkNext', {
-                date: formatYmdMonthDay(
-                  dateLocale,
-                  row.schedule.next_review_date,
-                ),
-              })
-            : t('home.reviewListRemarkPrev', {
-                date:
-                  (row.lastPracticedAtIso
-                    ? formatIsoMonthDay(dateLocale, row.lastPracticedAtIso)
-                    : null) ?? t('home.reviewListPrevPracticeNever'),
+          const remarkLine = (() => {
+            if (recorded) {
+              return t('home.reviewListRemarkNext', {
+                date: formatMdDotsFromYmd(row.schedule.next_review_date),
               });
+            }
+            const prevDots = row.lastPracticedAtIso
+              ? formatMdDotsFromIso(row.lastPracticedAtIso)
+              : null;
+            if (prevDots) {
+              return t('home.reviewListRemarkPrev', { date: prevDots });
+            }
+            return t('home.reviewListRemarkFirstPractice');
+          })();
           const a11y = t('home.reviewListRowA11y', {
             phase: phaseText,
             ref: verse.reference,
