@@ -19,33 +19,18 @@ type ListedRow = {
   lineKind: 'short' | 'long';
 };
 
-function localeTagForApp(language: string): string {
-  const raw = language ?? 'en';
-  const base = raw.split(/[-_]/)[0]?.toLowerCase() ?? 'en';
-  if (base === 'ko') return 'ko-KR';
-  if (base === 'zh') return 'zh-CN';
-  if (base === 'pt') return 'pt-BR';
-  if (base === 'es') return 'es-ES';
-  return 'en-US';
+/** 스케줄 `yyyy-MM-dd` → `2026.5.25` (월·일 앞자리 0 없음) */
+function formatScheduleYmdDots(ymd: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ymd.trim());
+  if (!m) return ymd.trim();
+  return `${Number(m[1])}.${Number(m[2])}.${Number(m[3])}`;
 }
 
-function formatLastPracticeDisplay(
-  iso: string | null | undefined,
-  language: string,
-  t: TFunction,
-): string {
-  if (iso == null || iso === '') {
-    return t('home.reviewListFirstPractice');
-  }
+/** ISO 시간 → 현지 yyyy.m.d */
+function formatIsoLocalDots(iso: string): string | null {
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return t('home.reviewListFirstPractice');
-  try {
-    return new Intl.DateTimeFormat(localeTagForApp(language), {
-      dateStyle: 'medium',
-    }).format(d);
-  } catch {
-    return t('home.reviewListFirstPractice');
-  }
+  if (Number.isNaN(d.getTime())) return null;
+  return `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}`;
 }
 
 function listedRowLineKind(row: ScheduledRow): 'short' | 'long' {
@@ -89,29 +74,42 @@ function sessionChipLabel(
   return t('home.reviewListSessionPractice', { n });
 }
 
-/** 상태를 작은 라운드 버튼(칩) 형태로 표시 — 행의 접근성 라벨이 전체 상태를 안내한다. */
-function SessionStatusBadge({
+/** 상태 칩 + 그 아래 다음/이전 연습일 한 줄 */
+function SessionStatusColumn({
   recorded,
-  label,
+  statusLabel,
+  scheduleLine,
 }: {
   recorded: boolean;
-  label: string;
+  statusLabel: string;
+  scheduleLine: string;
 }) {
   return (
-    <View
-      pointerEvents="none"
-      accessibilityElementsHidden
-      importantForAccessibility="no-hide-descendants"
-      style={[styles.statusBadgeBase, recorded ? styles.statusBadgeDone : styles.statusBadgePending]}
-    >
-      <Text
+    <View style={styles.statusColInner}>
+      <View
+        pointerEvents="none"
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
         style={[
-          styles.statusBadgeText,
-          recorded ? styles.statusBadgeTextDone : styles.statusBadgeTextPending,
+          styles.statusBadgeBase,
+          recorded ? styles.statusBadgeDone : styles.statusBadgePending,
         ]}
-        numberOfLines={1}
       >
-        {label}
+        <Text
+          style={[
+            styles.statusBadgeText,
+            recorded ? styles.statusBadgeTextDone : styles.statusBadgeTextPending,
+          ]}
+          numberOfLines={1}
+        >
+          {statusLabel}
+        </Text>
+      </View>
+      <Text
+        style={styles.statusScheduleLine}
+        numberOfLines={2}
+      >
+        {scheduleLine}
       </Text>
     </View>
   );
@@ -121,7 +119,7 @@ export function HomeGroupedReview({
   items,
   onSelectVerse,
 }: HomeGroupedReviewProps) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const entries = useMemo((): ListedRow[] => {
     return orderTodayScheduledRows(items).map((row) => ({
@@ -152,11 +150,6 @@ export function HomeGroupedReview({
                 {t('home.reviewListColSession')}
               </Text>
             </View>
-            <View style={[styles.col, styles.headCell]}>
-              <Text style={styles.headLabel}>
-                {t('home.reviewListColLastPractice')}
-              </Text>
-            </View>
             <View style={[styles.col, styles.headCell, styles.headCellLast]}>
               <Text style={styles.headLabel}>
                 {t('home.reviewListColStatus')}
@@ -176,17 +169,25 @@ export function HomeGroupedReview({
           const statusLabel = recorded
             ? t('home.reviewListTrainingDoneStatus')
             : t('home.reviewListTrainingPendingStatus');
-          const lastPracticeVisible = formatLastPracticeDisplay(
-            row.lastPracticedAtIso,
-            i18n.language,
-            t,
-          );
+          const scheduleLine = recorded
+            ? t('home.reviewListNextPracticeParens', {
+                date: formatScheduleYmdDots(row.schedule.next_review_date),
+              })
+            : (() => {
+                const dots = row.lastPracticedAtIso
+                  ? formatIsoLocalDots(row.lastPracticedAtIso)
+                  : null;
+                return t('home.reviewListPrevPracticeParens', {
+                  date:
+                    dots ?? t('home.reviewListPrevPracticeNever'),
+                });
+              })();
           const a11y = t('home.reviewListRowA11y', {
             phase: phaseText,
             ref: verse.reference,
             session: sessionText,
-            lastPractice: lastPracticeVisible,
             status: statusLabel,
+            statusSchedule: scheduleLine,
           });
           return (
             <Pressable
@@ -225,19 +226,11 @@ export function HomeGroupedReview({
                   {sessionText}
                 </Text>
               </View>
-              <View style={styles.col}>
-                <Text
-                  style={styles.colLastPractice}
-                  numberOfLines={2}
-                  ellipsizeMode="tail"
-                >
-                  {lastPracticeVisible}
-                </Text>
-              </View>
               <View style={[styles.col, styles.statusCol]}>
-                <SessionStatusBadge
+                <SessionStatusColumn
                   recorded={recorded}
-                  label={statusLabel}
+                  statusLabel={statusLabel}
+                  scheduleLine={scheduleLine}
                 />
               </View>
             </Pressable>
@@ -298,7 +291,7 @@ const styles = StyleSheet.create({
   rowDone: {
     opacity: 0.72,
   },
-  /** 균등 5열 — 구분 / 참조 / 연습회차 / 직전 연습일 / 상태 */
+  /** 균등 4열 — 구분 / 참조 / 연습회차 / 훈련상태(다음·이전 연습일) */
   col: {
     flex: 1,
     flexBasis: 0,
@@ -325,17 +318,23 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     lineHeight: 17,
   },
-  colLastPractice: {
-    fontSize: typography.caption,
-    fontWeight: '400',
-    color: colors.textSecondary,
-    lineHeight: 17,
-  },
   statusCol: {
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingHorizontal: 2,
     paddingVertical: 0,
+  },
+  statusColInner: {
+    alignItems: 'center',
+    gap: 6,
+    maxWidth: '100%',
+  },
+  statusScheduleLine: {
+    fontSize: 11,
+    lineHeight: 15,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    width: '100%',
   },
   statusBadgeBase: {
     borderRadius: 999,
