@@ -55,25 +55,18 @@ export function buildBlankChallenge(
 }
 
 /**
- * 문장/절 단위 분절(쉼표·마침표·물음표 등 기준).
- * 분절이 1개뿐이면 어절 덩어리로 나눔.
+ * 순서 맞추기용 분절.
+ * 쉼표·중점 등은 분절 기준으로 쓰지 않음(한두 덩어로 치우치는 것 방지).
+ * 마침표·물음표·느낌표·말줄임 뒤의 공백 경계만 문장처럼 분절하고,
+ * 그 외에는 어절을 묶어 대략 균등한 길이의 조각으로 나눈다.
  */
 export function splitVerseIntoSegments(text: string): string[] {
   const t = text.replace(/\s+/g, ' ').trim();
   if (!t) return [];
 
-  const byPunct = t
-    .split(/(?<=[.!?。…])\s+|(?<=[,，、;；:：])\s+/u)
-    .map((s) => s.trim())
-    .filter(Boolean);
+  const bySentence = t.split(/(?<=[.!?。…])\s+/u).map((s) => s.trim()).filter(Boolean);
 
-  if (byPunct.length >= 2) return byPunct;
-
-  const byComma = t
-    .split(/\s*[,，、]\s*/u)
-    .map((s) => s.trim())
-    .filter(Boolean);
-  if (byComma.length >= 2) return byComma;
+  if (bySentence.length >= 2) return bySentence;
 
   const words = tokenizeWords(t);
   if (words.length <= 2) return [t];

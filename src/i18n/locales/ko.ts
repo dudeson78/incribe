@@ -262,8 +262,8 @@ export const ko = {
     reviewListColSession: '연습회차',
     reviewListColStatus: '암송상태',
     reviewListColRemark: '훈련정보',
-    reviewListRemarkNext: '다음 훈련: {{date}}',
-    reviewListRemarkPrev: '이전 훈련: {{date}}',
+    reviewListRemarkNext: '다음 훈련\n{{date}}',
+    reviewListRemarkPrev: '이전 훈련\n{{date}}',
     reviewListRemarkFirstPractice: '최초 훈련',
     reviewListRowA11y:
       '{{phase}}. {{ref}}. {{session}}. {{status}}. {{remark}}.',

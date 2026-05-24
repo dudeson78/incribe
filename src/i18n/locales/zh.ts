@@ -251,8 +251,8 @@ export const zh: TranslationTree = {
     reviewListColSession: '练习场次',
     reviewListColStatus: '训练状态',
     reviewListColRemark: '备注',
-    reviewListRemarkNext: '下次训练：{{date}}',
-    reviewListRemarkPrev: '上次训练：{{date}}',
+    reviewListRemarkNext: '下次训练\n{{date}}',
+    reviewListRemarkPrev: '上次训练\n{{date}}',
     reviewListRemarkFirstPractice: '首次训练',
     reviewListRowA11y:
       '{{phase}}。{{ref}}。{{session}}。{{status}}。{{remark}}。',

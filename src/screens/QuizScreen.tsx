@@ -20,7 +20,6 @@ import { QuizReferenceMode } from '../components/quiz/QuizReferenceMode';
 import { QuizTodayVerseList } from '../components/quiz/QuizTodayVerseList';
 import { useVerses, type ScheduledRow } from '../hooks/useVerses';
 import { colors, typography } from '../theme/colors';
-import { radius } from '../theme/layout';
 
 export function QuizScreen() {
   const { t } = useTranslation();
@@ -42,7 +41,7 @@ export function QuizScreen() {
           if (prev && rows.some((r) => r.verse.id === prev.verse.id)) {
             return prev;
           }
-          return rows[0] ?? null;
+          return null;
         });
       }
     } catch {
@@ -65,13 +64,6 @@ export function QuizScreen() {
     setMode(next);
     setPlayRow(null);
   }
-
-  const modeDesc =
-    mode === 'reference'
-      ? t('quiz.modeDescReference')
-      : mode === 'blank'
-        ? t('quiz.modeDescBlank')
-        : t('quiz.modeDescOrder');
 
   function clearDailyPlaySelection() {
     setPlayRow(null);
@@ -99,10 +91,6 @@ export function QuizScreen() {
               order: t('quiz.modeOrder'),
             }}
           />
-          <View style={styles.descCard}>
-            <Text style={styles.descText}>{modeDesc}</Text>
-          </View>
-
           {mode === 'reference' ? (
             <QuizReferenceMode embedded />
           ) : (
@@ -117,6 +105,7 @@ export function QuizScreen() {
                   rows={todayRows}
                   loading={false}
                   embedded
+                  compactChipRow
                   selectedVerseId={playRow?.verse.id ?? null}
                   onPick={setPlayRow}
                 />
@@ -163,21 +152,6 @@ const styles = StyleSheet.create({
   scrollOuterContent: {
     flexGrow: 1,
     paddingBottom: 24,
-  },
-  descCard: {
-    marginHorizontal: 16,
-    marginBottom: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    backgroundColor: colors.backgroundSecondary,
-    borderRadius: radius.md,
-    borderWidth: 0.5,
-    borderColor: colors.borderTertiary,
-  },
-  descText: {
-    fontSize: typography.min,
-    lineHeight: 21,
-    color: colors.textSecondary,
   },
   loader: {
     paddingVertical: 28,

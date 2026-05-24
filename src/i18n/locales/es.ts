@@ -265,8 +265,8 @@ export const es: TranslationTree = {
     reviewListColSession: 'Sesión',
     reviewListColStatus: 'Estado',
     reviewListColRemark: 'Notas',
-    reviewListRemarkNext: 'Próx. práctica: {{date}}',
-    reviewListRemarkPrev: 'Práctica anterior: {{date}}',
+    reviewListRemarkNext: 'Próx. práctica\n{{date}}',
+    reviewListRemarkPrev: 'Práctica anterior\n{{date}}',
     reviewListRemarkFirstPractice: 'Primera práctica',
     reviewListRowA11y:
       '{{phase}}. {{ref}}. {{session}}. {{status}}. {{remark}}.',

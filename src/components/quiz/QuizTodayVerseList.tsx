@@ -12,6 +12,10 @@ type Props = {
   /** 상위 스크롤과 묶일 때 내부 스크롤 생략 */
   embedded?: boolean;
   selectedVerseId?: string | null;
+  /**
+   * true → 참조만 텍스트 너비의 칩을 가로로 나열(많으면 좌우 스크롤)
+   */
+  compactChipRow?: boolean;
 };
 
 export function QuizTodayVerseList({
@@ -20,6 +24,7 @@ export function QuizTodayVerseList({
   onPick,
   embedded = false,
   selectedVerseId = null,
+  compactChipRow = false,
 }: Props) {
   const { t } = useTranslation();
 
@@ -51,7 +56,7 @@ export function QuizTodayVerseList({
     </>
   );
 
-  const rowList = rows.map((row) => {
+  const verseRowCards = rows.map((row) => {
     const selected = selectedVerseId === row.verse.id;
     return (
       <Pressable
@@ -77,11 +82,58 @@ export function QuizTodayVerseList({
     );
   });
 
+  const verseChipRow = (
+    <ScrollView
+      horizontal
+      nestedScrollEnabled
+      showsHorizontalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={styles.chipScrollContent}
+    >
+      {rows.map((row) => {
+        const selected = selectedVerseId === row.verse.id;
+        return (
+          <Pressable
+            key={row.verse.id}
+            onPress={() => onPick(row)}
+            style={({ pressed }) => [
+              styles.chip,
+              selected && styles.chipSelected,
+              pressed && styles.chipPressed,
+            ]}
+            accessibilityRole="button"
+            accessibilityState={{ selected }}
+            accessibilityLabel={t('quiz.pickVerseA11y', {
+              ref: row.verse.reference,
+            })}
+          >
+            <Text
+              style={styles.chipRefText}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {row.verse.reference}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </ScrollView>
+  );
+
+  if (embedded && compactChipRow) {
+    return (
+      <View style={styles.embeddedWrap}>
+        {titleBlock}
+        {verseChipRow}
+      </View>
+    );
+  }
+
   if (embedded) {
     return (
       <View style={styles.embeddedWrap}>
         {titleBlock}
-        <View style={styles.embeddedRows}>{rowList}</View>
+        <View style={styles.embeddedRows}>{verseRowCards}</View>
       </View>
     );
   }
@@ -94,7 +146,7 @@ export function QuizTodayVerseList({
       showsVerticalScrollIndicator={false}
     >
       {titleBlock}
-      {rowList}
+      {verseRowCards}
     </ScrollView>
   );
 }
@@ -109,6 +161,40 @@ const styles = StyleSheet.create({
   },
   embeddedRows: {
     gap: 6,
+  },
+  chipScrollContent: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    gap: 8,
+    paddingVertical: 2,
+    paddingRight: 4,
+    flexGrow: 0,
+  },
+  chip: {
+    alignSelf: 'stretch',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    justifyContent: 'center',
+    minHeight: touchTarget.min,
+    backgroundColor: colors.backgroundPrimary,
+    borderRadius: radius.md,
+    borderWidth: 0.5,
+    borderColor: colors.borderTertiary,
+  },
+  chipRefText: {
+    fontSize: typography.min,
+    fontWeight: '600',
+    color: colors.forest,
+    flexShrink: 1,
+  },
+  chipSelected: {
+    borderWidth: 2,
+    borderColor: colors.orange,
+    backgroundColor: `${colors.orange}12`,
+  },
+  chipPressed: {
+    opacity: 0.9,
+    backgroundColor: colors.backgroundSecondary,
   },
   pad: {
     padding: 24,

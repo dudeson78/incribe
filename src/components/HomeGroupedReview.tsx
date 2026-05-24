@@ -373,7 +373,8 @@ const styles = StyleSheet.create({
   },
   remarkText: {
     fontSize: typography.caption,
-    lineHeight: 17,
+    /** 두 줄(이전·다음 훈련 라벨 + 날짜)일 때 줄 간격을 조금 붙임 */
+    lineHeight: 14,
     color: colors.textSecondary,
     width: '100%',
   },
