@@ -5,11 +5,14 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  KeyboardAvoidingView,
   ListRenderItem,
+  Modal,
   Platform,
   Pressable,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -32,8 +35,13 @@ type Props = NativeStackScreenProps<VersesStackParamList, 'VerseList'>;
 export function VerseListScreen({ navigation }: Props) {
   const tabScrollPadding = useBottomTabScrollPadding(32);
   const { t } = useTranslation();
-  const { getAllVerses, getReviewLogsForVerseIds, deleteVerse, simulateShortCompleteMoveToLong } =
-    useVerses();
+  const {
+    getAllVerses,
+    getReviewLogsForVerseIds,
+    deleteVerse,
+    simulateShortCompleteMoveToLong,
+    updateVerse,
+  } = useVerses();
   const [rows, setRows] = useState<VerseWithSchedule[]>([]);
   const [logsByVerse, setLogsByVerse] = useState<
     Record<string, ReviewLogRow[]>
@@ -41,6 +49,11 @@ export function VerseListScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [longBusyId, setLongBusyId] = useState<string | null>(null);
+  const [keywordModal, setKeywordModal] = useState<VerseWithSchedule | null>(
+    null,
+  );
+  const [keywordDraft, setKeywordDraft] = useState('');
+  const [keywordSaving, setKeywordSaving] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -164,7 +177,42 @@ export function VerseListScreen({ navigation }: Props) {
     ]);
   }
 
-  const blocked = deletingId !== null || longBusyId !== null;
+  const blocked =
+    deletingId !== null ||
+    longBusyId !== null ||
+    keywordSaving;
+
+  function openKeywords(v: VerseWithSchedule) {
+    setKeywordDraft(v.keywords?.trim() ? (v.keywords ?? '') : '');
+    setKeywordModal(v);
+  }
+
+  function closeKeywordModal() {
+    if (keywordSaving) return;
+    setKeywordModal(null);
+  }
+
+  async function saveKeywords() {
+    if (!keywordModal) return;
+    const raw = keywordDraft.trim();
+    setKeywordSaving(true);
+    try {
+      await updateVerse(keywordModal.id, {
+        keywords: raw.length > 0 ? raw : null,
+      });
+      await load();
+      setKeywordModal(null);
+    } catch (e) {
+      const body = mapAppError(e, t);
+      if (Platform.OS === 'web') {
+        globalThis.alert(`${t('errors.title')}\n\n${body}`);
+      } else {
+        Alert.alert(t('errors.title'), body);
+      }
+    } finally {
+      setKeywordSaving(false);
+    }
+  }
 
   const renderItem: ListRenderItem<VerseWithSchedule> = ({ item, index }) => {
     const n = index + 1;
@@ -231,6 +279,30 @@ export function VerseListScreen({ navigation }: Props) {
                 )}
               </Pressable>
               <Pressable
+                onPress={() => openKeywords(item)}
+                style={({ pressed }) => [
+                  styles.keywordBtn,
+                  pressed && styles.keywordBtnPressed,
+                  blocked && styles.keywordBtnDisabled,
+                ]}
+                accessibilityLabel={t('verses.keywordA11y', {
+                  ref: item.reference,
+                })}
+                accessibilityRole="button"
+                hitSlop={hitSlopComfortable}
+                disabled={blocked}
+              >
+                <Text
+                  style={[
+                    styles.keywordBtnText,
+                    blocked && styles.keywordBtnTextDisabled,
+                  ]}
+                  numberOfLines={1}
+                >
+                  {t('verses.keyword')}
+                </Text>
+              </Pressable>
+              <Pressable
                 onPress={() =>
                   confirmJumpToLong(item.id)}
                 style={({ pressed }) => [
@@ -284,21 +356,91 @@ export function VerseListScreen({ navigation }: Props) {
   }
 
   return (
-    <FlatList
-      data={rows}
-      keyExtractor={(item) => item.id}
-      renderItem={renderItem}
-      contentContainerStyle={[
-        styles.listContent,
-        { paddingBottom: tabScrollPadding },
-      ]}
-      ListEmptyComponent={
-        <View style={styles.empty}>
-          <Text style={styles.emptyTitle}>{t('verses.emptyTitle')}</Text>
-          <Text style={styles.emptyBody}>{t('verses.emptyBody')}</Text>
-        </View>
-      }
-    />
+    <>
+      <FlatList
+        data={rows}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        contentContainerStyle={[
+          styles.listContent,
+          { paddingBottom: tabScrollPadding },
+        ]}
+        ListEmptyComponent={
+          <View style={styles.empty}>
+            <Text style={styles.emptyTitle}>{t('verses.emptyTitle')}</Text>
+            <Text style={styles.emptyBody}>{t('verses.emptyBody')}</Text>
+          </View>
+        }
+      />
+
+      <Modal
+        visible={keywordModal !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={closeKeywordModal}
+      >
+        <KeyboardAvoidingView
+          style={styles.keywordModalBackdrop}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <Pressable style={styles.keywordModalDismiss} onPress={closeKeywordModal} />
+          <View style={styles.keywordModalCard}>
+            <Text style={styles.keywordModalTitle}>
+              {t('verses.keywordModalTitle')}
+            </Text>
+            {keywordModal ? (
+              <Text style={styles.keywordModalRef} numberOfLines={2}>
+                {keywordModal.reference}
+              </Text>
+            ) : null}
+            <Text style={styles.keywordModalHint}>{t('verses.keywordHint')}</Text>
+            <TextInput
+              style={styles.keywordInput}
+              value={keywordDraft}
+              onChangeText={setKeywordDraft}
+              placeholder={t('verses.keywordPlaceholder')}
+              placeholderTextColor={colors.muted}
+              multiline
+              editable={!keywordSaving}
+              autoCorrect={false}
+            />
+            <View style={styles.keywordModalBtns}>
+              <Pressable
+                style={[styles.keywordModalGhost, keywordSaving && styles.keywordModalDisabled]}
+                onPress={closeKeywordModal}
+                disabled={keywordSaving}
+              >
+                <Text style={styles.keywordModalGhostTxt}>
+                  {t('verses.keywordCancel')}
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[styles.keywordModalGhost, keywordSaving && styles.keywordModalDisabled]}
+                onPress={() => setKeywordDraft('')}
+                disabled={keywordSaving}
+              >
+                <Text style={styles.keywordModalGhostTxt}>
+                  {t('verses.keywordClear')}
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[styles.keywordModalPri, keywordSaving && styles.keywordModalDisabled]}
+                onPress={() => void saveKeywords()}
+                disabled={keywordSaving}
+              >
+                {keywordSaving ? (
+                  <ActivityIndicator color={colors.white} size="small" />
+                ) : (
+                  <Text style={styles.keywordModalPriTxt}>
+                    {t('verses.keywordSave')}
+                  </Text>
+                )}
+              </Pressable>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+    </>
   );
 }
 
@@ -408,6 +550,123 @@ const styles = StyleSheet.create({
   },
   jumpLongTextDisabled: {
     color: `${colors.forest}99`,
+  },
+  keywordBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: `${colors.orange}99`,
+    backgroundColor: `${colors.orange}14`,
+    minHeight: touchTarget.min * 0.65,
+    justifyContent: 'center',
+    alignItems: 'center',
+    maxWidth: 88,
+  },
+  keywordBtnPressed: {
+    opacity: 0.88,
+  },
+  keywordBtnDisabled: {
+    opacity: 0.45,
+    borderColor: `${colors.orange}44`,
+  },
+  keywordBtnText: {
+    fontSize: typography.caption,
+    fontWeight: '700',
+    color: colors.orange,
+  },
+  keywordBtnTextDisabled: {
+    color: `${colors.orange}99`,
+  },
+  keywordModalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(24,35,31,0.48)',
+    justifyContent: 'center',
+    padding: 22,
+  },
+  keywordModalDismiss: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  keywordModalCard: {
+    backgroundColor: colors.card,
+    borderRadius: 16,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: `${colors.forest}22`,
+    gap: 10,
+    zIndex: 1,
+    maxHeight: '80%',
+  },
+  keywordModalTitle: {
+    fontSize: typography.title,
+    fontWeight: '800',
+    color: colors.forest,
+  },
+  keywordModalRef: {
+    fontSize: typography.min,
+    fontWeight: '700',
+    color: colors.forest,
+    opacity: 0.92,
+    lineHeight: 22,
+  },
+  keywordModalHint: {
+    fontSize: typography.caption,
+    lineHeight: 20,
+    color: colors.textSecondary,
+  },
+  keywordInput: {
+    minHeight: 88,
+    borderWidth: 0.5,
+    borderColor: colors.borderSecondary,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: typography.body,
+    lineHeight: 26,
+    color: colors.forest,
+    backgroundColor: colors.backgroundPrimary,
+    textAlignVertical: 'top',
+  },
+  keywordModalBtns: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 4,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  keywordModalGhost: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: 0.5,
+    borderColor: colors.borderSecondary,
+    backgroundColor: colors.backgroundSecondary,
+    minHeight: touchTarget.min * 0.75,
+    justifyContent: 'center',
+  },
+  keywordModalGhostTxt: {
+    fontSize: typography.min,
+    fontWeight: '600',
+    color: colors.forest,
+  },
+  keywordModalPri: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    backgroundColor: colors.forest,
+    minHeight: touchTarget.min * 0.75,
+    minWidth: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  keywordModalPriTxt: {
+    fontSize: typography.min,
+    fontWeight: '800',
+    color: colors.white,
+  },
+  keywordModalDisabled: {
+    opacity: 0.55,
   },
   snippet: {
     fontSize: typography.body,

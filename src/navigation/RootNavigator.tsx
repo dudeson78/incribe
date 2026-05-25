@@ -56,7 +56,7 @@ function VersesStackNavigator() {
         name="VerseList"
         component={VerseListScreen}
         /** 스택 헤더는 바탕(밝은 회색)·제목 초록 글자 */
-        options={{ title: t('tabs.appTitle') }}
+        options={{ title: t('verses.manageScreenTitle') }}
       />
       <VersesStack.Screen
         name="VerseForm"

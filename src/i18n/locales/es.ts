@@ -14,6 +14,7 @@ export const es: TranslationTree = {
     settings: 'MY',
   },
   verses: {
+    manageScreenTitle: 'Gestión de versículos',
     addButton: 'Añadir',
     emptyTitle: 'Aún no hay versículos',
     emptyBody: 'Pulsa «Añadir» arriba a la derecha para crear uno.',
@@ -42,6 +43,16 @@ export const es: TranslationTree = {
       'Se borrarán todos los registros de repaso de este versículo y se crearán siete éxitos ficticios cortos. Quedará en pista larga para revisar hoy (intervalo 7 días).',
     jumpToLongConfirm: 'Continuar',
     jumpToLongSuccess: 'Pasado a pista larga.',
+    keyword: 'Palabras clave',
+    keywordA11y: 'Editar palabras clave de huecos para {{ref}}',
+    keywordModalTitle: 'Palabras clave (huecos)',
+    keywordPlaceholder:
+      'Separa con comas; igual que en el texto del versículo.',
+    keywordHint:
+      'Solo comas entre frases. Deben coincidir con palabras del texto; si no, se ignoran y se usan huecos al azar.',
+    keywordSave: 'Guardar',
+    keywordClear: 'Borrar',
+    keywordCancel: 'Cancelar',
   },
   verseForm: {
     titleAdd: 'Añadir versículo',
@@ -169,6 +180,8 @@ export const es: TranslationTree = {
     pickVerseA11y: 'Empezar con {{ref}}',
     blankHint:
       'Escribe cada palabra tal como aparece ocultada (signos incluidos).',
+    blankHintKeywords:
+      'Tus palabras clave son los huecos; escríbelas exactamente como en el versículo.',
     blankCheck: 'Verificar huecos',
     blankCorrect: '¡Genial — todo cuadra!',
     blankWrong: 'Algún hueco falla — mira debajo.',

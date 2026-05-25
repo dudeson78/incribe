@@ -14,6 +14,7 @@ export const en: TranslationTree = {
     settings: 'MY',
   },
   verses: {
+    manageScreenTitle: 'Manage verses',
     addButton: 'Add',
     emptyTitle: 'No saved verses yet',
     emptyBody: 'Tap “Add” in the top-right to create a verse.',
@@ -42,6 +43,15 @@ export const en: TranslationTree = {
       'All existing review logs for this verse will be deleted, then synthetic 7 short successes will be inserted. Schedule becomes long track due today with a 7-day interval.',
     jumpToLongConfirm: 'Continue',
     jumpToLongSuccess: 'Moved to long track.',
+    keyword: 'Keyword',
+    keywordA11y: 'Edit blank-drill keywords for {{ref}}',
+    keywordModalTitle: 'Blank‑drill keywords',
+    keywordPlaceholder: 'Separate with commas; match wording in your verse.',
+    keywordHint:
+      'Use commas between phrases only. Phrases must match verse tokens—unknown phrases are ignored (random blanks fill in). Leave empty for random blanks only.',
+    keywordSave: 'Save',
+    keywordClear: 'Clear',
+    keywordCancel: 'Cancel',
   },
   verseForm: {
     titleAdd: 'Add verse',
@@ -169,6 +179,8 @@ export const en: TranslationTree = {
     pickVerseA11y: 'Start quiz {{ref}}',
     blankHint:
       'Restore each hidden token exactly as written (spacing, punctuation).',
+    blankHintKeywords:
+      'Your saved keywords are the blanks — type them exactly as they appear in the verse.',
     blankCheck: 'Check answers',
     blankCorrect: 'Great — every blank matches!',
     blankWrong: 'Some blanks miss. See the verse below.',

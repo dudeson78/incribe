@@ -14,6 +14,7 @@ export const pt: TranslationTree = {
     settings: 'MY',
   },
   verses: {
+    manageScreenTitle: 'Gerenciar versículos',
     addButton: 'Adicionar',
     emptyTitle: 'Nenhum versículo ainda',
     emptyBody: 'Toque em «Adicionar» no canto superior direito.',
@@ -42,6 +43,16 @@ export const pt: TranslationTree = {
       'Todos os registros de revisão deste versículo serão apagados e surgirão sete êxitos curtos fictícios. Agenda fica em trilha longa para revisar hoje (intervalo 7 dias).',
     jumpToLongConfirm: 'Continuar',
     jumpToLongSuccess: 'Enviado para trilha longa.',
+    keyword: 'Palavras‑chave',
+    keywordA11y: 'Editar palavras‑chave de lacunas para {{ref}}',
+    keywordModalTitle: 'Palavras‑chave (lacunas)',
+    keywordPlaceholder:
+      'Separe com vírgulas; igual ao texto do versículo.',
+    keywordHint:
+      'Use só vírgulas entre frases. Deve coincidir com palavras do texto; caso contrário será ignorado (lacunas aleatórias).',
+    keywordSave: 'Salvar',
+    keywordClear: 'Limpar',
+    keywordCancel: 'Cancelar',
   },
   verseForm: {
     titleAdd: 'Adicionar versículo',
@@ -171,6 +182,8 @@ export const pt: TranslationTree = {
     pickVerseA11y: 'Começar com {{ref}}',
     blankHint:
       'Preencha exatamente cada palavra ocultada (acentos e espaços também).',
+    blankHintKeywords:
+      'Suas palavras‑chave viram lacunas — escreva igual ao versículo.',
     blankCheck: 'Conferir lacunas',
     blankCorrect: 'Perfeito — tudo igual ao original!',
     blankWrong: 'Alguma lacuna incorreta — veja embaixo.',

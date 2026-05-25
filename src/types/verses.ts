@@ -7,6 +7,8 @@ export type VerseRow = {
   reference: string;
   text: string;
   rema: string | null;
+  /** 빈칸 퀴즈용. 쉼표(,)로 구분된 구절 표현(본문 토큰과 맞는 구간이 빈칸) */
+  keywords?: string | null;
   verse_group: VerseGroup;
   created_at: string;
   is_active: boolean;
@@ -40,11 +42,15 @@ export type AddVerseInput = {
   reference: string;
   text: string;
   rema?: string | null;
+  keywords?: string | null;
   verse_group: VerseGroup;
 };
 
 export type UpdateVerseInput = Partial<
-  Pick<VerseRow, 'reference' | 'text' | 'rema' | 'verse_group' | 'is_active'>
+  Pick<
+    VerseRow,
+    'reference' | 'text' | 'rema' | 'keywords' | 'verse_group' | 'is_active'
+  >
 >;
 
 export type UpdateScheduleInput = Partial<

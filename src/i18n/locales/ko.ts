@@ -13,6 +13,7 @@ export const ko = {
     settings: 'MY',
   },
   verses: {
+    manageScreenTitle: '말씀 관리',
     addButton: '추가',
     emptyTitle: '저장된 구절이 없습니다',
     emptyBody: '우측 상단 「추가」로 구절을 넣어 보세요.',
@@ -40,6 +41,15 @@ export const ko = {
       '이 구절의 기존 복습 로그가 모두 삭제되며, 단기 7회를 완료한 것과 같은 가상 기록으로 채워집니다. 복습 일정은 오늘 장기 시작(간격 7일) 상태로 설정됩니다.',
     jumpToLongConfirm: '진행하기',
     jumpToLongSuccess: '장기 트랙으로 전환했습니다.',
+    keyword: '키워드',
+    keywordA11y: '{{ref}} 빈칸 퀴즈용 키워드 편집',
+    keywordModalTitle: '빈칸 연습 키워드',
+    keywordPlaceholder: '쉼표(,)로 여러 개 · 본문에 나오는 말과 띄어쓰기까지 맞추세요',
+    keywordHint:
+      '복수는 쉼표로만 구분합니다. 본문에 없는 표현은 빈칸에 쓰이지 않고, 없으면 무작위 빈칸을 씁니다.',
+    keywordSave: '저장',
+    keywordClear: '비우기',
+    keywordCancel: '취소',
   },
   verseForm: {
     titleAdd: '구절 추가',
@@ -167,6 +177,8 @@ export const ko = {
     pickVerseA11y: '{{ref}} 퀴즈 시작',
     blankHint:
       '빈 칸에는 가려졌던 그대로의 표기를 입력하세요.(띄어쓰기·맞춤법)',
+    blankHintKeywords:
+      '설정해 둔 키워드가 빈 칸입니다. 본문과 같은 표기로 채워 주세요.',
     blankCheck: '정답 확인',
     blankCorrect: '멋져요. 전부 정확해요!',
     blankWrong: '틀린 칸이 있어요. 아래 참고해 보세요.',

@@ -13,7 +13,8 @@ import { useTranslation } from 'react-i18next';
 
 import type { ScheduledRow } from '../../hooks/useVerses';
 import {
-  buildBlankChallenge,
+  buildBlankChallengePreferKeywords,
+  createSeededRandom,
   normalizeQuizToken,
 } from '../../lib/quizTextUtils';
 import { colors, typography } from '../../theme/colors';
@@ -29,11 +30,20 @@ type Props = {
 export function QuizBlankMode({ row, onBack, embedded = false }: Props) {
   const { t } = useTranslation();
   const text = row.verse.text ?? '';
+  const keywordsLine = row.verse.keywords?.trim() ?? '';
   const [roundKey, setRoundKey] = useState(0);
   const [guesses, setGuesses] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<'idle' | 'ok' | 'bad'>('idle');
 
-  const challenge = useMemo(() => buildBlankChallenge(text), [text, roundKey]);
+  const challenge = useMemo(
+    () =>
+      buildBlankChallengePreferKeywords(
+        text,
+        row.verse.keywords ?? null,
+        createSeededRandom(roundKey * 1_000_003 + text.length * 17),
+      ),
+    [text, row.verse.keywords, roundKey],
+  );
 
   useEffect(() => {
     if (!challenge?.blankIndices.length) return;
@@ -120,7 +130,9 @@ export function QuizBlankMode({ row, onBack, embedded = false }: Props) {
         </Text>
       )}
 
-      <Text style={styles.hint}>{t('quiz.blankHint')}</Text>
+      <Text style={styles.hint}>
+        {keywordsLine.length > 0 ? t('quiz.blankHintKeywords') : t('quiz.blankHint')}
+      </Text>
 
       <View
         style={[

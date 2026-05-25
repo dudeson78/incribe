@@ -180,6 +180,7 @@ async function addVerse(input: AddVerseInput): Promise<VerseRow> {
       reference: input.reference,
       text: input.text,
       rema: input.rema ?? null,
+      keywords: input.keywords ?? null,
       verse_group: input.verse_group,
     })
     .select()

@@ -14,6 +14,7 @@ export const zh: TranslationTree = {
     settings: 'MY',
   },
   verses: {
+    manageScreenTitle: '经文管理',
     addButton: '添加',
     emptyTitle: '还没有保存的经文',
     emptyBody: '点右上角「添加」创建经文。',
@@ -41,6 +42,15 @@ export const zh: TranslationTree = {
       '该经文的所有复习记录将被删除并写入虚构的七次短期成功记录。日程将设为今天开始进行长期复习（间隔 7 天）。',
     jumpToLongConfirm: '继续',
     jumpToLongSuccess: '已切换到长期。',
+    keyword: '关键词',
+    keywordA11y: '编辑 {{ref}} 的填空关键词',
+    keywordModalTitle: '填空练习关键词',
+    keywordPlaceholder: '用英文逗号分隔，需与经文用词一致',
+    keywordHint:
+      '仅用逗号分隔多个词组。须与正文用词一致，否则忽略并改用随机空位。',
+    keywordSave: '保存',
+    keywordClear: '清空',
+    keywordCancel: '取消',
   },
   verseForm: {
     titleAdd: '添加经文',
@@ -161,6 +171,8 @@ export const zh: TranslationTree = {
     pickVerseA11y: '开始 {{ref}}',
     blankHint:
       '请按原文填写被隐藏的词语（标点与空格也需一致）。',
+    blankHintKeywords:
+      '你设置的关键词会成为空缺，请按经文原文填写。',
     blankCheck: '检查填空',
     blankCorrect: '太棒了——全部吻合！',
     blankWrong: '还有错误，可看下方参考答案。',
