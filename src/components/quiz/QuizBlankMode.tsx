@@ -312,7 +312,6 @@ const styles = StyleSheet.create({
     fontSize: typography.min,
     lineHeight: 22,
     color: colors.textPrimary,
-    fontStyle: 'italic',
   },
   btnPri: {
     backgroundColor: colors.forest,

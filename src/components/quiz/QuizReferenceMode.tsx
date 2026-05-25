@@ -107,7 +107,7 @@ export function QuizReferenceMode({ embedded = false }: { embedded?: boolean }) 
       </View>
 
       <View style={styles.verseCard}>
-        <Text style={styles.quizVerseItal} selectable>
+        <Text style={styles.quizVerse} selectable>
           “{current.text}”
         </Text>
       </View>
@@ -251,11 +251,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     alignItems: 'center',
   },
-  quizVerseItal: {
+  quizVerse: {
     fontSize: typography.body,
     lineHeight: 30,
     color: colors.textPrimary,
-    fontStyle: 'italic',
     textAlign: 'center',
   },
   answerInput: {

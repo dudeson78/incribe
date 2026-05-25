@@ -324,24 +324,7 @@ export const ko = {
     resetPracticeNothingTitle: '초기화할 구절 없음',
     resetPracticeNothingBody:
       '활성으로 저장된 구절이 없습니다. 「관리」에서 구절을 추가한 뒤 다시 시도해 주세요.',
-    language: '언어 설정',
-    langKo: '한국어',
-    langEn: 'English',
-    langEs: 'Español',
-    langPt: 'Português',
-    langZh: '中文',
-    notifications: '복습 알람',
-    notifyEnable: '일일 복습 알림',
-    notifyTime: '알림 시간',
-    notifyTimeWebHint:
-      '웹에서는 24시간 형식으로 입력합니다 (예: 09:05). 확인을 누르면 적용됩니다.',
-    sync: '데이터 · 동기화',
-    syncBody:
-      '구절과 복습 기록은 Supabase를 통해 기기 간 자동 동기화됩니다.',
-    syncOk: '클라우드 동기화 사용 중',
     syncNeedAuth: '로그인하면 동기화가 활성화됩니다.',
-    signedInAs: '계정',
-    syncAnonCaption: '익명 세션입니다. 아래에서 이메일 계정을 만들면 기기를 바꿔도 같은 데이터를 쓸 수 있습니다.',
   },
   account: {
     section: '계정 관리',
@@ -362,7 +345,7 @@ export const ko = {
       '회원가입이 완료되었으며 바로 로그인되었습니다.',
     signUpSuccessVerifyEmail:
       '회원가입이 완료되었습니다. 인증 메일의 링크를 연 뒤 아래에서 로그인해 주세요.',
-    signedInWithEmail: '이메일 계정으로 로그인됨',
+    loginInfoLabel: '로그인 정보:',
     anonSession: '익명으로 사용 중',
     hintAfterSignOut:
       '로그아웃 후에는 다시 로그인해야 앱을 사용할 수 있습니다.',
@@ -373,11 +356,6 @@ export const ko = {
     signedInOk: '로그인되었습니다.',
     signedOutOk: '로그아웃했습니다.',
     headerSignedInAsA11y: '로그인 사용자 {{name}}',
-  },
-  notifications: {
-    dailyTitle: '오늘의 복습',
-    dailyBody: '암송 복습 시간이에요.',
-    dueCountBody: '오늘 복습할 말씀이 {{count}}개 있습니다 📖',
   },
 };
 

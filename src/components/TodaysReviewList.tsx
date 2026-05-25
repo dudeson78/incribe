@@ -38,30 +38,19 @@ function parseScheduleYmdLocal(dateStr: string): Date {
   return startOfDay(new Date(seg[0], seg[1] - 1, seg[2]));
 }
 
-function localeTagFromLanguage(language: string): string {
-  const raw = language ?? 'en';
-  const base = raw.split(/[-_]/)[0]?.toLowerCase() ?? 'en';
-  if (base === 'ko') return 'ko-KR';
-  if (base === 'zh') return 'zh-CN';
-  if (base === 'pt') return 'pt-BR';
-  if (base === 'es') return 'es-ES';
-  return 'en-US';
-}
-
 function buildShortDailyNextTrainingSubtitle(
   schedule: ReviewScheduleRow,
   fn: TFunction,
-  language: string,
 ): string {
   try {
     const { next } = computeAfterReview(schedule, true);
     const today = startOfDay(new Date());
     const target = parseScheduleYmdLocal(next.next_review_date);
     const days = differenceInCalendarDays(target, today);
-    const dateDisplay = new Intl.DateTimeFormat(
-      localeTagFromLanguage(language),
-      { month: 'long', day: 'numeric' },
-    ).format(target);
+    const dateDisplay = new Intl.DateTimeFormat('ko-KR', {
+      month: 'long',
+      day: 'numeric',
+    }).format(target);
     if (days < 1) {
       return fn('celebration.subtitleShortNextTrainingToday', {
         dateDisplay,
@@ -108,7 +97,7 @@ export function TodaysReviewList({
   logReview,
   completeLongRemediation,
 }: TodaysReviewListProps) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [sessionEnd, setSessionEnd] = useState<SessionEndPrompt | null>(null);
   /**
    * RN Modal 등이 과거 렌더의 onPress 클로저를 유지하면 sessionEnd 변수는 null 스냅샷일 수 있음.
@@ -126,8 +115,8 @@ export function TodaysReviewList({
     if (!sessionEnd || sessionEnd.variant !== 'shortDailyComplete') return null;
     const row = items.find((r) => r.verse.id === sessionEnd.verseId);
     if (!row) return null;
-    return buildShortDailyNextTrainingSubtitle(row.schedule, t, i18n.language);
-  }, [sessionEnd, items, t, i18n.language]);
+    return buildShortDailyNextTrainingSubtitle(row.schedule, t);
+  }, [sessionEnd, items, t]);
 
   useEffect(() => {
     if (items.length === 0) {

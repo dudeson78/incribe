@@ -34,7 +34,7 @@ export const typography = {
   ref: 15,
   versePreview: 14,
   body: 17,
-  /** Large italic verse (quiz memorization line) */
+  /** Large verse line */
   bodyLarge: 18,
   refLarge: 20,
   title: 22,

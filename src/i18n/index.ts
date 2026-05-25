@@ -6,7 +6,8 @@ import { resources } from './resources';
 void i18n.use(initReactI18next).init({
   compatibilityJSON: 'v4',
   lng: 'ko',
-  fallbackLng: 'en',
+  fallbackLng: 'ko',
+  supportedLngs: ['ko'],
   resources,
   interpolation: {
     escapeValue: false,

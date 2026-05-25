@@ -12,7 +12,6 @@ import { SettingsScreen } from '../screens/SettingsScreen';
 import { VerseFormScreen } from '../screens/VerseFormScreen';
 import { VerseListScreen } from '../screens/VerseListScreen';
 import { colors, typography } from '../theme/colors';
-import { touchTarget } from '../theme/layout';
 import type { RootTabParamList } from './tabParams';
 import type { VersesStackParamList } from './types';
 
@@ -81,17 +80,17 @@ function MainTabs() {
         headerShown: false,
         tabBarActiveTintColor: colors.forest,
         tabBarInactiveTintColor: colors.textSecondary,
-        /** 아이콘 다음 줄에 라벨 */
+        /** 라벨이 아래에 오도록 명시(iPad/가로폭 넓음에서 아이콘 옆으로 붙으면 줄바꿈·잘림이 생김). */
         tabBarLabelPosition: 'below-icon',
         tabBarShowLabel: true,
         tabBarIconStyle: {
           marginBottom: 2,
         },
         tabBarLabelStyle: {
-          fontSize: typography.caption,
-          fontWeight: '500',
+          fontSize: 11,
+          fontWeight: '600',
           marginTop: 2,
-          lineHeight: typography.caption + 4,
+          lineHeight: 14,
           textAlign: 'center',
         },
         tabBarItemStyle: {
@@ -106,9 +105,10 @@ function MainTabs() {
             : {}),
         },
         tabBarStyle: {
-          /** 탭 줄이 세로 flex 배치에서 0 높이로 접히지 않도록 */
+          /** 라이브러리 기본 height(약 49)는 라벨+아이콘을 세로 배치하면 잘리므로 높이를 명시 */
           flexShrink: 0,
-          minHeight: touchTarget.min + 2,
+          height:
+            Platform.OS === 'android' || Platform.OS === 'ios' ? 64 : 68,
           /** BottomTabBar가 `paddingBottom: insets.bottom`을 적용하지만 `tabBarStyle`이 마지막이라 여기서 paddingBottom을 주면 그 값으로 덮여 세이프에리어가 깨져 하단에 빈 공간이 보일 수 있음. 네이티브는 라이브러리 패딩만 쓴다. */
           paddingTop: Platform.OS === 'web' ? 6 : 4,
           ...(Platform.OS === 'web' ? ({ paddingBottom: 10 } as const) : null),

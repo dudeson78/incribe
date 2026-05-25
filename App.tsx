@@ -5,7 +5,6 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppAuthGate } from './src/components/AppAuthGate';
-import { NotificationAppStateSync } from './src/components/NotificationAppStateSync';
 import { SettingsProvider } from './src/context/SettingsContext';
 import { RootNavigator } from './src/navigation/RootNavigator';
 
@@ -37,7 +36,6 @@ export default function App() {
       <StatusBar style="dark" />
       <AppAuthGate>
         <SettingsProvider>
-          <NotificationAppStateSync />
           <View style={styles.flexFillMinZero}>
             <RootNavigator />
           </View>

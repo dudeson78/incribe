@@ -17,7 +17,7 @@ type Props = {
 };
 
 /** yyyy-MM-dd → 표시용 초소형 날짜(올해는 월·일만 → 셀 너비 절약) */
-function fmtHistoryDateDisplay(cell: string, locale: string): string {
+function fmtHistoryDateDisplay(cell: string): string {
   if (!cell.trim()) return '';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(cell)) return cell;
   const parts = cell.split('-');
@@ -25,16 +25,7 @@ function fmtHistoryDateDisplay(cell: string, locale: string): string {
   const m = Number(parts[1]);
   const d = Number(parts[2]);
   try {
-    const tag =
-      locale === 'ko'
-        ? 'ko-KR'
-        : locale === 'zh'
-          ? 'zh-CN'
-          : locale === 'es'
-            ? 'es-ES'
-            : locale === 'pt'
-              ? 'pt-BR'
-              : 'en-US';
+    const tag = 'ko-KR';
     const date = new Date(y, m - 1, d);
     const thisYear = new Date().getFullYear();
     const opts: Intl.DateTimeFormatOptions =
@@ -48,7 +39,7 @@ function fmtHistoryDateDisplay(cell: string, locale: string): string {
 }
 
 /** 접근성·전체 정보용 (연 포함) */
-function fmtHistoryDateA11y(cell: string, locale: string): string {
+function fmtHistoryDateA11y(cell: string): string {
   if (!cell.trim()) return '';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(cell)) return cell;
   const parts = cell.split('-');
@@ -56,16 +47,7 @@ function fmtHistoryDateA11y(cell: string, locale: string): string {
   const m = Number(parts[1]);
   const d = Number(parts[2]);
   try {
-    const tag =
-      locale === 'ko'
-        ? 'ko-KR'
-        : locale === 'zh'
-          ? 'zh-CN'
-          : locale === 'es'
-            ? 'es-ES'
-            : locale === 'pt'
-              ? 'pt-BR'
-              : 'en-US';
+    const tag = 'ko-KR';
     return new Intl.DateTimeFormat(tag, {
       year: 'numeric',
       month: 'numeric',
@@ -77,7 +59,7 @@ function fmtHistoryDateA11y(cell: string, locale: string): string {
 }
 
 export function VersePracticeHistoryTable({ verse, schedule, logs }: Props) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { shortRow, longRow, shortKind, longKind } = buildPracticeHistoryCells(
     verse,
     schedule,
@@ -114,8 +96,8 @@ export function VersePracticeHistoryTable({ verse, schedule, logs }: Props) {
           const kind = kinds[ix] ?? 'empty';
           const rawCell = raw ?? '';
           const dateShown =
-            fmtHistoryDateDisplay(rawCell, i18n.language).trim();
-          const dateA11y = fmtHistoryDateA11y(rawCell, i18n.language).trim();
+            fmtHistoryDateDisplay(rawCell).trim();
+          const dateA11y = fmtHistoryDateA11y(rawCell).trim();
           const subtitle = subtitleFor(kind);
           const isBlank = !dateShown && !subtitle;
           const a11y = isBlank
