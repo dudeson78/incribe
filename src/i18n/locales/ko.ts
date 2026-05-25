@@ -7,9 +7,9 @@ export const ko = {
   tabs: {
     appTitle: '📖 말씀 암송',
     appSubtitle: 'Memory Scripture',
-    home: '암송훈련',
+    home: '훈련',
     quiz: '퀴즈',
-    verses: '말씀관리',
+    verses: '관리',
     settings: 'MY',
   },
   verses: {
@@ -311,11 +311,6 @@ export const ko = {
     annualGoal: '연간 목표',
     annualGoalHint: '올해 추가할 암송 구절 목표 (기본 52)',
     apply: '적용',
-    reviewCycle: '복습 주기 안내',
-    rcShort:
-      '단기: 매일 7회 세션, 7일간 복습 후 장기로 전환',
-    rcLong:
-      '장기: 단기 종료 후 첫 검사는 약 7일 뒤. n번째 검사 성공 후 다음 간격은 7×2^(n-1)일(1차 성공 뒤 7일 재검사, 2차 뒤 14일…). 검사 미달 후 7회 재암송·재예약, 연속 검사 실패 3회 시 간격 반(최소 7일).',
     resetPracticeSection: '연습 초기화',
     resetPracticeHint:
       '활성 구절의 복습 일정·연습 기록을 초기화합니다. 구절 본문·참조는 그대로입니다.',
@@ -329,13 +324,13 @@ export const ko = {
     resetPracticeNothingTitle: '초기화할 구절 없음',
     resetPracticeNothingBody:
       '활성으로 저장된 구절이 없습니다. 「관리」에서 구절을 추가한 뒤 다시 시도해 주세요.',
-    language: '언어',
+    language: '언어 설정',
     langKo: '한국어',
     langEn: 'English',
     langEs: 'Español',
     langPt: 'Português',
     langZh: '中文',
-    notifications: '알림',
+    notifications: '복습 알람',
     notifyEnable: '일일 복습 알림',
     notifyTime: '알림 시간',
     notifyTimeWebHint:
@@ -349,7 +344,7 @@ export const ko = {
     syncAnonCaption: '익명 세션입니다. 아래에서 이메일 계정을 만들면 기기를 바꿔도 같은 데이터를 쓸 수 있습니다.',
   },
   account: {
-    section: '계정 · 회원',
+    section: '계정 관리',
     nameLabel: '이름',
     phName: '예: 홍길동',
     fullNameA11y: '이름',

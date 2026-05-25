@@ -30,7 +30,6 @@ type Props = {
 export function QuizBlankMode({ row, onBack, embedded = false }: Props) {
   const { t } = useTranslation();
   const text = row.verse.text ?? '';
-  const keywordsLine = row.verse.keywords?.trim() ?? '';
   const [roundKey, setRoundKey] = useState(0);
   const [guesses, setGuesses] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<'idle' | 'ok' | 'bad'>('idle');
@@ -120,19 +119,8 @@ export function QuizBlankMode({ row, onBack, embedded = false }: Props) {
           >
             <Text style={styles.backChipTxt}>{'‹ '} {t('quiz.back')}</Text>
           </Pressable>
-          <Text style={styles.refBadge} numberOfLines={2}>
-            {row.verse.reference}
-          </Text>
         </View>
-      ) : (
-        <Text style={[styles.refBadge, styles.refBadgeEmbedded]} numberOfLines={2}>
-          {row.verse.reference}
-        </Text>
-      )}
-
-      <Text style={styles.hint}>
-        {keywordsLine.length > 0 ? t('quiz.blankHintKeywords') : t('quiz.blankHint')}
-      </Text>
+      ) : null}
 
       <View
         style={[
@@ -237,7 +225,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     textAlign: 'center',
   },
-  topBar: { gap: 10, marginBottom: 4 },
+  topBar: { marginBottom: 4 },
   backChip: {
     alignSelf: 'flex-start',
     paddingVertical: 8,
@@ -249,22 +237,6 @@ const styles = StyleSheet.create({
     fontSize: typography.min,
     fontWeight: '700',
     color: colors.orange,
-  },
-  refBadge: {
-    fontSize: typography.refLarge,
-    fontWeight: '800',
-    color: colors.forest,
-    lineHeight: 28,
-  },
-  refBadgeEmbedded: {
-    marginBottom: 2,
-    marginTop: 4,
-  },
-  hint: {
-    fontSize: typography.min,
-    lineHeight: 21,
-    color: colors.textSecondary,
-    marginBottom: 4,
   },
   versePaper: {
     backgroundColor: colors.cream,

@@ -315,11 +315,6 @@ export const es: TranslationTree = {
     annualGoal: 'Meta anual',
     annualGoalHint: 'Versículos a añadir este año (predeterminado 52)',
     apply: 'Aplicar',
-    reviewCycle: 'Ciclo de repaso',
-    rcShort:
-      'Corto: 7 repeticiones al día durante 7 días, luego pasa a largo.',
-    rcLong:
-      'Largo: la primera revisión espaciada es ~7 días tras cerrar corto; tras la n‑ésima revisión aprobada, la siguiente espera 7 × 2^(n-1) días (1.ª vez: 7; 2.ª: 14; luego 28…). Fallar ⇒ ronda ×7 y la misma regla de intervalo; tres fallos contados ⇒ mitad del intervalo (mín 7).',
     resetPracticeSection: 'Reinicio de práctica',
     resetPracticeHint:
       'Borra registros de práctica y reinicia agendas de repetición para versículos activos; el texto y la referencia se conservan.',
@@ -334,13 +329,13 @@ export const es: TranslationTree = {
     resetPracticeNothingTitle: 'Nada que reiniciar',
     resetPracticeNothingBody:
       'No hay versículos activos guardados. Añádelos en Versículos y vuelve a intentarlo.',
-    language: 'Idioma',
+    language: 'Configuración de idioma',
     langKo: '한국어',
     langEn: 'English',
     langEs: 'Español',
     langPt: 'Português',
     langZh: '中文',
-    notifications: 'Notificaciones',
+    notifications: 'Alertas de repaso',
     notifyEnable: 'Recordatorio diario',
     notifyTime: 'Hora del recordatorio',
     notifyTimeWebHint:
@@ -355,7 +350,7 @@ export const es: TranslationTree = {
       'Sesión anónima. Crea una cuenta con correo para conservar los mismos versículos en todos tus dispositivos.',
   },
   account: {
-    section: 'Cuenta',
+    section: 'Gestión de cuenta',
     nameLabel: 'Nombre',
     phName: 'p. ej. María García',
     fullNameA11y: 'Nombre',

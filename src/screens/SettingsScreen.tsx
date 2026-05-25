@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { ReviewCycleDisplay } from '../components/ReviewCycleDisplay';
 import { useAuthProfile } from '../hooks/useAuthProfile';
 import { useSettings } from '../context/SettingsContext';
 import {
@@ -394,182 +393,193 @@ export function SettingsScreen() {
           { paddingBottom: tabScrollPadding },
         ]}
       >
-        <Text style={styles.section}>{t('settings.annualGoal')}</Text>
-        <Text style={styles.hint}>{t('settings.annualGoalHint')}</Text>
-        <View style={styles.row}>
-          <TextInput
-            style={styles.goalInput}
-            keyboardType="number-pad"
-            value={goalInput}
-            onChangeText={setGoalInput}
-            accessibilityLabel={t('settings.annualGoal')}
-          />
-          <Pressable style={styles.applyBtn} onPress={applyGoal}>
-            <Text style={styles.applyText}>{t('settings.apply')}</Text>
+        <View style={styles.settingBlock}>
+          <Text style={styles.blockTitle}>{t('settings.annualGoal')}</Text>
+          <Text style={styles.hint}>{t('settings.annualGoalHint')}</Text>
+          <View style={styles.row}>
+            <TextInput
+              style={styles.goalInput}
+              keyboardType="number-pad"
+              value={goalInput}
+              onChangeText={setGoalInput}
+              accessibilityLabel={t('settings.annualGoal')}
+            />
+            <Pressable style={styles.applyBtn} onPress={applyGoal}>
+              <Text style={styles.applyText}>{t('settings.apply')}</Text>
+            </Pressable>
+          </View>
+        </View>
+
+        <View style={styles.settingBlock}>
+          <Text style={styles.blockSubtitle}>
+            {t('settings.resetPracticeSection')}
+          </Text>
+          <Text style={styles.hint}>{t('settings.resetPracticeHint')}</Text>
+          <Pressable
+            style={({ pressed }) => [
+              styles.resetPracticeBtn,
+              pressed && styles.resetPracticeBtnPressed,
+              resetPracticeBusy && styles.resetPracticeBtnDisabled,
+            ]}
+            onPress={confirmResetPractice}
+            disabled={resetPracticeBusy}
+            accessibilityRole="button"
+            accessibilityLabel={t('settings.resetPracticeA11y')}
+          >
+            {resetPracticeBusy ? (
+              <ActivityIndicator color={colors.forest} size="small" />
+            ) : (
+              <Text style={styles.resetPracticeBtnText}>
+                {t('settings.resetPracticeBtn')}
+              </Text>
+            )}
           </Pressable>
         </View>
 
-        <Text style={styles.section}>{t('settings.reviewCycle')}</Text>
-        <ReviewCycleDisplay />
-
-        <Text style={styles.section}>{t('settings.resetPracticeSection')}</Text>
-        <Text style={styles.hint}>{t('settings.resetPracticeHint')}</Text>
-        <Pressable
-          style={({ pressed }) => [
-            styles.resetPracticeBtn,
-            pressed && styles.resetPracticeBtnPressed,
-            resetPracticeBusy && styles.resetPracticeBtnDisabled,
-          ]}
-          onPress={confirmResetPractice}
-          disabled={resetPracticeBusy}
-          accessibilityRole="button"
-          accessibilityLabel={t('settings.resetPracticeA11y')}
-        >
-          {resetPracticeBusy ? (
-            <ActivityIndicator color={colors.forest} size="small" />
-          ) : (
-            <Text style={styles.resetPracticeBtnText}>
-              {t('settings.resetPracticeBtn')}
-            </Text>
-          )}
-        </Pressable>
-
-        <Text style={styles.section}>{t('settings.language')}</Text>
-        <View style={styles.langGrid}>
-          {LANGS.map((item) => {
-            const sel = language === item.code;
-            const label = t(item.labelKey);
-            return (
-              <Pressable
-                key={item.code}
-                style={({ pressed }) => [
-                  styles.langCell,
-                  sel && styles.langCellOn,
-                  pressed && styles.pressed,
-                ]}
-                onPress={() => setLanguage(item.code)}
-                accessibilityLabel={label}
-              >
-                <Text style={styles.langFlag}>{item.flag}</Text>
-                <Text
-                  style={[styles.langLabel, sel && styles.langLabelOn]}
-                  numberOfLines={1}
+        <View style={styles.settingBlock}>
+          <Text style={styles.blockTitle}>{t('settings.language')}</Text>
+          <View style={styles.langGrid}>
+            {LANGS.map((item) => {
+              const sel = language === item.code;
+              const label = t(item.labelKey);
+              return (
+                <Pressable
+                  key={item.code}
+                  style={({ pressed }) => [
+                    styles.langCell,
+                    sel && styles.langCellOn,
+                    pressed && styles.pressed,
+                  ]}
+                  onPress={() => setLanguage(item.code)}
+                  accessibilityLabel={label}
                 >
-                  {label}
-                </Text>
-              </Pressable>
-            );
-          })}
+                  <Text style={styles.langFlag}>{item.flag}</Text>
+                  <Text
+                    style={[styles.langLabel, sel && styles.langLabelOn]}
+                    numberOfLines={1}
+                  >
+                    {label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
 
-        <Text style={styles.section}>{t('settings.notifications')}</Text>
-        <View style={styles.switchRow}>
-          <Text style={styles.switchLabel}>{t('settings.notifyEnable')}</Text>
-          <Switch
-            value={notificationsEnabled}
-            onValueChange={setNotificationsEnabled}
-            trackColor={{ false: `${colors.forest}33`, true: `${colors.orange}88` }}
-            thumbColor={notificationsEnabled ? colors.orange : colors.card}
-            accessibilityLabel={t('settings.notifyEnable')}
-          />
-        </View>
-        {Platform.OS === 'web' ? (
-          <>
-            <View
-              style={[
-                styles.timeRow,
-                !notificationsEnabled && styles.timeRowDisabled,
-              ]}
-            >
-              <Text
+        <View style={styles.settingBlock}>
+          <Text style={styles.blockTitle}>{t('settings.notifications')}</Text>
+          <View style={styles.switchRow}>
+            <Text style={styles.switchLabel}>{t('settings.notifyEnable')}</Text>
+            <Switch
+              value={notificationsEnabled}
+              onValueChange={setNotificationsEnabled}
+              trackColor={{
+                false: `${colors.forest}33`,
+                true: `${colors.orange}88`,
+              }}
+              thumbColor={notificationsEnabled ? colors.orange : colors.card}
+              accessibilityLabel={t('settings.notifyEnable')}
+            />
+          </View>
+          {Platform.OS === 'web' ? (
+            <>
+              <View
                 style={[
-                  styles.timeLabel,
-                  !notificationsEnabled && styles.timeDisabled,
+                  styles.timeRow,
+                  !notificationsEnabled && styles.timeRowDisabled,
                 ]}
               >
-                {t('settings.notifyTime')}
-              </Text>
-              <Text
-                style={[
-                  styles.timeValue,
-                  !notificationsEnabled && styles.timeDisabled,
-                ]}
-              >
-                {pad2(notificationHour)}:{pad2(notificationMinute)}
-              </Text>
-            </View>
-            <Text style={styles.hint}>{t('settings.notifyTimeWebHint')}</Text>
-            <View style={styles.row}>
-              <TextInput
-                style={[
-                  styles.goalInput,
-                  !notificationsEnabled && styles.inputDisabled,
-                ]}
-                value={webTimeDraft}
-                onChangeText={setWebTimeDraft}
-                placeholder="HH:mm"
-                placeholderTextColor={`${colors.forest}55`}
-                editable={notificationsEnabled}
-                keyboardType="default"
-                accessible
-                accessibilityLabel={t('settings.notifyTime')}
-                maxLength={5}
-              />
+                <Text
+                  style={[
+                    styles.timeLabel,
+                    !notificationsEnabled && styles.timeDisabled,
+                  ]}
+                >
+                  {t('settings.notifyTime')}
+                </Text>
+                <Text
+                  style={[
+                    styles.timeValue,
+                    !notificationsEnabled && styles.timeDisabled,
+                  ]}
+                >
+                  {pad2(notificationHour)}:{pad2(notificationMinute)}
+                </Text>
+              </View>
+              <Text style={styles.hint}>{t('settings.notifyTimeWebHint')}</Text>
+              <View style={styles.row}>
+                <TextInput
+                  style={[
+                    styles.goalInput,
+                    !notificationsEnabled && styles.inputDisabled,
+                  ]}
+                  value={webTimeDraft}
+                  onChangeText={setWebTimeDraft}
+                  placeholder="HH:mm"
+                  placeholderTextColor={`${colors.forest}55`}
+                  editable={notificationsEnabled}
+                  keyboardType="default"
+                  accessible
+                  accessibilityLabel={t('settings.notifyTime')}
+                  maxLength={5}
+                />
+                <Pressable
+                  style={[
+                    styles.applyBtn,
+                    !notificationsEnabled && styles.applyBtnDisabled,
+                  ]}
+                  onPress={applyWebNotificationTime}
+                  disabled={!notificationsEnabled}
+                >
+                  <Text style={styles.applyText}>{t('common.ok')}</Text>
+                </Pressable>
+              </View>
+            </>
+          ) : (
+            <>
               <Pressable
-                style={[
-                  styles.applyBtn,
-                  !notificationsEnabled && styles.applyBtnDisabled,
-                ]}
-                onPress={applyWebNotificationTime}
+                style={styles.timeRow}
+                onPress={() => setShowTime(true)}
                 disabled={!notificationsEnabled}
               >
-                <Text style={styles.applyText}>{t('common.ok')}</Text>
+                <Text
+                  style={[
+                    styles.timeLabel,
+                    !notificationsEnabled && styles.timeDisabled,
+                  ]}
+                >
+                  {t('settings.notifyTime')}
+                </Text>
+                <Text
+                  style={[
+                    styles.timeValue,
+                    !notificationsEnabled && styles.timeDisabled,
+                  ]}
+                >
+                  {pad2(notificationHour)}:{pad2(notificationMinute)}
+                </Text>
               </Pressable>
-            </View>
-          </>
-        ) : (
-          <>
-            <Pressable
-              style={styles.timeRow}
-              onPress={() => setShowTime(true)}
-              disabled={!notificationsEnabled}
-            >
-              <Text
-                style={[
-                  styles.timeLabel,
-                  !notificationsEnabled && styles.timeDisabled,
-                ]}
-              >
-                {t('settings.notifyTime')}
-              </Text>
-              <Text
-                style={[
-                  styles.timeValue,
-                  !notificationsEnabled && styles.timeDisabled,
-                ]}
-              >
-                {pad2(notificationHour)}:{pad2(notificationMinute)}
-              </Text>
-            </Pressable>
-            {showTime ? (
-              <NativeReminderTimePicker
-                value={timeDate}
-                onChange={onTimeChange}
-              />
-            ) : null}
-            {Platform.OS === 'ios' && showTime ? (
-              <Pressable
-                style={styles.closeTime}
-                onPress={() => setShowTime(false)}
-              >
-                <Text style={styles.closeTimeText}>{t('common.ok')}</Text>
-              </Pressable>
-            ) : null}
-          </>
-        )}
+              {showTime ? (
+                <NativeReminderTimePicker
+                  value={timeDate}
+                  onChange={onTimeChange}
+                />
+              ) : null}
+              {Platform.OS === 'ios' && showTime ? (
+                <Pressable
+                  style={styles.closeTime}
+                  onPress={() => setShowTime(false)}
+                >
+                  <Text style={styles.closeTimeText}>{t('common.ok')}</Text>
+                </Pressable>
+              ) : null}
+            </>
+          )}
+        </View>
 
-        <Text style={styles.section}>{t('account.section')}</Text>
-        <View style={styles.accountCard}>
+        <View style={styles.settingBlock}>
+          <Text style={styles.blockTitle}>{t('account.section')}</Text>
+          <View style={styles.accountInner}>
           {sessionOk ? (
             <Text style={styles.accountStatus}>
               {authSlice.email
@@ -662,24 +672,27 @@ export function SettingsScreen() {
               {accountBanner.message}
             </Text>
           ) : null}
+          </View>
         </View>
 
-        <Text style={styles.section}>{t('settings.sync')}</Text>
-        <View style={styles.syncCard}>
-          <Text style={styles.syncBody}>{t('settings.syncBody')}</Text>
-          <Text
-            style={[
-              styles.syncStatus,
-              sessionOk ? styles.syncOk : styles.syncWarn,
-            ]}
-          >
-            {sessionOk ? t('settings.syncOk') : t('settings.syncNeedAuth')}
-          </Text>
-          {sessionOk ? (
-            <Text style={styles.syncEmail}>
-              {t('settings.signedInAs')}: {authSlice.email ?? '—'}
+        <View style={styles.settingBlock}>
+          <Text style={styles.blockSubtitle}>{t('settings.sync')}</Text>
+          <View style={styles.syncInner}>
+            <Text style={styles.syncBody}>{t('settings.syncBody')}</Text>
+            <Text
+              style={[
+                styles.syncStatus,
+                sessionOk ? styles.syncOk : styles.syncWarn,
+              ]}
+            >
+              {sessionOk ? t('settings.syncOk') : t('settings.syncNeedAuth')}
             </Text>
-          ) : null}
+            {sessionOk ? (
+              <Text style={styles.syncEmail}>
+                {t('settings.signedInAs')}: {authSlice.email ?? '—'}
+              </Text>
+            ) : null}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -725,14 +738,24 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     flexGrow: 1,
   },
-  section: {
-    fontSize: typography.caption,
-    fontWeight: '500',
+  settingBlock: {
+    gap: 12,
+    padding: 18,
+    marginBottom: 14,
+    backgroundColor: colors.card,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: `${colors.forest}18`,
+  },
+  blockTitle: {
+    fontSize: typography.headline,
+    fontWeight: '700',
+    color: colors.forest,
+  },
+  blockSubtitle: {
+    fontSize: typography.title,
+    fontWeight: '700',
     color: colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    marginTop: 12,
-    marginBottom: 8,
   },
   hint: {
     fontSize: typography.min,
@@ -744,11 +767,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 0,
   },
   resetPracticeBtn: {
     alignSelf: 'stretch',
-    marginBottom: 20,
+    marginBottom: 0,
     paddingVertical: 10,
     paddingHorizontal: 18,
     borderRadius: 12,
@@ -771,14 +794,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.forest,
   },
-  accountCard: {
-    padding: 16,
-    borderRadius: 14,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: `${colors.forest}22`,
-    gap: 8,
-    marginBottom: 8,
+  accountInner: {
+    gap: 10,
   },
   accountStatus: {
     fontSize: typography.body,
@@ -881,7 +898,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
-    marginBottom: 20,
+    marginBottom: 0,
   },
   langCell: {
     width: '47%',
@@ -971,12 +988,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: typography.min,
   },
-  syncCard: {
-    padding: 16,
-    borderRadius: 14,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: `${colors.forest}22`,
+  syncInner: {
     gap: 8,
   },
   syncBody: {

@@ -103,18 +103,8 @@ export function QuizOrderMode({ row, onBack, embedded = false }: Props) {
           >
             <Text style={styles.backChipTxt}>{'‹ '} {t('quiz.back')}</Text>
           </Pressable>
-          <Text style={styles.refBadge} numberOfLines={2}>
-            {row.verse.reference}
-          </Text>
         </View>
-      ) : (
-        <Text style={[styles.refBadge, styles.refBadgeEmbedded]} numberOfLines={2}>
-          {row.verse.reference}
-        </Text>
-      )}
-
-      <Text style={styles.hint}>{t('quiz.orderHint')}</Text>
-      <Text style={styles.subHint}>{t('quiz.orderSwapHint')}</Text>
+      ) : null}
 
       {order.map((seg, idx) => {
         const highlighted = selected === idx;
@@ -225,7 +215,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.orange,
   },
-  topBar: { gap: 10, marginBottom: 6 },
+  topBar: { marginBottom: 6 },
   backChip: {
     alignSelf: 'flex-start',
     paddingVertical: 8,
@@ -237,30 +227,6 @@ const styles = StyleSheet.create({
     fontSize: typography.min,
     fontWeight: '700',
     color: colors.orange,
-  },
-  refBadge: {
-    fontSize: typography.refLarge,
-    fontWeight: '800',
-    color: colors.forest,
-    lineHeight: 28,
-  },
-  refBadgeEmbedded: {
-    marginBottom: 4,
-    marginTop: 4,
-  },
-  hint: {
-    fontSize: typography.min,
-    lineHeight: 21,
-    color: colors.textSecondary,
-    marginBottom: 6,
-    fontWeight: '600',
-  },
-  subHint: {
-    fontSize: typography.caption,
-    lineHeight: 18,
-    color: colors.textSecondary,
-    marginBottom: 12,
-    opacity: 0.92,
   },
   segmentRowOuter: {
     flexDirection: 'row',

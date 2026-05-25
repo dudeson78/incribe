@@ -299,10 +299,6 @@ export const zh: TranslationTree = {
     annualGoal: '年度目标',
     annualGoalHint: '今年计划添加的经节数（默认 52）',
     apply: '应用',
-    reviewCycle: '复习周期说明',
-    rcShort: '短期：每天 7 轮，连续 7 天后转入长期。',
-    rcLong:
-      '长期：短期结束后首个间隔复查约在第 7 天；若第 n 次间隔复查通过，则从当天起再等 7×2^(n-1) 天（首次通过后 7 天再复查、第二次通过后 14 天…）。未通过则七次补救与同间隔复检；间距检测三连败则减半（最低 7 天）。',
     resetPracticeSection: '重置练习',
     resetPracticeHint:
       '清空练习记录并重置启用经文的复习日程；经文正文与引用仍保留。',
@@ -316,13 +312,13 @@ export const zh: TranslationTree = {
     resetPracticeNothingTitle: '没有可重置的内容',
     resetPracticeNothingBody:
       '当前没有保存的启用经文。请先在「经文」页添加后再试。',
-    language: '语言',
+    language: '语言设置',
     langKo: '한국어',
     langEn: 'English',
     langEs: 'Español',
     langPt: 'Português',
     langZh: '中文',
-    notifications: '通知',
+    notifications: '复习提醒',
     notifyEnable: '每日复习提醒',
     notifyTime: '提醒时间',
     notifyTimeWebHint:
@@ -336,7 +332,7 @@ export const zh: TranslationTree = {
       '当前为匿名会话。用电子邮箱注册登录后，可在各设备上使用同一经文数据。',
   },
   account: {
-    section: '账户',
+    section: '账号管理',
     nameLabel: '姓名',
     phName: '如：王明',
     fullNameA11y: '姓名',

@@ -315,11 +315,6 @@ export const en: TranslationTree = {
     annualGoal: 'Annual goal',
     annualGoalHint: 'Verses to add this year (default 52)',
     apply: 'Apply',
-    reviewCycle: 'Review cycle',
-    rcShort:
-      'Short: 7 reps per day for 7 days, then move to long track.',
-    rcLong:
-      'Long track: first spaced review ~7 days after short track completes. After the n‑th successful review, schedule the next one 7 × 2^(n−1) days out (after your 1st pass: revisit in 7d; after 2nd: 14d; then 28d…). Failing triggers seven remedial taps and the same-interval rule; three counted failures halve the interval (min 7d).',
     resetPracticeSection: 'Reset practice',
     resetPracticeHint:
       'Clears practice logs and restores review schedules on active verses. Verse text and references stay unchanged.',
@@ -334,13 +329,13 @@ export const en: TranslationTree = {
     resetPracticeNothingTitle: 'Nothing to reset',
     resetPracticeNothingBody:
       'There are no active saved verses yet. Add verses in the Manage tab, then try again.',
-    language: 'Language',
+    language: 'Language settings',
     langKo: '한국어',
     langEn: 'English',
     langEs: 'Español',
     langPt: 'Português',
     langZh: '中文',
-    notifications: 'Notifications',
+    notifications: 'Review alerts',
     notifyEnable: 'Daily review reminder',
     notifyTime: 'Reminder time',
     notifyTimeWebHint:
@@ -354,7 +349,7 @@ export const en: TranslationTree = {
       "You're on an anonymous session. Sign up with email below to keep the same verses on every device.",
   },
   account: {
-    section: 'Account',
+    section: 'Account management',
     nameLabel: 'Display name',
     phName: 'e.g. Alex Kim',
     fullNameA11y: 'Display name',
