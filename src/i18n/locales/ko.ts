@@ -43,10 +43,8 @@ export const ko = {
     jumpToLongSuccess: '장기 트랙으로 전환했습니다.',
     keyword: '키워드',
     keywordA11y: '{{ref}} 빈칸 퀴즈용 키워드 편집',
-    keywordModalTitle: '빈칸 연습 키워드',
+    keywordModalTitle: '키워드 관리',
     keywordPlaceholder: '쉼표(,)로 여러 개 · 본문에 나오는 말과 띄어쓰기까지 맞추세요',
-    keywordHint:
-      '복수는 쉼표로만 구분합니다. 본문에 없는 표현은 빈칸에 쓰이지 않고, 없으면 무작위 빈칸을 씁니다.',
     keywordSave: '저장',
     keywordClear: '비우기',
     keywordCancel: '취소',
@@ -138,8 +136,7 @@ export const ko = {
   quiz: {
     accuracy: '정확도',
     correctCount: '맞춘 수',
-    refInstructionBanner:
-      '다음 성경 말씀의 구절을 약어형태로 입력해서 맞추세요.',
+    refInstructionBanner: '다음 성경 말씀의 구절은 어디에 있나요?',
     refPromptShort: '이 말씀의 성경 구절은?',
     stats: '{{correct}} / {{total}} 맞춤',
     verseBody: '구절 본문',
@@ -175,6 +172,7 @@ export const ko = {
     noTrainingTodayHint:
       '홈 「말씀훈련」에 오늘 예정 구절이 없으면 이 목록이 비게 됩니다. 새 구절을 추가했거나 다음 복습일만 남았다면, 내일 다시 확인해 보세요.',
     pickVerseA11y: '{{ref}} 퀴즈 시작',
+    blankVerseChipSolvedA11y: '{{ref}} 빈칸 맞춤 완료',
     blankHint:
       '빈 칸에는 가려졌던 그대로의 표기를 입력하세요.(띄어쓰기·맞춤법)',
     blankHintKeywords:

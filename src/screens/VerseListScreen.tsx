@@ -10,6 +10,7 @@ import {
   Modal,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -393,7 +394,20 @@ export function VerseListScreen({ navigation }: Props) {
                 {keywordModal.reference}
               </Text>
             ) : null}
-            <Text style={styles.keywordModalHint}>{t('verses.keywordHint')}</Text>
+            {keywordModal ? (
+              <ScrollView
+                style={styles.keywordModalBodyScroll}
+                nestedScrollEnabled
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator
+              >
+                <Text style={styles.keywordModalBodyText} selectable>
+                  {(keywordModal.text ?? '').trim().length > 0
+                    ? keywordModal.text
+                    : '—'}
+                </Text>
+              </ScrollView>
+            ) : null}
             <TextInput
               style={styles.keywordInput}
               value={keywordDraft}
@@ -609,10 +623,19 @@ const styles = StyleSheet.create({
     opacity: 0.92,
     lineHeight: 22,
   },
-  keywordModalHint: {
-    fontSize: typography.caption,
-    lineHeight: 20,
-    color: colors.textSecondary,
+  keywordModalBodyScroll: {
+    maxHeight: 200,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.creamBorder,
+    backgroundColor: colors.cream,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  keywordModalBodyText: {
+    fontSize: typography.body,
+    lineHeight: 26,
+    color: colors.textPrimary,
   },
   keywordInput: {
     minHeight: 88,

@@ -13,6 +13,10 @@ type Props = {
   embedded?: boolean;
   selectedVerseId?: string | null;
   /**
+   * 빈칸 넣기 모드에서 이미 맞춘 구절 id — 칩 비활성 및 완료 표시(하늘색 원)
+   */
+  blankCompletedVerseIds?: ReadonlySet<string> | null;
+  /**
    * true → 참조만 텍스트 너비의 칩을 가로로 나열(많으면 좌우 스크롤)
    */
   compactChipRow?: boolean;
@@ -24,6 +28,7 @@ export function QuizTodayVerseList({
   onPick,
   embedded = false,
   selectedVerseId = null,
+  blankCompletedVerseIds = null,
   compactChipRow = false,
 }: Props) {
   const { t } = useTranslation();
@@ -81,28 +86,42 @@ export function QuizTodayVerseList({
     >
       {rows.map((row) => {
         const selected = selectedVerseId === row.verse.id;
+        const blankDone = blankCompletedVerseIds?.has(row.verse.id) ?? false;
         return (
           <Pressable
             key={row.verse.id}
-            onPress={() => onPick(row)}
+            onPress={() => {
+              if (!blankDone) onPick(row);
+            }}
+            disabled={blankDone}
             style={({ pressed }) => [
               styles.chip,
               selected && styles.chipSelected,
-              pressed && styles.chipPressed,
+              blankDone && styles.chipBlankDone,
+              !blankDone && pressed && styles.chipPressed,
             ]}
             accessibilityRole="button"
-            accessibilityState={{ selected }}
-            accessibilityLabel={t('quiz.pickVerseA11y', {
-              ref: row.verse.reference,
-            })}
+            accessibilityState={{ selected, disabled: blankDone }}
+            accessibilityLabel={
+              blankDone
+                ? t('quiz.blankVerseChipSolvedA11y', {
+                    ref: row.verse.reference,
+                  })
+                : t('quiz.pickVerseA11y', {
+                    ref: row.verse.reference,
+                  })
+            }
           >
-            <Text
-              style={styles.chipRefText}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {row.verse.reference}
-            </Text>
+            <View style={styles.chipInner}>
+              <Text
+                style={styles.chipRefText}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {row.verse.reference}
+              </Text>
+              {blankDone ? <View style={styles.blankDoneDot} /> : null}
+            </View>
           </Pressable>
         );
       })}
@@ -167,11 +186,28 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: colors.borderTertiary,
   },
+  chipInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   chipRefText: {
     fontSize: typography.min,
     fontWeight: '600',
     color: colors.forest,
     flexShrink: 1,
+  },
+  blankDoneDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#7EC8E3',
+    flexShrink: 0,
+  },
+  chipBlankDone: {
+    opacity: 0.78,
+    borderColor: `${colors.forest}44`,
+    backgroundColor: colors.backgroundSecondary,
   },
   chipSelected: {
     borderWidth: 2,

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -30,6 +30,13 @@ export function QuizScreen() {
   const [todayRows, setTodayRows] = useState<ScheduledRow[]>([]);
   const [todayLoading, setTodayLoading] = useState(false);
   const [playRow, setPlayRow] = useState<ScheduledRow | null>(null);
+  /** 빈칸 모드에서 성공한 오늘 훈련 구절 id (칩 비활성·완료 표시) */
+  const [blankSolvedIds, setBlankSolvedIds] = useState(() => new Set<string>());
+
+  const blankSolvedSet = useMemo(
+    () => (mode === 'blank' ? blankSolvedIds : null),
+    [mode, blankSolvedIds],
+  );
 
   const loadToday = useCallback(async () => {
     setTodayLoading(true);
@@ -66,6 +73,15 @@ export function QuizScreen() {
     setMode(next);
     setPlayRow(null);
   }
+
+  const onBlankSolved = useCallback((verseId: string) => {
+    setBlankSolvedIds((prev) => {
+      if (prev.has(verseId)) return prev;
+      const next = new Set(prev);
+      next.add(verseId);
+      return next;
+    });
+  }, []);
 
   function clearDailyPlaySelection() {
     setPlayRow(null);
@@ -112,6 +128,7 @@ export function QuizScreen() {
                   embedded
                   compactChipRow
                   selectedVerseId={playRow?.verse.id ?? null}
+                  blankCompletedVerseIds={blankSolvedSet}
                   onPick={setPlayRow}
                 />
               )}
@@ -123,6 +140,7 @@ export function QuizScreen() {
                   embedded
                   row={playRow}
                   onBack={clearDailyPlaySelection}
+                  onBlankSolved={onBlankSolved}
                 />
               ) : null}
               {!todayLoading &&

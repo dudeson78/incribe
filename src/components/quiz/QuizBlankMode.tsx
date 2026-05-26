@@ -25,9 +25,16 @@ type Props = {
   /** 목록 초기화(비움)·짧은 본문일 때 에러 처리 */
   onBack: () => void;
   embedded?: boolean;
+  /** 모든 빈칸 정답일 때 호출 — 상위에서 구절 칩 완료 표시 등 */
+  onBlankSolved?: (verseId: string) => void;
 };
 
-export function QuizBlankMode({ row, onBack, embedded = false }: Props) {
+export function QuizBlankMode({
+  row,
+  onBack,
+  embedded = false,
+  onBlankSolved,
+}: Props) {
   const { t } = useTranslation();
   const text = row.verse.text ?? '';
   const [roundKey, setRoundKey] = useState(0);
@@ -98,6 +105,9 @@ export function QuizBlankMode({ row, onBack, embedded = false }: Props) {
       }
     }
     setFeedback(ok ? 'ok' : 'bad');
+    if (ok) {
+      onBlankSolved?.(row.verse.id);
+    }
   }
 
   function reshuffleBlanks() {
