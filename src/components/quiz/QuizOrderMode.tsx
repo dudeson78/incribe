@@ -9,11 +9,17 @@ import {
 } from '../../lib/quizTextUtils';
 import { colors, typography } from '../../theme/colors';
 import { radius, touchTarget } from '../../theme/layout';
+import {
+  QuizOrderDragList,
+  type OrderDragItem,
+} from './QuizOrderDragList';
 
 type Props = {
   row: ScheduledRow;
   onBack: () => void;
   embedded?: boolean;
+  /** 순서 정답일 때 — 상위에서 구절 칩 완료 색 표시 */
+  onOrderSolved?: (verseId: string) => void;
 };
 
 function arraysEqualOrder(a: string[], b: string[]): boolean {
@@ -24,11 +30,22 @@ function arraysEqualOrder(a: string[], b: string[]): boolean {
   return true;
 }
 
-export function QuizOrderMode({ row, onBack, embedded = false }: Props) {
+function buildOrderItems(segments: string[], roundKey: number): OrderDragItem[] {
+  return segments.map((text, i) => ({
+    id: `${roundKey}-${i}`,
+    text,
+  }));
+}
+
+export function QuizOrderMode({
+  row,
+  onBack,
+  embedded = false,
+  onOrderSolved,
+}: Props) {
   const { t } = useTranslation();
   const text = row.verse.text ?? '';
   const [roundKey, setRoundKey] = useState(0);
-  const [selected, setSelected] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'idle' | 'ok' | 'bad'>('idle');
 
   const correctSegments = useMemo(
@@ -36,14 +53,15 @@ export function QuizOrderMode({ row, onBack, embedded = false }: Props) {
     [text],
   );
 
-  const [order, setOrder] = useState<string[]>([]);
+  const [items, setItems] = useState<OrderDragItem[]>([]);
 
   useEffect(() => {
     const segs = splitVerseIntoSegments(text);
-    setOrder(shuffleSegments(segs));
-    setSelected(null);
+    setItems(buildOrderItems(shuffleSegments(segs), roundKey));
     setFeedback('idle');
   }, [text, roundKey]);
+
+  const order = useMemo(() => items.map((item) => item.text), [items]);
 
   if (correctSegments.length < 2) {
     return (
@@ -56,34 +74,17 @@ export function QuizOrderMode({ row, onBack, embedded = false }: Props) {
     );
   }
 
-  function move(idx: number, dir: -1 | 1) {
-    const j = idx + dir;
-    if (j < 0 || j >= order.length) return;
-    const next = [...order];
-    [next[idx], next[j]] = [next[j]!, next[idx]!];
-    setOrder(next);
+  function onReorder(next: OrderDragItem[]) {
+    setItems(next);
     setFeedback('idle');
-    setSelected(null);
-  }
-
-  function onRowPress(i: number) {
-    setFeedback('idle');
-    if (selected === null) {
-      setSelected(i);
-      return;
-    }
-    if (selected === i) {
-      setSelected(null);
-      return;
-    }
-    const next = [...order];
-    [next[selected], next[i]] = [next[i]!, next[selected]!];
-    setOrder(next);
-    setSelected(null);
   }
 
   function checkOrder() {
-    setFeedback(arraysEqualOrder(order, correctSegments) ? 'ok' : 'bad');
+    const ok = arraysEqualOrder(order, correctSegments);
+    setFeedback(ok ? 'ok' : 'bad');
+    if (ok) {
+      onOrderSolved?.(row.verse.id);
+    }
   }
 
   function reshuffle() {
@@ -106,46 +107,27 @@ export function QuizOrderMode({ row, onBack, embedded = false }: Props) {
         </View>
       ) : null}
 
-      {order.map((seg, idx) => {
-        const highlighted = selected === idx;
-        return (
-          <View key={`${roundKey}-${idx}`} style={styles.segmentRowOuter}>
-            <View style={styles.arrows}>
-              <Pressable
-                style={[styles.miniBtn, idx === 0 && styles.miniBtnDisabled]}
-                onPress={() => move(idx, -1)}
-                disabled={idx === 0}
-                accessibilityLabel={t('quiz.orderMoveUpA11y')}
-              >
-                <Text style={styles.miniBtnTxt}>▲</Text>
-              </Pressable>
-              <Pressable
-                style={[
-                  styles.miniBtn,
-                  idx >= order.length - 1 && styles.miniBtnDisabled,
-                ]}
-                onPress={() => move(idx, 1)}
-                disabled={idx >= order.length - 1}
-                accessibilityLabel={t('quiz.orderMoveDownA11y')}
-              >
-                <Text style={styles.miniBtnTxt}>▼</Text>
-              </Pressable>
-            </View>
-            <Pressable
-              onPress={() => onRowPress(idx)}
+      <Text style={styles.dragHint}>{t('quiz.orderDragHint')}</Text>
+
+      <QuizOrderDragList
+        items={items}
+        onReorder={onReorder}
+        dragHandleA11yLabel={t('quiz.orderDragHandleA11y')}
+        renderCard={(item, index, dragHandle) => (
+          <View style={styles.segmentRowOuter}>
+            {dragHandle}
+            <View
               style={[
                 styles.segmentCard,
-                highlighted && styles.segmentCardSel,
+                feedback === 'ok' && styles.segmentCardOk,
               ]}
-              accessibilityRole="button"
-              accessibilityState={{ selected: highlighted }}
             >
-              <Text style={styles.segIx}>{idx + 1}</Text>
-              <Text style={styles.segTxt}>{seg}</Text>
-            </Pressable>
+              <Text style={styles.segIx}>{index + 1}</Text>
+              <Text style={styles.segTxt}>{item.text}</Text>
+            </View>
           </View>
-        );
-      })}
+        )}
+      />
 
       {feedback === 'ok' ? (
         <View style={[styles.fb, styles.fbOk]}>
@@ -228,35 +210,16 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.orange,
   },
+  dragHint: {
+    fontSize: typography.min,
+    color: colors.textSecondary,
+    lineHeight: 20,
+    marginBottom: 2,
+  },
   segmentRowOuter: {
     flexDirection: 'row',
     alignItems: 'stretch',
     gap: 10,
-    marginBottom: 6,
-  },
-  arrows: {
-    justifyContent: 'center',
-    gap: 4,
-    paddingVertical: 4,
-    width: 44,
-  },
-  miniBtn: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.backgroundSecondary,
-    borderRadius: 8,
-    borderWidth: 0.5,
-    borderColor: colors.borderSecondary,
-    minHeight: 36,
-    flex: 1,
-  },
-  miniBtnDisabled: {
-    opacity: 0.35,
-  },
-  miniBtnTxt: {
-    fontSize: 13,
-    color: colors.forest,
-    fontWeight: '700',
   },
   segmentCard: {
     flex: 1,
@@ -269,12 +232,11 @@ const styles = StyleSheet.create({
     borderColor: colors.borderTertiary,
     padding: 14,
     minHeight: touchTarget.min + 10,
-    marginBottom: 2,
   },
-  segmentCardSel: {
-    borderColor: colors.orange,
+  segmentCardOk: {
+    borderColor: colors.successBorder,
     borderWidth: 2,
-    backgroundColor: `${colors.orange}12`,
+    backgroundColor: colors.successBg,
   },
   segIx: {
     fontSize: typography.min,

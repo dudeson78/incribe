@@ -333,9 +333,7 @@ export function VerseListScreen({ navigation }: Props) {
               </Pressable>
             </View>
           </View>
-          <Text style={styles.snippet} numberOfLines={2}>
-            {item.text}
-          </Text>
+          <Text style={styles.snippet}>{item.text}</Text>
           {schedule ? (
             <VersePracticeHistoryTable
               verse={item}

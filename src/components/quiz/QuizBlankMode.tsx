@@ -41,15 +41,17 @@ export function QuizBlankMode({
   const [guesses, setGuesses] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<'idle' | 'ok' | 'bad'>('idle');
 
-  const challenge = useMemo(
-    () =>
-      buildBlankChallengePreferKeywords(
-        text,
-        row.verse.keywords ?? null,
-        createSeededRandom(roundKey * 1_000_003 + text.length * 17),
-      ),
-    [text, row.verse.keywords, roundKey],
-  );
+  const challenge = useMemo(() => {
+    const keywords = row.verse.keywords ?? null;
+    const hasKeywords = (keywords ?? '').trim().length > 0;
+    const keywordOnly = roundKey === 0 && hasKeywords;
+    return buildBlankChallengePreferKeywords(
+      text,
+      keywords,
+      createSeededRandom(roundKey * 1_000_003 + text.length * 17),
+      { keywordOnly },
+    );
+  }, [text, row.verse.keywords, roundKey]);
 
   useEffect(() => {
     if (!challenge?.blankIndices.length) return;

@@ -30,13 +30,15 @@ export function QuizScreen() {
   const [todayRows, setTodayRows] = useState<ScheduledRow[]>([]);
   const [todayLoading, setTodayLoading] = useState(false);
   const [playRow, setPlayRow] = useState<ScheduledRow | null>(null);
-  /** 빈칸 모드에서 성공한 오늘 훈련 구절 id (칩 비활성·완료 표시) */
+  /** 빈칸·순서 모드에서 한 번 이상 맞춘 오늘 훈련 구절 id (칩 색 표시) */
   const [blankSolvedIds, setBlankSolvedIds] = useState(() => new Set<string>());
+  const [orderSolvedIds, setOrderSolvedIds] = useState(() => new Set<string>());
 
-  const blankSolvedSet = useMemo(
-    () => (mode === 'blank' ? blankSolvedIds : null),
-    [mode, blankSolvedIds],
-  );
+  const solvedVerseSet = useMemo(() => {
+    if (mode === 'blank') return blankSolvedIds;
+    if (mode === 'order') return orderSolvedIds;
+    return null;
+  }, [mode, blankSolvedIds, orderSolvedIds]);
 
   const loadToday = useCallback(async () => {
     setTodayLoading(true);
@@ -76,6 +78,15 @@ export function QuizScreen() {
 
   const onBlankSolved = useCallback((verseId: string) => {
     setBlankSolvedIds((prev) => {
+      if (prev.has(verseId)) return prev;
+      const next = new Set(prev);
+      next.add(verseId);
+      return next;
+    });
+  }, []);
+
+  const onOrderSolved = useCallback((verseId: string) => {
+    setOrderSolvedIds((prev) => {
       if (prev.has(verseId)) return prev;
       const next = new Set(prev);
       next.add(verseId);
@@ -128,7 +139,7 @@ export function QuizScreen() {
                   embedded
                   compactChipRow
                   selectedVerseId={playRow?.verse.id ?? null}
-                  blankCompletedVerseIds={blankSolvedSet}
+                  solvedVerseIds={solvedVerseSet}
                   onPick={setPlayRow}
                 />
               )}
@@ -151,6 +162,7 @@ export function QuizScreen() {
                   embedded
                   row={playRow}
                   onBack={clearDailyPlaySelection}
+                  onOrderSolved={onOrderSolved}
                 />
               ) : null}
             </>

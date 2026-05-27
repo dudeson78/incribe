@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AnnualGoalCard } from '../components/AnnualGoalCard';
 import { HomeGroupedReview } from '../components/HomeGroupedReview';
+import { TodayTrainingListenButton } from '../components/TodayTrainingListenButton';
 import { TodayPracticeVerseBadge } from '../components/TodayPracticeVerseBadge';
 import { TodaysReviewList } from '../components/TodaysReviewList';
 import { UserTodayVerseCard } from '../components/UserTodayVerseCard';
@@ -222,14 +223,17 @@ export function HomeScreen() {
         {!loading && !error ? <TodayPracticeVerseBadge /> : null}
 
         {!loading && !error && scheduled.length > 0 ? (
-          <HomeGroupedReview
-            items={scheduled}
-            onSelectVerse={(verseId) => {
-              const hit = scheduled.find((r) => r.verse.id === verseId);
-              if (!hit || (hit.todaySessionRecordedSuccess ?? false)) return;
-              setTrainingFocusVerseId(verseId);
-            }}
-          />
+          <>
+            <HomeGroupedReview
+              items={scheduled}
+              onSelectVerse={(verseId) => {
+                const hit = scheduled.find((r) => r.verse.id === verseId);
+                if (!hit || (hit.todaySessionRecordedSuccess ?? false)) return;
+                setTrainingFocusVerseId(verseId);
+              }}
+            />
+            <TodayTrainingListenButton rows={scheduled} />
+          </>
         ) : null}
 
         {!error && (loading || savedVerses.length > 0) ? (

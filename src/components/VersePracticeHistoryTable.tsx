@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -87,24 +87,29 @@ export function VersePracticeHistoryTable({ verse, schedule, logs }: Props) {
   }) {
     return (
       <View style={styles.tr}>
-        <View style={[styles.cell, styles.labelCellFirst]}>
-          <Text style={styles.labelHeadText} numberOfLines={2}>
+        <View style={[styles.cell, styles.labelCell]}>
+          <Text style={styles.labelHeadText} numberOfLines={1}>
             {label}
           </Text>
         </View>
         {cells.slice(0, SESSIONS).map((raw, ix) => {
           const kind = kinds[ix] ?? 'empty';
           const rawCell = raw ?? '';
-          const dateShown =
-            fmtHistoryDateDisplay(rawCell).trim();
+          const dateShown = fmtHistoryDateDisplay(rawCell).trim();
           const dateA11y = fmtHistoryDateA11y(rawCell).trim();
           const subtitle = subtitleFor(kind);
           const isBlank = !dateShown && !subtitle;
           const a11y = isBlank
             ? '-'
-            : [dateA11y || dateShown || rawCell, subtitle].filter(Boolean).join(' ');
+            : [dateA11y || dateShown || rawCell, subtitle]
+                .filter(Boolean)
+                .join(' ');
           return (
-            <View key={ix} style={styles.cell} accessibilityLabel={a11y}>
+            <View
+              key={ix}
+              style={[styles.cell, styles.dataCell]}
+              accessibilityLabel={a11y}
+            >
               {isBlank ? (
                 <Text style={styles.cellDash} accessibilityElementsHidden>
                   -
@@ -116,7 +121,7 @@ export function VersePracticeHistoryTable({ verse, schedule, logs }: Props) {
                       style={styles.cellText}
                       numberOfLines={2}
                       adjustsFontSizeToFit
-                      minimumFontScale={0.75}
+                      minimumFontScale={0.65}
                     >
                       {dateShown}
                     </Text>
@@ -138,44 +143,37 @@ export function VersePracticeHistoryTable({ verse, schedule, logs }: Props) {
   return (
     <View style={styles.wrap}>
       <Text style={styles.section}>{t('verses.historyTitle')}</Text>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator
-        contentContainerStyle={styles.scrollInner}
-      >
-        <View>
-          <View style={styles.tr}>
-            <View style={[styles.cell, styles.labelCellTop]}>
-              <Text style={styles.headerCorner}>{t('verses.historyColCategory')}</Text>
-            </View>
-            {headerSession.map((h) => (
-              <View key={h} style={[styles.cell, styles.headerCell]}>
-                <Text style={styles.headerText} numberOfLines={2}>
-                  {h}
-                </Text>
-              </View>
-            ))}
+      <View style={styles.table}>
+        <View style={styles.tr}>
+          <View style={[styles.cell, styles.labelCell, styles.headerLabelCell]}>
+            <Text style={styles.headerCorner} numberOfLines={1}>
+              {t('verses.historyColCategory')}
+            </Text>
           </View>
-          <Row
-            label={t('verses.historyShort')}
-            cells={shortRow}
-            kinds={shortKind}
-          />
-          <Row
-            label={t('verses.historyLong')}
-            cells={longRow}
-            kinds={longKind}
-          />
+          {headerSession.map((h, i) => (
+            <View key={i} style={[styles.cell, styles.dataCell, styles.headerCell]}>
+              <Text style={styles.headerText} numberOfLines={1}>
+                {h}
+              </Text>
+            </View>
+          ))}
         </View>
-      </ScrollView>
+        <Row
+          label={t('verses.historyShort')}
+          cells={shortRow}
+          kinds={shortKind}
+        />
+        <Row
+          label={t('verses.historyLong')}
+          cells={longRow}
+          kinds={longKind}
+        />
+      </View>
     </View>
   );
 }
 
-/** 연습 이력 미니 표 — 카드 안에서 과도하게 커 보이지 않도록 시각적 무게 최소화 */
-const CELL_W = 58;
-const LABEL_W = 52;
-
+/** 연습 이력 미니 표 — 카드 너비 안에 7회까지 가로 스크롤 없이 표시 */
 const styles = StyleSheet.create({
   wrap: {
     alignSelf: 'stretch',
@@ -188,76 +186,78 @@ const styles = StyleSheet.create({
     marginBottom: 3,
     letterSpacing: 0.15,
   },
-  scrollInner: {
-    paddingBottom: 1,
+  table: {
+    alignSelf: 'stretch',
   },
   tr: {
     flexDirection: 'row',
     alignItems: 'stretch',
   },
   cell: {
-    width: CELL_W,
-    minHeight: 36,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.borderTertiary,
     justifyContent: 'center',
-    paddingHorizontal: 2,
-    paddingVertical: 3,
+    paddingHorizontal: 1,
+    paddingVertical: 1,
     backgroundColor: colors.backgroundPrimary,
   },
-  labelCellFirst: {
-    width: LABEL_W,
+  labelCell: {
+    width: 26,
+    minHeight: 28,
     backgroundColor: `${colors.forest}0d`,
   },
-  labelCellTop: {
-    width: LABEL_W,
+  headerLabelCell: {
     backgroundColor: `${colors.orange}18`,
-    justifyContent: 'center',
+  },
+  dataCell: {
+    flex: 1,
+    minWidth: 0,
+    minHeight: 28,
   },
   headerCell: {
     backgroundColor: `${colors.forest}0f`,
-    minHeight: 32,
+    minHeight: 24,
   },
   headerCorner: {
-    fontSize: typography.chip,
+    fontSize: 9,
     fontWeight: '700',
     color: colors.forest,
     textAlign: 'center',
-    lineHeight: 13,
+    lineHeight: 11,
   },
   headerText: {
-    fontSize: typography.chip,
+    fontSize: 9,
     fontWeight: '600',
     color: colors.forest,
     textAlign: 'center',
-    lineHeight: 12,
+    lineHeight: 11,
   },
   cellText: {
-    fontSize: 10,
+    fontSize: 9,
     color: colors.textPrimary,
     textAlign: 'center',
-    lineHeight: 12,
+    lineHeight: 11,
   },
   cellDash: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: '500',
     color: colors.borderSecondary,
     textAlign: 'center',
-    lineHeight: 14,
+    lineHeight: 12,
   },
   cellSub: {
-    marginTop: 1,
-    fontSize: 9,
+    marginTop: 0,
+    fontSize: 7,
     fontWeight: '600',
     color: colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 10,
+    lineHeight: 8,
   },
   labelHeadText: {
-    fontSize: typography.chip,
+    fontSize: 9,
     fontWeight: '600',
     color: colors.forest,
     textAlign: 'center',
-    lineHeight: 13,
+    lineHeight: 11,
   },
 });

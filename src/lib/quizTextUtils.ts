@@ -63,6 +63,16 @@ export function splitKeywordCsv(csv: string | null | undefined): string[] {
     .filter(Boolean);
 }
 
+/** 키워드·토큰 일치 시 끝에 붙은 구두점은 무시 (예: "하나님," ↔ "하나님") */
+function comparableTokenForKeyword(s: string): string {
+  let t = normalizeQuizToken(s);
+  t = t.replace(
+    /^[\s"'「『⟨（〔［]+|[\s"'」』⟩）〕］.,，。．!！?？;；:：…]+$/gu,
+    '',
+  );
+  return t.trim();
+}
+
 function tokensMatchAt(
   tokens: string[],
   start: number,
@@ -76,8 +86,8 @@ function tokensMatchAt(
     return false;
   for (let k = 0; k < pattern.length; k++) {
     if (
-      normalizeQuizToken(tokens[start + k] ?? '') !==
-      normalizeQuizToken(pattern[k] ?? '')
+      comparableTokenForKeyword(tokens[start + k] ?? '') !==
+      comparableTokenForKeyword(pattern[k] ?? '')
     )
       return false;
   }
@@ -112,6 +122,84 @@ export function blankIndicesFromKeywords(
   return [...idxSet].sort((a, b) => a - b);
 }
 
+/** `buildBlankChallenge`와 동일한 목표 빈칸 개수 룰 */
+function heuristicBlankTarget(tokenCount: number): number {
+  const n = tokenCount;
+  if (n <= 1) return 1;
+  return Math.max(
+    1,
+    Math.min(n - 1, Math.min(12, Math.max(2, Math.round(n * 0.28)))),
+  );
+}
+
+export type BuildBlankChallengeOptions = {
+  /**
+   * true → 키워드 구문에 해당하는 어절만 빈칸(최초 문제용).
+   * 다어절 키워드는 연속 어절마다 빈칸 하나씩.
+   */
+  keywordOnly?: boolean;
+};
+
+/** 키워드가 본문에 매칭되면 해당 칸은 모두 빈칸으로 유지하고, 부족하면 나머지에서 채운다 */
+export function buildBlankChallengePreferKeywords(
+  text: string,
+  keywordsCsv: string | null | undefined,
+  rnd: () => number = Math.random,
+  options: BuildBlankChallengeOptions = {},
+): BlankChallenge | null {
+  const tokens = tokenizeWords(text);
+  const n = tokens.length;
+  if (n === 0) return null;
+
+  const hasKeywordInput = splitKeywordCsv(keywordsCsv).length > 0;
+  if (!hasKeywordInput) {
+    return buildBlankChallenge(text, rnd);
+  }
+
+  const keywordIdx = blankIndicesFromKeywords(text, keywordsCsv);
+  if (!keywordIdx || keywordIdx.length === 0) {
+    return buildBlankChallenge(text, rnd);
+  }
+
+  if (options.keywordOnly) {
+    const blankIndices = [...keywordIdx].sort((a, b) => a - b);
+    return {
+      tokens,
+      blankIndices,
+      answers: blankIndices.map((i) => tokens[i]!),
+    };
+  }
+
+  const maxBlanks = n > 1 ? n - 1 : 1;
+  const heuristicTarget = heuristicBlankTarget(n);
+
+  /** 키워드 매칭 구간은 우선 포함; 전부 가리면 안 되므로 n>1일 때 최대 maxBlanks까지 */
+  const picked = new Set<number>(keywordIdx);
+  while (picked.size > maxBlanks) {
+    const sorted = [...picked].sort((a, b) => a - b);
+    picked.delete(sorted[sorted.length - 1]!);
+  }
+
+  const targetTotal = Math.min(
+    maxBlanks,
+    Math.max(heuristicTarget, picked.size),
+  );
+
+  const candidates = tokens.map((_, i) => i).filter((i) => !picked.has(i));
+  const shuffled = shuffleInPlaceCopy(candidates, rnd);
+  for (const i of shuffled) {
+    if (picked.size >= targetTotal) break;
+    picked.add(i);
+  }
+
+  const blankIndices = [...picked].sort((a, b) => a - b);
+  return {
+    tokens,
+    blankIndices,
+    answers: blankIndices.map((i) => tokens[i]!),
+  };
+}
+
 /** 라운드 키마다 다른 무작위 빈칸(키워드 없을 때 등) */
 export function createSeededRandom(seed: number): () => number {
   let s = (Math.imul(seed >>> 0, 0x9e3779b1) ^ 0xdeadbeef) >>> 0;
@@ -120,25 +208,6 @@ export function createSeededRandom(seed: number): () => number {
     s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
     return s / 0x100000000;
   };
-}
-
-/** 키워드가 본문에 매칭되면 해당 토큰만 빈칸, 아니면 기존 무작위 로직 */
-export function buildBlankChallengePreferKeywords(
-  text: string,
-  keywordsCsv: string | null | undefined,
-  rnd: () => number = Math.random,
-): BlankChallenge | null {
-  const indices = blankIndicesFromKeywords(text, keywordsCsv);
-  const tokens = tokenizeWords(text);
-  if (tokens.length === 0) return null;
-  if (indices && indices.length > 0) {
-    return {
-      tokens,
-      blankIndices: indices,
-      answers: indices.map((i) => tokens[i]!),
-    };
-  }
-  return buildBlankChallenge(text, rnd);
 }
 
 /**

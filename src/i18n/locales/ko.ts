@@ -28,8 +28,8 @@ export const ko = {
     a11yDelete: '{{ref}} 삭제',
     deleteSuccess: '구절이 삭제되었습니다.',
     historyTitle: '연습 이력',
-    historyColCategory: '구분',
-    historySession: '{{n}}회차',
+    historyColCategory: '회차',
+    historySession: '{{n}}회',
     historyShort: '단기',
     historyLong: '장기',
     historyDateCompleted: '(완료)',
@@ -172,7 +172,7 @@ export const ko = {
     noTrainingTodayHint:
       '홈 「말씀훈련」에 오늘 예정 구절이 없으면 이 목록이 비게 됩니다. 새 구절을 추가했거나 다음 복습일만 남았다면, 내일 다시 확인해 보세요.',
     pickVerseA11y: '{{ref}} 퀴즈 시작',
-    blankVerseChipSolvedA11y: '{{ref}} 빈칸 맞춤 완료',
+    verseChipSolvedA11y: '{{ref}} 정답 맞춤',
     blankHint:
       '빈 칸에는 가려졌던 그대로의 표기를 입력하세요.(띄어쓰기·맞춤법)',
     blankHintKeywords:
@@ -191,8 +191,8 @@ export const ko = {
     orderWrong: '아직 순서가 달라요. 참고본을 보세요.',
     orderTooShort: '본문을 둘 이상 나누기 어려워 순서 퀴즈를 할 수 없습니다.',
     orderReshuffle: '순서 다시 섞기',
-    orderMoveUpA11y: '위로 한 칸',
-    orderMoveDownA11y: '아래로 한 칸',
+    orderDragHint: '⠿ 손잡이를 끌어 순서를 바꿉니다.',
+    orderDragHandleA11y: '드래그하여 순서 변경',
   },
   reference: {
     label: '참조',
@@ -288,6 +288,13 @@ export const ko = {
     loadError: '불러오기 실패',
     loadErrorHint:
       '(로그인 상태와 Supabase 마이그레이션·RLS를 확인해 주세요.)',
+    todayTrainingListen: '오늘 훈련구절 듣기',
+    todayTrainingListenHint: '쉐도잉 안내 · 구절별 3회 반복',
+    todayTrainingListenStop: '듣기 중지',
+    todayTrainingListenStopHint: '탭하면 낭독을 멈춥니다',
+    todayTrainingListenA11y: '오늘 훈련구절 전체 쉐도잉 안내 듣기',
+    todayTrainingListenStopA11y: '훈련구절 낭독 중지',
+    todayTrainingListenError: '낭독을 시작하지 못했습니다.',
   },
   memorize: {
     badgeRecite: '암송 — 참조만 표시 · 본문은 떠올리기',
