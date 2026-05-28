@@ -308,6 +308,7 @@ export function TodaysReviewList({
           <VerseVerifyModalTrigger
             reference={verse.reference}
             text={verse.text}
+            keywords={verse.keywords}
             disabled={locked}
           />
         </View>

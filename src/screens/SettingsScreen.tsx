@@ -13,12 +13,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useAuthProfile } from '../hooks/useAuthProfile';
+import { VoiceReadingSettings } from '../components/VoiceReadingSettings';
 import { useSettings } from '../context/SettingsContext';
 import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
 import { useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import { supabase } from '../supabase/client';
-import { colors, typography } from '../theme/colors';
+import { colors, settingsSectionTitle, typography } from '../theme/colors';
 import { touchTarget } from '../theme/layout';
 
 const DEFAULT_GOAL = 52;
@@ -233,8 +234,10 @@ export function SettingsScreen() {
           </View>
         </View>
 
+        <VoiceReadingSettings />
+
         <View style={styles.settingBlock}>
-          <Text style={styles.blockSubtitle}>
+          <Text style={styles.blockTitle}>
             {t('settings.resetPracticeSection')}
           </Text>
           <Text style={styles.hint}>{t('settings.resetPracticeHint')}</Text>
@@ -321,9 +324,7 @@ const styles = StyleSheet.create({
   myProfileName: {
     flex: 1,
     minWidth: 0,
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.forest,
+    ...settingsSectionTitle,
   },
   myProfileSignOut: {
     flexShrink: 0,
@@ -350,16 +351,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: `${colors.forest}18`,
   },
-  blockTitle: {
-    fontSize: typography.headline,
-    fontWeight: '700',
-    color: colors.forest,
-  },
-  blockSubtitle: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.textSecondary,
-  },
+  blockTitle: settingsSectionTitle,
   hint: {
     fontSize: typography.min,
     color: colors.muted,

@@ -48,6 +48,28 @@ function expandBookName(bookPart: string): string {
   return raw;
 }
 
+const SINO_ONES = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'] as const;
+
+/** TTS가 「다섯장」 대신 「오장」처럼 한자어 수로 읽도록 변환 */
+export function numberToSinoKorean(n: number): string {
+  if (!Number.isFinite(n) || n <= 0 || n >= 1000) {
+    return String(n);
+  }
+  if (n < 10) return SINO_ONES[n]!;
+  if (n < 100) {
+    const tens = Math.floor(n / 10);
+    const ones = n % 10;
+    const tensPart = tens === 1 ? '십' : `${SINO_ONES[tens]!}십`;
+    return ones ? `${tensPart}${SINO_ONES[ones]!}` : tensPart;
+  }
+  const hundreds = Math.floor(n / 100);
+  const rest = n % 100;
+  const hundredPart = hundreds === 1 ? '백' : `${SINO_ONES[hundreds]!}백`;
+  if (rest === 0) return hundredPart;
+  if (rest < 10) return `${hundredPart}${SINO_ONES[rest]!}`;
+  return `${hundredPart}${numberToSinoKorean(rest)}`;
+}
+
 function parseReferenceParts(
   reference: string,
 ): { book: string; chapter: string; verse: string } | null {
@@ -75,7 +97,7 @@ function parseReferenceParts(
   return null;
 }
 
-/** TTS용 참조: `벧전 3:7` → `베드로전서 3장 7절` */
+/** TTS용 참조: `벧전 3:7` → `베드로전서 삼장 칠절` */
 export function referenceToSpeech(reference: string): string {
   const parts = parseReferenceParts(reference);
   if (!parts) return reference.trim();
@@ -83,8 +105,12 @@ export function referenceToSpeech(reference: string): string {
   const book = expandBookName(parts.book);
   const chapter = Number(parts.chapter);
   const verse = Number(parts.verse);
-  const chapterSpeech = Number.isFinite(chapter) ? `${chapter}장` : `${parts.chapter}장`;
-  const verseSpeech = Number.isFinite(verse) ? `${verse}절` : `${parts.verse}절`;
+  const chapterSpeech = Number.isFinite(chapter)
+    ? `${numberToSinoKorean(chapter)}장`
+    : `${parts.chapter}장`;
+  const verseSpeech = Number.isFinite(verse)
+    ? `${numberToSinoKorean(verse)}절`
+    : `${parts.verse}절`;
 
   return `${book} ${chapterSpeech} ${verseSpeech}`;
 }

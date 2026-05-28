@@ -42,6 +42,13 @@ export const typography = {
   headline: 26,
 } as const;
 
+/** MY(설정) 화면 섹션 제목 — 연간 목표 등 블록 라벨 */
+export const settingsSectionTitle = {
+  fontSize: typography.headline,
+  fontWeight: '700' as const,
+  color: colors.forest,
+} as const;
+
 /** Field labels above inputs — prototype `.input-label` */
 export const labelTypography = {
   fontWeight: '500' as const,

@@ -2,13 +2,10 @@ import { useCallback, useRef, useState, type ReactNode } from 'react';
 import {
   PanResponder,
   StyleSheet,
-  Text,
   View,
   type LayoutChangeEvent,
   type PanResponderGestureState,
 } from 'react-native';
-import { colors } from '../../theme/colors';
-import { radius, touchTarget } from '../../theme/layout';
 
 export type OrderDragItem = {
   id: string;
@@ -20,12 +17,8 @@ type RowLayout = { y: number; height: number };
 type Props = {
   items: OrderDragItem[];
   onReorder: (next: OrderDragItem[]) => void;
-  renderCard: (
-    item: OrderDragItem,
-    index: number,
-    dragHandle: ReactNode,
-  ) => ReactNode;
-  dragHandleA11yLabel: string;
+  renderCard: (item: OrderDragItem, index: number, dragging: boolean) => ReactNode;
+  dragA11yLabel: string;
 };
 
 function reorderItems<T>(list: T[], from: number, to: number): T[] {
@@ -53,21 +46,31 @@ function indexAtY(layouts: RowLayout[], y: number, count: number): number {
   return Math.max(0, count - 1);
 }
 
-type DragHandleProps = {
-  active: boolean;
+type DraggableRowProps = {
+  item: OrderDragItem;
+  index: number;
+  dragging: boolean;
+  dragDy: number;
   a11yLabel: string;
-  onGrant: () => void;
+  onGrant: (index: number) => void;
   onMove: (gesture: PanResponderGestureState) => void;
   onEnd: () => void;
+  onLayout: (index: number, e: LayoutChangeEvent) => void;
+  renderCard: (item: OrderDragItem, index: number, dragging: boolean) => ReactNode;
 };
 
-function DragHandle({
-  active,
+function DraggableRow({
+  item,
+  index,
+  dragging,
+  dragDy,
   a11yLabel,
   onGrant,
   onMove,
   onEnd,
-}: DragHandleProps) {
+  onLayout,
+  renderCard,
+}: DraggableRowProps) {
   const onGrantRef = useRef(onGrant);
   const onMoveRef = useRef(onMove);
   const onEndRef = useRef(onEnd);
@@ -78,9 +81,10 @@ function DragHandle({
   const pan = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, gesture) =>
+        Math.abs(gesture.dy) > 2 || Math.abs(gesture.dx) > 2,
       onPanResponderTerminationRequest: () => false,
-      onPanResponderGrant: () => onGrantRef.current(),
+      onPanResponderGrant: () => onGrantRef.current(index),
       onPanResponderMove: (_, gesture) => onMoveRef.current(gesture),
       onPanResponderRelease: () => onEndRef.current(),
       onPanResponderTerminate: () => onEndRef.current(),
@@ -89,14 +93,17 @@ function DragHandle({
 
   return (
     <View
-      style={[styles.dragHandle, active && styles.dragHandleActive]}
+      onLayout={(e) => onLayout(index, e)}
+      style={[
+        styles.row,
+        dragging && styles.rowDragging,
+        dragging && { transform: [{ translateY: dragDy }] },
+      ]}
       accessibilityRole="adjustable"
       accessibilityLabel={a11yLabel}
       {...pan.panHandlers}
     >
-      <Text style={styles.dragHandleIcon} accessible={false}>
-        ⠿
-      </Text>
+      {renderCard(item, index, dragging)}
     </View>
   );
 }
@@ -105,7 +112,7 @@ export function QuizOrderDragList({
   items,
   onReorder,
   renderCard,
-  dragHandleA11yLabel,
+  dragA11yLabel,
 }: Props) {
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragDy, setDragDy] = useState(0);
@@ -132,24 +139,21 @@ export function QuizOrderDragList({
     });
   }, []);
 
-  const onDragMove = useCallback(
-    (gesture: PanResponderGestureState) => {
-      const from = dragFromIndexRef.current;
-      if (from < 0) return;
+  const onDragMove = useCallback((gesture: PanResponderGestureState) => {
+    const from = dragFromIndexRef.current;
+    if (from < 0) return;
 
-      setDragDy(gesture.dy);
+    setDragDy(gesture.dy);
 
-      const fingerY = gesture.moveY - listPageYRef.current;
-      const to = indexAtY(layoutsRef.current, fingerY, itemsRef.current.length);
-      if (to === from) return;
+    const fingerY = gesture.moveY - listPageYRef.current;
+    const to = indexAtY(layoutsRef.current, fingerY, itemsRef.current.length);
+    if (to === from) return;
 
-      const next = reorderItems(itemsRef.current, from, to);
-      dragFromIndexRef.current = to;
-      setDragDy(0);
-      onReorderRef.current(next);
-    },
-    [],
-  );
+    const next = reorderItems(itemsRef.current, from, to);
+    dragFromIndexRef.current = to;
+    setDragDy(0);
+    onReorderRef.current(next);
+  }, []);
 
   function onRowLayout(index: number, e: LayoutChangeEvent) {
     const { y, height } = e.nativeEvent.layout;
@@ -160,39 +164,30 @@ export function QuizOrderDragList({
     measureListY();
   }
 
+  function onGrant(index: number) {
+    measureListY();
+    dragFromIndexRef.current = index;
+    setDraggingId(itemsRef.current[index]?.id ?? null);
+    setDragDy(0);
+  }
+
   return (
     <View ref={listRef} style={styles.list} onLayout={onListLayout}>
-      {items.map((item, index) => {
-        const dragging = draggingId === item.id;
-        const dragHandle = (
-          <DragHandle
-            active={dragging}
-            a11yLabel={dragHandleA11yLabel}
-            onGrant={() => {
-              measureListY();
-              dragFromIndexRef.current = index;
-              setDraggingId(item.id);
-              setDragDy(0);
-            }}
-            onMove={onDragMove}
-            onEnd={resetDrag}
-          />
-        );
-
-        return (
-          <View
-            key={item.id}
-            onLayout={(e) => onRowLayout(index, e)}
-            style={[
-              styles.row,
-              dragging && styles.rowDragging,
-              dragging && { transform: [{ translateY: dragDy }] },
-            ]}
-          >
-            {renderCard(item, index, dragHandle)}
-          </View>
-        );
-      })}
+      {items.map((item, index) => (
+        <DraggableRow
+          key={item.id}
+          item={item}
+          index={index}
+          dragging={draggingId === item.id}
+          dragDy={dragDy}
+          a11yLabel={dragA11yLabel}
+          onGrant={onGrant}
+          onMove={onDragMove}
+          onEnd={resetDrag}
+          onLayout={onRowLayout}
+          renderCard={renderCard}
+        />
+      ))}
     </View>
   );
 }
@@ -211,25 +206,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
-  },
-  dragHandle: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 36,
-    alignSelf: 'stretch',
-    borderRadius: radius.md,
-    backgroundColor: colors.backgroundSecondary,
-    borderWidth: 0.5,
-    borderColor: colors.borderSecondary,
-  },
-  dragHandleActive: {
-    borderColor: colors.forest,
-    backgroundColor: `${colors.forest}14`,
-  },
-  dragHandleIcon: {
-    fontSize: 18,
-    lineHeight: 22,
-    color: colors.forest,
-    fontWeight: '700',
   },
 });

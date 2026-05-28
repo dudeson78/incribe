@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
   Modal,
   Pressable,
@@ -9,94 +9,169 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { splitKeywordCsv } from '../lib/quizTextUtils';
 import { colors, typography } from '../theme/colors';
 import { radius, touchTarget } from '../theme/layout';
 
 type VerseVerifyModalTriggerProps = {
   reference: string;
   text: string;
+  keywords?: string | null;
   disabled?: boolean;
 };
 
-/** 암송 단계에서 본문·참조를 확인용으로만 모달 표시 */
+function VerifyModal({
+  visible,
+  title,
+  onClose,
+  children,
+}: {
+  visible: boolean;
+  title: string;
+  onClose: () => void;
+  children: ReactNode;
+}) {
+  const { t } = useTranslation();
+
+  return (
+    <Modal
+      visible={visible}
+      animationType="fade"
+      transparent
+      onRequestClose={onClose}
+    >
+      <View style={styles.wrap}>
+        <Pressable
+          style={styles.backdropHit}
+          onPress={onClose}
+          accessibilityRole="button"
+          accessibilityLabel={t('rema.modalCloseA11y')}
+        />
+        <View style={styles.card}>
+          <Text style={styles.refTitle}>{title}</Text>
+          <ScrollView
+            style={styles.scroll}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator
+            nestedScrollEnabled
+          >
+            {children}
+          </ScrollView>
+          <Pressable
+            style={({ pressed }) => [styles.okBtn, pressed && styles.okBtnPressed]}
+            onPress={onClose}
+            accessibilityLabel={t('common.ok')}
+          >
+            <Text style={styles.okText}>{t('common.ok')}</Text>
+          </Pressable>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+/** 암송 단계에서 본문·키워드를 확인용 모달로 표시 */
 export function VerseVerifyModalTrigger({
   reference,
   text,
+  keywords,
   disabled = false,
 }: VerseVerifyModalTriggerProps) {
   const { t } = useTranslation();
-  const [visible, setVisible] = useState(false);
+  const [scriptureVisible, setScriptureVisible] = useState(false);
+  const [keywordVisible, setKeywordVisible] = useState(false);
   const refTrimmed = typeof reference === 'string' ? reference.trim() : '';
   const body = typeof text === 'string' ? text.trim() : '';
+  const keywordList = useMemo(() => splitKeywordCsv(keywords), [keywords]);
 
-  /** 암송 7회 완료 후 축하 Modal이 위에 올 때, 이 확인 창이 열린 채로 남아 터치를 가로채는 것을 방지 */
   useEffect(() => {
-    if (disabled) setVisible(false);
+    if (disabled) {
+      setScriptureVisible(false);
+      setKeywordVisible(false);
+    }
   }, [disabled]);
 
   return (
     <>
-      <Pressable
-        style={({ pressed }) => [
-          styles.trigger,
-          pressed && styles.triggerPressed,
-          disabled && styles.triggerDisabled,
-        ]}
-        onPress={() => {
-          if (disabled) return;
-          setVisible(true);
-        }}
-        disabled={disabled}
-        accessibilityRole="button"
-        accessibilityLabel={t('seven.verifyScriptureA11y')}
-      >
-        <Text style={styles.triggerText}>{t('seven.verifyScriptureBtn')}</Text>
-      </Pressable>
+      <View style={styles.triggerRow}>
+        <Pressable
+          style={({ pressed }) => [
+            styles.trigger,
+            styles.triggerHalf,
+            pressed && styles.triggerPressed,
+            disabled && styles.triggerDisabled,
+          ]}
+          onPress={() => {
+            if (disabled) return;
+            setScriptureVisible(true);
+          }}
+          disabled={disabled}
+          accessibilityRole="button"
+          accessibilityLabel={t('seven.verifyScriptureA11y')}
+        >
+          <Text style={styles.triggerText}>{t('seven.verifyScriptureBtn')}</Text>
+        </Pressable>
 
-      <Modal
-        visible={visible}
-        animationType="fade"
-        transparent
-        onRequestClose={() => setVisible(false)}
+        <Pressable
+          style={({ pressed }) => [
+            styles.trigger,
+            styles.triggerHalf,
+            pressed && styles.triggerPressed,
+            disabled && styles.triggerDisabled,
+          ]}
+          onPress={() => {
+            if (disabled) return;
+            setKeywordVisible(true);
+          }}
+          disabled={disabled}
+          accessibilityRole="button"
+          accessibilityLabel={t('seven.verifyKeywordA11y')}
+        >
+          <Text style={styles.triggerText}>{t('seven.verifyKeywordBtn')}</Text>
+        </Pressable>
+      </View>
+
+      <VerifyModal
+        visible={scriptureVisible}
+        title={refTrimmed}
+        onClose={() => setScriptureVisible(false)}
       >
-        <View style={styles.wrap}>
-          <Pressable
-            style={styles.backdropHit}
-            onPress={() => setVisible(false)}
-            accessibilityRole="button"
-            accessibilityLabel={t('rema.modalCloseA11y')}
-          />
-          <View style={styles.card}>
-            <Text style={styles.refTitle}>{refTrimmed}</Text>
-            <ScrollView
-              style={styles.scroll}
-              contentContainerStyle={styles.scrollContent}
-              showsVerticalScrollIndicator
-              nestedScrollEnabled
-            >
-              <Text style={styles.body} selectable>
-                {body}
-              </Text>
-            </ScrollView>
-            <Pressable
-              style={({ pressed }) => [styles.okBtn, pressed && styles.okBtnPressed]}
-              onPress={() => setVisible(false)}
-              accessibilityLabel={t('common.ok')}
-            >
-              <Text style={styles.okText}>{t('common.ok')}</Text>
-            </Pressable>
+        <Text style={styles.body} selectable>
+          {body}
+        </Text>
+      </VerifyModal>
+
+      <VerifyModal
+        visible={keywordVisible}
+        title={t('seven.verifyKeywordModalTitle', { ref: refTrimmed })}
+        onClose={() => setKeywordVisible(false)}
+      >
+        {keywordList.length === 0 ? (
+          <Text style={styles.emptyKeywords}>{t('seven.verifyKeywordEmpty')}</Text>
+        ) : (
+          <View style={styles.keywordList}>
+            {keywordList.map((kw, i) => (
+              <View key={`${i}-${kw}`} style={styles.keywordChip}>
+                <Text style={styles.keywordText} selectable>
+                  {kw}
+                </Text>
+              </View>
+            ))}
           </View>
-        </View>
-      </Modal>
+        )}
+      </VerifyModal>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  /** RemaModalTrigger.trigger 와 동일 */
-  trigger: {
-    alignSelf: 'center',
+  triggerRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    gap: 8,
     marginTop: 12,
+  },
+  trigger: {
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: radius.md,
@@ -105,6 +180,10 @@ const styles = StyleSheet.create({
     backgroundColor: `${colors.forest}0d`,
     minHeight: touchTarget.min * 0.75,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  triggerHalf: {
+    flex: 1,
   },
   triggerPressed: {
     opacity: 0.88,
@@ -116,6 +195,7 @@ const styles = StyleSheet.create({
     fontSize: typography.caption,
     fontWeight: '600',
     color: colors.forest,
+    textAlign: 'center',
   },
   wrap: {
     flex: 1,
@@ -156,6 +236,31 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontWeight: '400',
     textAlign: 'left',
+  },
+  emptyKeywords: {
+    fontSize: typography.min,
+    lineHeight: 24,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    paddingVertical: 8,
+  },
+  keywordList: {
+    gap: 8,
+  },
+  keywordChip: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: radius.md,
+    backgroundColor: `${colors.orange}12`,
+    borderWidth: 1,
+    borderColor: `${colors.orange}44`,
+  },
+  keywordText: {
+    fontSize: typography.min,
+    lineHeight: 22,
+    fontWeight: '600',
+    color: colors.forest,
+    textAlign: 'center',
   },
   okBtn: {
     alignSelf: 'stretch',

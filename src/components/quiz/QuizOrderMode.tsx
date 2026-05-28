@@ -112,19 +112,17 @@ export function QuizOrderMode({
       <QuizOrderDragList
         items={items}
         onReorder={onReorder}
-        dragHandleA11yLabel={t('quiz.orderDragHandleA11y')}
-        renderCard={(item, index, dragHandle) => (
-          <View style={styles.segmentRowOuter}>
-            {dragHandle}
-            <View
-              style={[
-                styles.segmentCard,
-                feedback === 'ok' && styles.segmentCardOk,
-              ]}
-            >
-              <Text style={styles.segIx}>{index + 1}</Text>
-              <Text style={styles.segTxt}>{item.text}</Text>
-            </View>
+        dragA11yLabel={t('quiz.orderDragHandleA11y')}
+        renderCard={(item, index, dragging) => (
+          <View
+            style={[
+              styles.segmentCard,
+              dragging && styles.segmentCardDragging,
+              feedback === 'ok' && styles.segmentCardOk,
+            ]}
+          >
+            <Text style={styles.segIx}>{index + 1}</Text>
+            <Text style={styles.segTxt}>{item.text}</Text>
           </View>
         )}
       />
@@ -216,13 +214,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 2,
   },
-  segmentRowOuter: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    gap: 10,
-  },
   segmentCard: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 10,
@@ -232,6 +224,11 @@ const styles = StyleSheet.create({
     borderColor: colors.borderTertiary,
     padding: 14,
     minHeight: touchTarget.min + 10,
+  },
+  segmentCardDragging: {
+    borderColor: colors.forest,
+    borderWidth: 1.5,
+    backgroundColor: `${colors.forest}08`,
   },
   segmentCardOk: {
     borderColor: colors.successBorder,
