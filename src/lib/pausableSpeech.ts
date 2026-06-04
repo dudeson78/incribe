@@ -4,6 +4,7 @@ import {
   pauseSpeech,
   speakWithSettings,
   stopSpeech,
+  waitSpeechEngineIdle,
 } from './speechEngine';
 
 export type PausableSpeechStatus = 'idle' | 'playing' | 'paused';
@@ -83,6 +84,7 @@ export async function resumePausableSpeechSession(
   if (session.status !== 'paused') return false;
   session.status = 'playing';
   clearSpeechAbortFlag();
+  await waitSpeechEngineIdle();
   notifyPauseWaiters(session);
   return true;
 }
@@ -100,6 +102,7 @@ async function speakOnce(
     const result = await speakWithSettings(text, settings);
     if (session.cancelRequested) return 'cancelled';
     if (result === 'done') return 'done';
+    await waitSpeechEngineIdle();
     await waitWhilePaused(session);
   }
 }

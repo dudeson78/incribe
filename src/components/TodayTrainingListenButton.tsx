@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  ActivityIndicator,
   Pressable,
   StyleSheet,
   Text,
@@ -100,7 +99,7 @@ export function TodayTrainingListenButton({ rows }: Props) {
         <View style={styles.activePanel}>
           <View style={styles.statusRow}>
             {status === 'playing' ? (
-              <ActivityIndicator size="small" color={colors.forest} />
+              <Ionicons name="volume-high" size={22} color={colors.forest} />
             ) : (
               <Ionicons name="pause-circle" size={22} color={colors.orange} />
             )}
