@@ -14,12 +14,12 @@ import type { ScheduledRow } from '../hooks/useVerses';
 import {
   cancelTodayTrainingSpeech,
   getTodayTrainingSpeechStatus,
-  isSpeechSpeaking,
   pauseTodayTrainingSpeech,
   resumeTodayTrainingSpeech,
   speakTodayTrainingVerses,
   type TrainingSpeechStatus,
 } from '../lib/todayTrainingSpeech';
+import { cancelVerseCardSpeech } from '../lib/verseCardSpeech';
 import { colors, typography } from '../theme/colors';
 import { radius, touchTarget } from '../theme/layout';
 
@@ -33,10 +33,6 @@ export function TodayTrainingListenButton({ rows }: Props) {
   const [status, setStatus] = useState<TrainingSpeechStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const runIdRef = useRef(0);
-
-  const syncStatus = useCallback(() => {
-    setStatus(getTodayTrainingSpeechStatus());
-  }, []);
 
   useEffect(() => {
     return () => {
@@ -52,6 +48,7 @@ export function TodayTrainingListenButton({ rows }: Props) {
   const startSpeaking = useCallback(async () => {
     const runId = ++runIdRef.current;
     setError(null);
+    cancelVerseCardSpeech();
     setStatus('playing');
     try {
       await speakTodayTrainingVerses(rows, speechSettings);
@@ -63,16 +60,10 @@ export function TodayTrainingListenButton({ rows }: Props) {
       }
     } finally {
       if (runIdRef.current === runId) {
-        const still = await isSpeechSpeaking();
-        const next = getTodayTrainingSpeechStatus();
-        if (!still && next === 'idle') {
-          setStatus('idle');
-        } else {
-          syncStatus();
-        }
+        setStatus(getTodayTrainingSpeechStatus());
       }
     }
-  }, [rows, speechSettings, syncStatus, t]);
+  }, [rows, speechSettings, t]);
 
   async function onStartPress() {
     await startSpeaking();

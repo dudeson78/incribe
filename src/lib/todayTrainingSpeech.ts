@@ -1,15 +1,20 @@
 import type { SpeechSettings } from '../types/speechSettings';
 import {
-  clearSpeechAbortFlag,
-  isSpeechSpeaking,
-  pauseSpeech,
-  resumeSpeech,
-  speakWithSettings,
-  stopSpeech,
-} from './speechEngine';
+  beginPausableSpeechSession,
+  cancelPausableSpeechSession,
+  getPausableSpeechStatus,
+  pausePausableSpeechSession,
+  resumePausableSpeechSession,
+  runPausableSpeechSegments,
+  type PausableSpeechSession,
+  type PausableSpeechStatus,
+} from './pausableSpeech';
+import { isSpeechSpeaking } from './speechEngine';
 
 import { orderTodayScheduledRows, type ScheduledRow } from '../hooks/useVerses';
 import { referenceToSpeech } from './referenceSpeech';
+
+const SESSION_ID = 'today-training';
 
 const INTRO =
   '오늘 훈련구절을 알려드립니다. 총 세번 반복되니 큰 소리로 쉐도잉 해 주세요.';
@@ -29,7 +34,9 @@ const ORDINAL_PREFIX = [
   '열',
 ] as const;
 
-export type TrainingSpeechStatus = 'idle' | 'playing' | 'paused';
+export type TrainingSpeechStatus = PausableSpeechStatus;
+
+let session: PausableSpeechSession | null = null;
 
 function ordinalSpeech(n: number): string {
   if (n >= 1 && n <= ORDINAL_PREFIX.length) {
@@ -47,70 +54,38 @@ function closingLine(reference: string): string {
   return `${referenceToSpeech(reference)} 말씀`;
 }
 
-let cancelRequested = false;
-let sessionStatus: TrainingSpeechStatus = 'idle';
-const pauseWaiters: Array<() => void> = [];
-
-function notifyPauseWaiters(): void {
-  while (pauseWaiters.length > 0) {
-    pauseWaiters.shift()?.();
+function ensureSession(): PausableSpeechSession {
+  if (!session || session.id !== SESSION_ID) {
+    session = beginPausableSpeechSession(SESSION_ID);
   }
-}
-
-function waitWhilePaused(): Promise<void> {
-  if (sessionStatus !== 'paused') return Promise.resolve();
-  return new Promise((resolve) => {
-    pauseWaiters.push(resolve);
-  });
+  return session;
 }
 
 export function getTodayTrainingSpeechStatus(): TrainingSpeechStatus {
-  return sessionStatus;
+  return getPausableSpeechStatus(SESSION_ID);
 }
 
 export function cancelTodayTrainingSpeech(): void {
-  cancelRequested = true;
-  sessionStatus = 'idle';
-  clearSpeechAbortFlag();
-  notifyPauseWaiters();
-  stopSpeech();
+  if (session) {
+    cancelPausableSpeechSession(session);
+    session = null;
+  } else {
+    cancelPausableSpeechSession(beginPausableSpeechSession(SESSION_ID));
+  }
 }
 
 export function isTodayTrainingSpeechCancelled(): boolean {
-  return cancelRequested;
+  return session?.cancelRequested ?? false;
 }
 
 export async function pauseTodayTrainingSpeech(): Promise<boolean> {
-  if (sessionStatus !== 'playing') return false;
-  sessionStatus = 'paused';
-  await pauseSpeech();
-  return true;
+  const s = ensureSession();
+  return pausePausableSpeechSession(s);
 }
 
 export async function resumeTodayTrainingSpeech(): Promise<boolean> {
-  if (sessionStatus !== 'paused') return false;
-  sessionStatus = 'playing';
-  clearSpeechAbortFlag();
-  notifyPauseWaiters();
-  await resumeSpeech();
-  return true;
-}
-
-async function speakSegment(
-  text: string,
-  settings: SpeechSettings,
-): Promise<'done' | 'cancelled'> {
-  while (true) {
-    if (cancelRequested) return 'cancelled';
-    await waitWhilePaused();
-    if (cancelRequested) return 'cancelled';
-
-    const result = await speakWithSettings(text, settings);
-    if (cancelRequested) return 'cancelled';
-    if (result === 'done') return 'done';
-    /* aborted — 일시정지로 중단됨, 재개 후 같은 구간부터 */
-    await waitWhilePaused();
-  }
+  const s = ensureSession();
+  return resumePausableSpeechSession(s);
 }
 
 /** 오늘 훈련구절 리스트 순서로 쉐도잉 안내 낭독 */
@@ -118,45 +93,30 @@ export async function speakTodayTrainingVerses(
   rows: ScheduledRow[],
   settings: SpeechSettings,
 ): Promise<void> {
-  cancelRequested = false;
-  sessionStatus = 'playing';
+  const s = beginPausableSpeechSession(SESSION_ID);
+  session = s;
+
   const ordered = orderTodayScheduledRows(rows);
+  if (ordered.length === 0) return;
 
-  try {
-    if (ordered.length === 0) return;
+  const segments: string[] = [INTRO];
 
-    if ((await speakSegment(INTRO, settings)) === 'cancelled') return;
+  for (let i = 0; i < ordered.length; i++) {
+    const row = ordered[i]!;
+    const reference = row.verse.reference?.trim() ?? '';
+    const body = row.verse.text?.trim() ?? '';
 
-    for (let i = 0; i < ordered.length; i++) {
-      const row = ordered[i]!;
-      const reference = row.verse.reference?.trim() ?? '';
-      const body = row.verse.text?.trim() ?? '';
-
-      if (reference) {
-        if ((await speakSegment(announceLine(i, reference), settings)) === 'cancelled') {
-          return;
-        }
-      }
-
-      for (let rep = 0; rep < SHADOWING_REPEATS; rep++) {
-        if (body) {
-          if ((await speakSegment(body, settings)) === 'cancelled') return;
-        }
-        if (reference) {
-          if ((await speakSegment(closingLine(reference), settings)) === 'cancelled') {
-            return;
-          }
-        }
-      }
+    if (reference) {
+      segments.push(announceLine(i, reference));
     }
-  } finally {
-    if (!cancelRequested && sessionStatus === 'playing') {
-      sessionStatus = 'idle';
-    }
-    if (cancelRequested) {
-      sessionStatus = 'idle';
+
+    for (let rep = 0; rep < SHADOWING_REPEATS; rep++) {
+      if (body) segments.push(body);
+      if (reference) segments.push(closingLine(reference));
     }
   }
+
+  await runPausableSpeechSegments(segments, settings, s);
 }
 
 export { isSpeechSpeaking };

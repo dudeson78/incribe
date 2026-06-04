@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
+  ActivityIndicator,
   Modal,
   Pressable,
   ScrollView,
@@ -9,7 +10,16 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { useSettings } from '../context/SettingsContext';
 import { splitKeywordCsv } from '../lib/quizTextUtils';
+import { cancelTodayTrainingSpeech } from '../lib/todayTrainingSpeech';
+import {
+  cancelVerseCardSpeech,
+  getVerseCardSpeechStatus,
+  pauseVerseCardSpeech,
+  resumeVerseCardSpeech,
+  speakVerseTextThreeTimes,
+} from '../lib/verseCardSpeech';
 import { colors, typography } from '../theme/colors';
 import { radius, touchTarget } from '../theme/layout';
 
@@ -70,7 +80,7 @@ function VerifyModal({
   );
 }
 
-/** 암송 단계에서 본문·키워드를 확인용 모달로 표시 */
+/** 암송 단계에서 본문·키워드 확인 및 말씀 듣기 */
 export function VerseVerifyModalTrigger({
   reference,
   text,
@@ -78,8 +88,14 @@ export function VerseVerifyModalTrigger({
   disabled = false,
 }: VerseVerifyModalTriggerProps) {
   const { t } = useTranslation();
+  const { speechSettings } = useSettings();
   const [scriptureVisible, setScriptureVisible] = useState(false);
   const [keywordVisible, setKeywordVisible] = useState(false);
+  const [listenStatus, setListenStatus] = useState<
+    'idle' | 'playing' | 'paused'
+  >('idle');
+  const listenRunRef = useRef(0);
+
   const refTrimmed = typeof reference === 'string' ? reference.trim() : '';
   const body = typeof text === 'string' ? text.trim() : '';
   const keywordList = useMemo(() => splitKeywordCsv(keywords), [keywords]);
@@ -88,8 +104,63 @@ export function VerseVerifyModalTrigger({
     if (disabled) {
       setScriptureVisible(false);
       setKeywordVisible(false);
+      cancelVerseCardSpeech();
+      setListenStatus('idle');
     }
   }, [disabled]);
+
+  useEffect(() => {
+    return () => {
+      cancelVerseCardSpeech();
+    };
+  }, []);
+
+  const startVerseListen = useCallback(async () => {
+    if (!body) return;
+    const runId = ++listenRunRef.current;
+    cancelTodayTrainingSpeech();
+    setListenStatus('playing');
+    try {
+      await speakVerseTextThreeTimes(body, speechSettings);
+    } finally {
+      if (listenRunRef.current === runId) {
+        const next = getVerseCardSpeechStatus();
+        setListenStatus(next === 'paused' ? 'paused' : 'idle');
+      }
+    }
+  }, [body, speechSettings]);
+
+  async function onListenPress() {
+    if (disabled || !body) return;
+
+    if (listenStatus === 'playing') {
+      const ok = await pauseVerseCardSpeech();
+      if (ok) setListenStatus('paused');
+      return;
+    }
+
+    if (listenStatus === 'paused') {
+      const ok = await resumeVerseCardSpeech();
+      if (ok) setListenStatus('playing');
+      return;
+    }
+
+    await startVerseListen();
+  }
+
+  const listenLabel =
+    listenStatus === 'playing'
+      ? t('seven.verifyVerseListenPause')
+      : listenStatus === 'paused'
+        ? t('seven.verifyVerseListenResume')
+        : t('seven.verifyVerseListenBtn');
+
+  const listenA11y =
+    listenStatus === 'playing'
+      ? t('seven.verifyVerseListenPauseA11y')
+      : listenStatus === 'paused'
+        ? t('seven.verifyVerseListenResumeA11y')
+        : t('seven.verifyVerseListenA11y');
 
   return (
     <>
@@ -97,7 +168,7 @@ export function VerseVerifyModalTrigger({
         <Pressable
           style={({ pressed }) => [
             styles.trigger,
-            styles.triggerHalf,
+            styles.triggerThird,
             pressed && styles.triggerPressed,
             disabled && styles.triggerDisabled,
           ]}
@@ -115,7 +186,33 @@ export function VerseVerifyModalTrigger({
         <Pressable
           style={({ pressed }) => [
             styles.trigger,
-            styles.triggerHalf,
+            styles.triggerThird,
+            listenStatus !== 'idle' && styles.triggerListenActive,
+            pressed && styles.triggerPressed,
+            (disabled || !body) && styles.triggerDisabled,
+          ]}
+          onPress={() => void onListenPress()}
+          disabled={disabled || !body}
+          accessibilityRole="button"
+          accessibilityLabel={listenA11y}
+        >
+          {listenStatus === 'playing' ? (
+            <ActivityIndicator size="small" color={colors.forest} />
+          ) : null}
+          <Text
+            style={[
+              styles.triggerText,
+              listenStatus !== 'idle' && styles.triggerTextActive,
+            ]}
+          >
+            {listenLabel}
+          </Text>
+        </Pressable>
+
+        <Pressable
+          style={({ pressed }) => [
+            styles.trigger,
+            styles.triggerThird,
             pressed && styles.triggerPressed,
             disabled && styles.triggerDisabled,
           ]}
@@ -168,12 +265,12 @@ const styles = StyleSheet.create({
   triggerRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
-    gap: 8,
+    gap: 6,
     marginTop: 12,
   },
   trigger: {
     paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: `${colors.forest}44`,
@@ -181,9 +278,14 @@ const styles = StyleSheet.create({
     minHeight: touchTarget.min * 0.75,
     justifyContent: 'center',
     alignItems: 'center',
+    gap: 4,
   },
-  triggerHalf: {
+  triggerThird: {
     flex: 1,
+  },
+  triggerListenActive: {
+    borderColor: colors.forest,
+    backgroundColor: `${colors.forest}14`,
   },
   triggerPressed: {
     opacity: 0.88,
@@ -192,10 +294,13 @@ const styles = StyleSheet.create({
     opacity: 0.45,
   },
   triggerText: {
-    fontSize: typography.caption,
+    fontSize: typography.chip,
     fontWeight: '600',
     color: colors.forest,
     textAlign: 'center',
+  },
+  triggerTextActive: {
+    fontWeight: '700',
   },
   wrap: {
     flex: 1,

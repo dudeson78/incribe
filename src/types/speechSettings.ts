@@ -21,9 +21,14 @@ export const SPEECH_RATE_MAX = 1.5;
 export const SPEECH_PITCH_MIN = 0.5;
 export const SPEECH_PITCH_MAX = 1.5;
 
+export type SpeechVoiceCategory = 'male' | 'female' | 'child' | 'unknown';
+
 export type SpeechVoiceOption = {
   id: string;
   name: string;
   language: string;
   isDefault?: boolean;
+  category?: SpeechVoiceCategory;
 };
+
+export type SpeechVoiceCategoryFilter = 'all' | SpeechVoiceCategory;

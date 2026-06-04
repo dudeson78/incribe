@@ -27,6 +27,7 @@ import {
   SPEECH_PITCH_MIN,
   SPEECH_RATE_MAX,
   SPEECH_RATE_MIN,
+  type SpeechVoiceCategoryFilter,
   type SpeechVoiceOption,
 } from '../types/speechSettings';
 import { colors, settingsSectionTitle, typography } from '../theme/colors';
@@ -35,6 +36,13 @@ import { radius, touchTarget } from '../theme/layout';
 function formatSliderValue(n: number): string {
   return n.toFixed(2).replace(/\.?0+$/, '');
 }
+
+const VOICE_CATEGORY_FILTERS: SpeechVoiceCategoryFilter[] = [
+  'all',
+  'female',
+  'male',
+  'child',
+];
 
 export function VoiceReadingSettings() {
   const { t } = useTranslation();
@@ -48,6 +56,8 @@ export function VoiceReadingSettings() {
   const [voices, setVoices] = useState<SpeechVoiceOption[]>([]);
   const [voicesLoading, setVoicesLoading] = useState(true);
   const [voiceQuery, setVoiceQuery] = useState('');
+  const [voiceCategory, setVoiceCategory] =
+    useState<SpeechVoiceCategoryFilter>('all');
   const [previewing, setPreviewing] = useState(false);
   const previewRunRef = useRef(0);
 
@@ -67,9 +77,20 @@ export function VoiceReadingSettings() {
   }, [loaded, loadVoices]);
 
   const filteredVoices = useMemo(
-    () => filterSpeechVoices(voices, voiceQuery),
-    [voices, voiceQuery],
+    () => filterSpeechVoices(voices, voiceQuery, voiceCategory),
+    [voices, voiceQuery, voiceCategory],
   );
+
+  function categoryLabel(category: SpeechVoiceCategoryFilter): string {
+    return t(`settings.speechVoiceCategory.${category}`);
+  }
+
+  function voiceCategoryBadge(category: SpeechVoiceOption['category']): string {
+    if (!category || category === 'unknown') {
+      return t('settings.speechVoiceCategory.unknown');
+    }
+    return t(`settings.speechVoiceCategory.${category}`);
+  }
 
   const selectedVoice = useMemo(
     () => voices.find((v) => v.id === speechSettings.voiceURI) ?? null,
@@ -139,6 +160,37 @@ export function VoiceReadingSettings() {
           accessibilityLabel={t('settings.speechVoiceSearchA11y')}
         />
 
+        <View style={styles.categoryRow}>
+          {VOICE_CATEGORY_FILTERS.map((cat) => {
+            const selected = voiceCategory === cat;
+            return (
+              <Pressable
+                key={cat}
+                onPress={() => setVoiceCategory(cat)}
+                style={({ pressed }) => [
+                  styles.categoryChip,
+                  selected && styles.categoryChipSelected,
+                  pressed && styles.categoryChipPressed,
+                ]}
+                accessibilityRole="radio"
+                accessibilityState={{ selected }}
+                accessibilityLabel={categoryLabel(cat)}
+              >
+                <Text
+                  style={[
+                    styles.categoryChipText,
+                    selected && styles.categoryChipTextSelected,
+                  ]}
+                >
+                  {categoryLabel(cat)}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+
+        <Text style={styles.categoryNote}>{t('settings.speechVoiceCategoryNote')}</Text>
+
         {voicesLoading ? (
           <View style={styles.voiceLoading}>
             <ActivityIndicator color={colors.forest} />
@@ -167,7 +219,11 @@ export function VoiceReadingSettings() {
             </Pressable>
 
             {filteredVoices.length === 0 ? (
-              <Text style={styles.emptyVoices}>{t('settings.speechNoVoices')}</Text>
+              <Text style={styles.emptyVoices}>
+                {voiceCategory === 'all'
+                  ? t('settings.speechNoVoices')
+                  : t('settings.speechNoVoicesInCategory')}
+              </Text>
             ) : (
               filteredVoices.map((voice) => {
                 const selected = speechSettings.voiceURI === voice.id;
@@ -186,7 +242,11 @@ export function VoiceReadingSettings() {
                     <Text style={styles.voiceName} numberOfLines={2}>
                       {voice.name}
                     </Text>
-                    <Text style={styles.voiceMeta}>{voice.language}</Text>
+                    <Text style={styles.voiceMeta}>
+                      {voice.language}
+                      {' · '}
+                      {voiceCategoryBadge(voice.category)}
+                    </Text>
                   </Pressable>
                 );
               })
@@ -339,6 +399,42 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     backgroundColor: colors.backgroundPrimary,
     minHeight: touchTarget.min * 0.85,
+  },
+  categoryRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  categoryChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.borderSecondary,
+    backgroundColor: colors.backgroundSecondary,
+    minHeight: touchTarget.min * 0.7,
+    justifyContent: 'center',
+  },
+  categoryChipSelected: {
+    borderColor: colors.forest,
+    backgroundColor: `${colors.forest}12`,
+  },
+  categoryChipPressed: {
+    opacity: 0.9,
+  },
+  categoryChipText: {
+    fontSize: typography.chip,
+    fontWeight: '600',
+    color: colors.textSecondary,
+  },
+  categoryChipTextSelected: {
+    color: colors.forest,
+    fontWeight: '700',
+  },
+  categoryNote: {
+    fontSize: typography.chip,
+    color: colors.textSecondary,
+    lineHeight: 18,
   },
   voiceLoading: {
     minHeight: 120,
