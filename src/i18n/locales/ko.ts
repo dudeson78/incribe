@@ -136,11 +136,16 @@ export const ko = {
       '참조와 본문을 열어 암송할 내용을 확인합니다. 닫으면 다시 숨겨집니다.',
     verifyVerseListenBtn: '말씀듣기',
     verifyVerseListenA11y: '이 구절 본문을 한 번 읽어 줍니다',
-    verifyKeywordBtn: '키워드확인',
+    verifyKeywordBtn: '키워드',
     verifyKeywordA11y: '이 구절에 등록된 키워드를 확인합니다.',
     verifyKeywordModalTitle: '{{ref}} 키워드',
     verifyKeywordEmpty:
       '등록된 키워드가 없습니다. 「관리」 탭에서 키워드를 추가할 수 있습니다.',
+    verifyMnemonicsBtn: '연상기법',
+    verifyMnemonicsA11y: '이 구절에 등록된 연상기법을 확인합니다.',
+    verifyMnemonicsModalTitle: '{{ref}} 연상기법',
+    verifyMnemonicsEmpty:
+      '등록된 연상기법이 없습니다. 「관리」 탭에서 연상기법을 추가할 수 있습니다.',
   },
   rema: {
     label: '묵상',

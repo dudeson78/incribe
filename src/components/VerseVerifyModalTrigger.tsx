@@ -23,6 +23,7 @@ type VerseVerifyModalTriggerProps = {
   reference: string;
   text: string;
   keywords?: string | null;
+  mnemonics?: string | null;
   disabled?: boolean;
 };
 
@@ -81,23 +82,28 @@ export function VerseVerifyModalTrigger({
   reference,
   text,
   keywords,
+  mnemonics,
   disabled = false,
 }: VerseVerifyModalTriggerProps) {
   const { t } = useTranslation();
   const { speechSettings } = useSettings();
   const [scriptureVisible, setScriptureVisible] = useState(false);
   const [keywordVisible, setKeywordVisible] = useState(false);
+  const [mnemonicsVisible, setMnemonicsVisible] = useState(false);
   const [listenStatus, setListenStatus] = useState<'idle' | 'playing'>('idle');
   const listenRunRef = useRef(0);
 
   const refTrimmed = typeof reference === 'string' ? reference.trim() : '';
   const body = typeof text === 'string' ? text.trim() : '';
+  const mnemonicsText =
+    typeof mnemonics === 'string' ? mnemonics.trim() : '';
   const keywordList = useMemo(() => splitKeywordCsv(keywords), [keywords]);
 
   useEffect(() => {
     if (disabled) {
       setScriptureVisible(false);
       setKeywordVisible(false);
+      setMnemonicsVisible(false);
       cancelVerseCardSpeech();
       setListenStatus('idle');
     }
@@ -195,6 +201,26 @@ export function VerseVerifyModalTrigger({
         >
           <Text style={styles.triggerText}>{t('seven.verifyKeywordBtn')}</Text>
         </Pressable>
+
+        <Pressable
+          style={({ pressed }) => [
+            styles.trigger,
+            styles.triggerThird,
+            pressed && styles.triggerPressed,
+            disabled && styles.triggerDisabled,
+          ]}
+          onPress={() => {
+            if (disabled) return;
+            setMnemonicsVisible(true);
+          }}
+          disabled={disabled}
+          accessibilityRole="button"
+          accessibilityLabel={t('seven.verifyMnemonicsA11y')}
+        >
+          <Text style={styles.triggerText}>
+            {t('seven.verifyMnemonicsBtn')}
+          </Text>
+        </Pressable>
       </View>
 
       <VerifyModal
@@ -224,6 +250,22 @@ export function VerseVerifyModalTrigger({
               </View>
             ))}
           </View>
+        )}
+      </VerifyModal>
+
+      <VerifyModal
+        visible={mnemonicsVisible}
+        title={t('seven.verifyMnemonicsModalTitle', { ref: refTrimmed })}
+        onClose={() => setMnemonicsVisible(false)}
+      >
+        {mnemonicsText.length === 0 ? (
+          <Text style={styles.emptyKeywords}>
+            {t('seven.verifyMnemonicsEmpty')}
+          </Text>
+        ) : (
+          <Text style={styles.body} selectable>
+            {mnemonicsText}
+          </Text>
         )}
       </VerifyModal>
     </>
