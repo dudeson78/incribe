@@ -356,6 +356,20 @@ export const ko = {
       '웹에서는 브라우저 Web Speech API 음성 목록을 사용합니다.',
     speechNativeNote:
       '앱(iOS/Android)에서는 기기에 설치된 TTS 음성 목록을 사용합니다.',
+    speechQualityTitle: '음성이 기계처럼 들리나요?',
+    speechQualityToggleShow: '고품질 음성 받는 법 보기',
+    speechQualityToggleHide: '안내 닫기',
+    speechQualityIntro:
+      '기기에 더 자연스러운 한국어 음성을 추가로 설치하면 훨씬 사람 같은 목소리로 들을 수 있습니다. 무료이며, 설치 후 아래 「새로고침」을 누르고 새 음성을 선택하면 됩니다.',
+    speechQualityIosTitle: 'iPhone · iPad (iOS)',
+    speechQualityIosSteps:
+      '1. 설정 → 손쉬운 사용 → 음성 콘텐츠\n2. 음성 → 한국어 선택\n3. 「유나(Yuna)」 등에서 고품질·프리미엄 음성 내려받기\n4. 이 화면으로 돌아와 「새로고침」 후 새 음성 선택',
+    speechQualityAndroidTitle: 'Android',
+    speechQualityAndroidSteps:
+      '1. 설정 → 시스템 → 언어 및 입력 → 텍스트 음성 변환(TTS) 출력\n2. 엔진을 「Google TTS」 또는 「삼성 TTS」로 선택\n3. 「음성 데이터 설치」에서 한국어 내려받기(고품질 우선)\n4. 이 화면으로 돌아와 「새로고침」 후 새 음성 선택',
+    speechQualityWebTitle: '웹 브라우저',
+    speechQualityWeb:
+      '브라우저·OS에 설치된 음성을 사용합니다. Microsoft Edge나 Chrome에서 한국어 「Natural · Online」 음성이 목록에 보이면 훨씬 자연스럽습니다. 안 보이면 「새로고침」을 눌러 보세요.',
     speechVoice: '음성',
     speechReloadVoices: '새로고침',
     speechReloadVoicesA11y: '음성 목록 새로고침',
