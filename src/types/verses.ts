@@ -9,6 +9,8 @@ export type VerseRow = {
   rema: string | null;
   /** 빈칸 퀴즈용. 쉼표(,)로 구분된 구절 표현(본문 토큰과 맞는 구간이 빈칸) */
   keywords?: string | null;
+  /** 연상기법 — 암기를 돕는 자유 메모(아이디어) */
+  mnemonics?: string | null;
   verse_group: VerseGroup;
   created_at: string;
   is_active: boolean;
@@ -43,13 +45,20 @@ export type AddVerseInput = {
   text: string;
   rema?: string | null;
   keywords?: string | null;
+  mnemonics?: string | null;
   verse_group: VerseGroup;
 };
 
 export type UpdateVerseInput = Partial<
   Pick<
     VerseRow,
-    'reference' | 'text' | 'rema' | 'keywords' | 'verse_group' | 'is_active'
+    | 'reference'
+    | 'text'
+    | 'rema'
+    | 'keywords'
+    | 'mnemonics'
+    | 'verse_group'
+    | 'is_active'
   >
 >;
 

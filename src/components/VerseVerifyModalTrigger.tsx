@@ -12,13 +12,9 @@ import { useTranslation } from 'react-i18next';
 
 import { useSettings } from '../context/SettingsContext';
 import { splitKeywordCsv } from '../lib/quizTextUtils';
-import { cancelTodayTrainingSpeech } from '../lib/todayTrainingSpeech';
 import {
   cancelVerseCardSpeech,
-  getVerseCardSpeechStatus,
-  pauseVerseCardSpeech,
-  resumeVerseCardSpeech,
-  speakVerseTextThreeTimes,
+  speakVerseOnce,
 } from '../lib/verseCardSpeech';
 import { colors, typography } from '../theme/colors';
 import { radius, touchTarget } from '../theme/layout';
@@ -91,9 +87,7 @@ export function VerseVerifyModalTrigger({
   const { speechSettings } = useSettings();
   const [scriptureVisible, setScriptureVisible] = useState(false);
   const [keywordVisible, setKeywordVisible] = useState(false);
-  const [listenStatus, setListenStatus] = useState<
-    'idle' | 'playing' | 'paused'
-  >('idle');
+  const [listenStatus, setListenStatus] = useState<'idle' | 'playing'>('idle');
   const listenRunRef = useRef(0);
 
   const refTrimmed = typeof reference === 'string' ? reference.trim() : '';
@@ -118,49 +112,24 @@ export function VerseVerifyModalTrigger({
   const startVerseListen = useCallback(async () => {
     if (!body) return;
     const runId = ++listenRunRef.current;
-    cancelTodayTrainingSpeech();
     setListenStatus('playing');
     try {
-      await speakVerseTextThreeTimes(body, speechSettings);
+      await speakVerseOnce(body, speechSettings);
     } finally {
       if (listenRunRef.current === runId) {
-        const next = getVerseCardSpeechStatus();
-        setListenStatus(next === 'paused' ? 'paused' : 'idle');
+        setListenStatus('idle');
       }
     }
   }, [body, speechSettings]);
 
-  async function onListenPress() {
+  function onListenPress() {
     if (disabled || !body) return;
-
-    if (listenStatus === 'playing') {
-      const ok = await pauseVerseCardSpeech();
-      if (ok) setListenStatus('paused');
-      return;
-    }
-
-    if (listenStatus === 'paused') {
-      const ok = await resumeVerseCardSpeech();
-      if (ok) setListenStatus('playing');
-      return;
-    }
-
-    await startVerseListen();
+    if (listenStatus === 'playing') return;
+    void startVerseListen();
   }
 
-  const listenLabel =
-    listenStatus === 'playing'
-      ? t('seven.verifyVerseListenPause')
-      : listenStatus === 'paused'
-        ? t('seven.verifyVerseListenResume')
-        : t('seven.verifyVerseListenBtn');
-
-  const listenA11y =
-    listenStatus === 'playing'
-      ? t('seven.verifyVerseListenPauseA11y')
-      : listenStatus === 'paused'
-        ? t('seven.verifyVerseListenResumeA11y')
-        : t('seven.verifyVerseListenA11y');
+  const listenLabel = t('seven.verifyVerseListenBtn');
+  const listenA11y = t('seven.verifyVerseListenA11y');
 
   return (
     <>
@@ -191,7 +160,7 @@ export function VerseVerifyModalTrigger({
             pressed && styles.triggerPressed,
             (disabled || !body) && styles.triggerDisabled,
           ]}
-          onPress={() => void onListenPress()}
+          onPress={onListenPress}
           disabled={disabled || !body}
           accessibilityRole="button"
           accessibilityLabel={listenA11y}

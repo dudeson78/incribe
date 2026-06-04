@@ -59,7 +59,6 @@ export function VoiceReadingSettings() {
   const [voiceCategory, setVoiceCategory] =
     useState<SpeechVoiceCategoryFilter>('all');
   const [previewing, setPreviewing] = useState(false);
-  const [qualityHelpOpen, setQualityHelpOpen] = useState(false);
   const previewRunRef = useRef(0);
 
   const loadVoices = useCallback(async () => {
@@ -138,68 +137,6 @@ export function VoiceReadingSettings() {
       ) : (
         <Text style={styles.platformNote}>{t('settings.speechNativeNote')}</Text>
       )}
-
-      <View style={styles.qualityHelp}>
-        <Pressable
-          onPress={() => setQualityHelpOpen((v) => !v)}
-          style={({ pressed }) => [
-            styles.qualityToggle,
-            pressed && styles.qualityTogglePressed,
-          ]}
-          accessibilityRole="button"
-          accessibilityState={{ expanded: qualityHelpOpen }}
-        >
-          <Text style={styles.qualityToggleText}>
-            {t('settings.speechQualityTitle')}
-          </Text>
-          <Text style={styles.qualityToggleAction}>
-            {qualityHelpOpen
-              ? t('settings.speechQualityToggleHide')
-              : t('settings.speechQualityToggleShow')}
-          </Text>
-        </Pressable>
-
-        {qualityHelpOpen ? (
-          <View style={styles.qualityPanel}>
-            <Text style={styles.qualityIntro}>
-              {t('settings.speechQualityIntro')}
-            </Text>
-
-            {Platform.OS === 'web' ? (
-              <View style={styles.qualityStep}>
-                <Text style={styles.qualityStepTitle}>
-                  {t('settings.speechQualityWebTitle')}
-                </Text>
-                <Text style={styles.qualityStepText}>
-                  {t('settings.speechQualityWeb')}
-                </Text>
-              </View>
-            ) : null}
-
-            {Platform.OS === 'ios' || Platform.OS === 'web' ? (
-              <View style={styles.qualityStep}>
-                <Text style={styles.qualityStepTitle}>
-                  {t('settings.speechQualityIosTitle')}
-                </Text>
-                <Text style={styles.qualityStepText}>
-                  {t('settings.speechQualityIosSteps')}
-                </Text>
-              </View>
-            ) : null}
-
-            {Platform.OS === 'android' || Platform.OS === 'web' ? (
-              <View style={styles.qualityStep}>
-                <Text style={styles.qualityStepTitle}>
-                  {t('settings.speechQualityAndroidTitle')}
-                </Text>
-                <Text style={styles.qualityStepText}>
-                  {t('settings.speechQualityAndroidSteps')}
-                </Text>
-              </View>
-            ) : null}
-          </View>
-        ) : null}
-      </View>
 
       <View style={styles.controlGroup}>
         <View style={styles.controlHeader}>
@@ -431,60 +368,6 @@ const styles = StyleSheet.create({
     fontSize: typography.chip,
     color: colors.textSecondary,
     lineHeight: 18,
-  },
-  qualityHelp: {
-    borderWidth: 1,
-    borderColor: `${colors.orange}40`,
-    borderRadius: radius.md,
-    backgroundColor: `${colors.orange}0f`,
-    overflow: 'hidden',
-  },
-  qualityToggle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    minHeight: touchTarget.min * 0.9,
-  },
-  qualityTogglePressed: {
-    opacity: 0.85,
-  },
-  qualityToggleText: {
-    flexShrink: 1,
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.forest,
-  },
-  qualityToggleAction: {
-    fontSize: typography.chip,
-    fontWeight: '700',
-    color: colors.orange,
-    textDecorationLine: 'underline',
-  },
-  qualityPanel: {
-    paddingHorizontal: 12,
-    paddingBottom: 14,
-    gap: 12,
-  },
-  qualityIntro: {
-    fontSize: typography.chip,
-    color: colors.textSecondary,
-    lineHeight: 19,
-  },
-  qualityStep: {
-    gap: 4,
-  },
-  qualityStepTitle: {
-    fontSize: typography.chip,
-    fontWeight: '800',
-    color: colors.forest,
-  },
-  qualityStepText: {
-    fontSize: typography.chip,
-    color: colors.textSecondary,
-    lineHeight: 20,
   },
   controlGroup: {
     gap: 8,

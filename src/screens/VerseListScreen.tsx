@@ -55,6 +55,10 @@ export function VerseListScreen({ navigation }: Props) {
   );
   const [keywordDraft, setKeywordDraft] = useState('');
   const [keywordSaving, setKeywordSaving] = useState(false);
+  const [mnemonicsModal, setMnemonicsModal] =
+    useState<VerseWithSchedule | null>(null);
+  const [mnemonicsDraft, setMnemonicsDraft] = useState('');
+  const [mnemonicsSaving, setMnemonicsSaving] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -181,7 +185,8 @@ export function VerseListScreen({ navigation }: Props) {
   const blocked =
     deletingId !== null ||
     longBusyId !== null ||
-    keywordSaving;
+    keywordSaving ||
+    mnemonicsSaving;
 
   function openKeywords(v: VerseWithSchedule) {
     setKeywordDraft(v.keywords?.trim() ? (v.keywords ?? '') : '');
@@ -212,6 +217,38 @@ export function VerseListScreen({ navigation }: Props) {
       }
     } finally {
       setKeywordSaving(false);
+    }
+  }
+
+  function openMnemonics(v: VerseWithSchedule) {
+    setMnemonicsDraft(v.mnemonics?.trim() ? (v.mnemonics ?? '') : '');
+    setMnemonicsModal(v);
+  }
+
+  function closeMnemonicsModal() {
+    if (mnemonicsSaving) return;
+    setMnemonicsModal(null);
+  }
+
+  async function saveMnemonics() {
+    if (!mnemonicsModal) return;
+    const raw = mnemonicsDraft.trim();
+    setMnemonicsSaving(true);
+    try {
+      await updateVerse(mnemonicsModal.id, {
+        mnemonics: raw.length > 0 ? raw : null,
+      });
+      await load();
+      setMnemonicsModal(null);
+    } catch (e) {
+      const body = mapAppError(e, t);
+      if (Platform.OS === 'web') {
+        globalThis.alert(`${t('errors.title')}\n\n${body}`);
+      } else {
+        Alert.alert(t('errors.title'), body);
+      }
+    } finally {
+      setMnemonicsSaving(false);
     }
   }
 
@@ -301,6 +338,30 @@ export function VerseListScreen({ navigation }: Props) {
                   numberOfLines={1}
                 >
                   {t('verses.keyword')}
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => openMnemonics(item)}
+                style={({ pressed }) => [
+                  styles.keywordBtn,
+                  pressed && styles.keywordBtnPressed,
+                  blocked && styles.keywordBtnDisabled,
+                ]}
+                accessibilityLabel={t('verses.mnemonicsA11y', {
+                  ref: item.reference,
+                })}
+                accessibilityRole="button"
+                hitSlop={hitSlopComfortable}
+                disabled={blocked}
+              >
+                <Text
+                  style={[
+                    styles.keywordBtnText,
+                    blocked && styles.keywordBtnTextDisabled,
+                  ]}
+                  numberOfLines={1}
+                >
+                  {t('verses.mnemonics')}
                 </Text>
               </Pressable>
               <Pressable
@@ -445,6 +506,99 @@ export function VerseListScreen({ navigation }: Props) {
                 ) : (
                   <Text style={styles.keywordModalPriTxt}>
                     {t('verses.keywordSave')}
+                  </Text>
+                )}
+              </Pressable>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+
+      <Modal
+        visible={mnemonicsModal !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={closeMnemonicsModal}
+      >
+        <KeyboardAvoidingView
+          style={styles.keywordModalBackdrop}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <Pressable
+            style={styles.keywordModalDismiss}
+            onPress={closeMnemonicsModal}
+          />
+          <View style={styles.keywordModalCard}>
+            <Text style={styles.keywordModalTitle}>
+              {t('verses.mnemonicsModalTitle')}
+            </Text>
+            {mnemonicsModal ? (
+              <Text style={styles.keywordModalRef} numberOfLines={2}>
+                {mnemonicsModal.reference}
+              </Text>
+            ) : null}
+            {mnemonicsModal ? (
+              <ScrollView
+                style={styles.keywordModalBodyScroll}
+                nestedScrollEnabled
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator
+              >
+                <Text style={styles.keywordModalBodyText} selectable>
+                  {(mnemonicsModal.text ?? '').trim().length > 0
+                    ? mnemonicsModal.text
+                    : '—'}
+                </Text>
+              </ScrollView>
+            ) : null}
+            <TextInput
+              style={styles.keywordInput}
+              value={mnemonicsDraft}
+              onChangeText={setMnemonicsDraft}
+              placeholder={t('verses.mnemonicsPlaceholder')}
+              placeholderTextColor={colors.muted}
+              multiline
+              editable={!mnemonicsSaving}
+              autoCorrect={false}
+            />
+            <View style={styles.keywordModalBtns}>
+              <Pressable
+                style={[
+                  styles.keywordModalGhost,
+                  mnemonicsSaving && styles.keywordModalDisabled,
+                ]}
+                onPress={closeMnemonicsModal}
+                disabled={mnemonicsSaving}
+              >
+                <Text style={styles.keywordModalGhostTxt}>
+                  {t('verses.mnemonicsCancel')}
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.keywordModalGhost,
+                  mnemonicsSaving && styles.keywordModalDisabled,
+                ]}
+                onPress={() => setMnemonicsDraft('')}
+                disabled={mnemonicsSaving}
+              >
+                <Text style={styles.keywordModalGhostTxt}>
+                  {t('verses.mnemonicsClear')}
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.keywordModalPri,
+                  mnemonicsSaving && styles.keywordModalDisabled,
+                ]}
+                onPress={() => void saveMnemonics()}
+                disabled={mnemonicsSaving}
+              >
+                {mnemonicsSaving ? (
+                  <ActivityIndicator color={colors.white} size="small" />
+                ) : (
+                  <Text style={styles.keywordModalPriTxt}>
+                    {t('verses.mnemonicsSave')}
                   </Text>
                 )}
               </Pressable>

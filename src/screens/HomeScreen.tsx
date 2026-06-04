@@ -12,7 +12,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AnnualGoalCard } from '../components/AnnualGoalCard';
 import { HomeGroupedReview } from '../components/HomeGroupedReview';
-import { TodayTrainingListenButton } from '../components/TodayTrainingListenButton';
 import { TodayPracticeVerseBadge } from '../components/TodayPracticeVerseBadge';
 import { TodaysReviewList } from '../components/TodaysReviewList';
 import { UserTodayVerseCard } from '../components/UserTodayVerseCard';
@@ -232,7 +231,6 @@ export function HomeScreen() {
                 setTrainingFocusVerseId(verseId);
               }}
             />
-            <TodayTrainingListenButton rows={scheduled} />
           </>
         ) : null}
 
