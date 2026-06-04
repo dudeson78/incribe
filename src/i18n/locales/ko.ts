@@ -299,7 +299,7 @@ export const ko = {
     loadError: '불러오기 실패',
     loadErrorHint:
       '(로그인 상태와 Supabase 마이그레이션·RLS를 확인해 주세요.)',
-    todayTrainingListen: '오늘 훈련구절 듣기',
+    todayTrainingListen: '오늘 훈련구절 전체 듣기',
     todayTrainingListenHint: '쉐도잉 안내 · 구절별 3회 반복',
     todayTrainingListenPlaying: '낭독 중',
     todayTrainingListenPaused: '일시정지',

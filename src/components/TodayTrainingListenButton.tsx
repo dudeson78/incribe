@@ -91,9 +91,13 @@ export function TodayTrainingListenButton({ rows }: Props) {
           accessibilityRole="button"
           accessibilityLabel={t('home.todayTrainingListenA11y')}
         >
-          <Ionicons name="volume-high-outline" size={40} color={colors.white} />
-          <Text style={styles.btnTitle}>{t('home.todayTrainingListen')}</Text>
-          <Text style={styles.btnHint}>{t('home.todayTrainingListenHint')}</Text>
+          <Ionicons name="volume-high-outline" size={30} color={colors.white} />
+          <View style={styles.btnTextCol}>
+            <Text style={styles.btnTitle}>{t('home.todayTrainingListen')}</Text>
+            <Text style={styles.btnHint}>
+              {t('home.todayTrainingListenHint')}
+            </Text>
+          </View>
         </Pressable>
       ) : (
         <View style={styles.activePanel}>
@@ -183,34 +187,39 @@ const styles = StyleSheet.create({
   },
   btn: {
     width: '100%',
-    aspectRatio: 1,
-    maxHeight: 148,
+    height: 74,
     alignSelf: 'center',
     borderRadius: radius.lg,
     backgroundColor: colors.forest,
     borderWidth: 1,
     borderColor: `${colors.forest}cc`,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 16,
-    gap: 8,
+    paddingVertical: 10,
+    gap: 12,
     minHeight: touchTarget.min,
   },
   btnPressed: {
     opacity: 0.92,
   },
+  btnTextCol: {
+    alignItems: 'flex-start',
+    flexShrink: 1,
+    gap: 2,
+  },
   btnTitle: {
     fontSize: typography.body,
     fontWeight: '800',
     color: colors.white,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   btnHint: {
     fontSize: typography.chip,
     fontWeight: '600',
     color: `${colors.white}dd`,
-    textAlign: 'center',
+    textAlign: 'left',
     lineHeight: 16,
   },
   activePanel: {

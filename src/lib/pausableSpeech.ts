@@ -13,27 +13,15 @@ export type PausableSpeechSession = {
   id: string;
   status: PausableSpeechStatus;
   cancelRequested: boolean;
-  pauseWaiters: Array<() => void>;
   segments: string[];
   segmentIndex: number;
   settings: SpeechSettings | null;
+  /** 새 러너가 시작될 때마다 증가. 오래된 러너를 무효화한다. */
+  runToken: number;
 };
 
 let activeSession: PausableSpeechSession | null = null;
 let runnerPromise: Promise<void> | null = null;
-
-function notifyPauseWaiters(session: PausableSpeechSession): void {
-  while (session.pauseWaiters.length > 0) {
-    session.pauseWaiters.shift()?.();
-  }
-}
-
-function waitWhilePaused(session: PausableSpeechSession): Promise<void> {
-  if (session.status !== 'paused') return Promise.resolve();
-  return new Promise((resolve) => {
-    session.pauseWaiters.push(resolve);
-  });
-}
 
 export function getPausableSpeechSession(
   id: string,
@@ -54,10 +42,10 @@ export function beginPausableSpeechSession(id: string): PausableSpeechSession {
     id,
     status: 'idle',
     cancelRequested: false,
-    pauseWaiters: [],
     segments: [],
     segmentIndex: 0,
     settings: null,
+    runToken: 0,
   };
   activeSession = session;
   return session;
@@ -71,8 +59,7 @@ export function cancelPausableSpeechSession(
   target.cancelRequested = true;
   target.status = 'idle';
   target.segmentIndex = 0;
-  clearSpeechAbortFlag();
-  notifyPauseWaiters(target);
+  target.runToken += 1;
   stopSpeech();
   runnerPromise = null;
   if (activeSession === target) activeSession = null;
@@ -82,6 +69,7 @@ export async function pausePausableSpeechSession(
   session: PausableSpeechSession,
 ): Promise<boolean> {
   if (session.status !== 'playing') return false;
+  // status를 먼저 바꿔야 러너가 깨어났을 때 인덱스를 보존한 채 종료한다.
   session.status = 'paused';
   await pauseSpeech();
   return true;
@@ -97,35 +85,10 @@ export async function resumePausableSpeechSession(
   session.cancelRequested = false;
   clearSpeechAbortFlag();
   await waitSpeechEngineIdle();
-  notifyPauseWaiters(session);
 
-  if (!runnerPromise) {
-    void runPausableSpeechRunner(session);
-  }
-
+  // 보존된 segmentIndex부터 새 러너 시작 (처음으로 돌아가지 않는다).
+  runnerPromise = runPausableSpeechRunner(session);
   return true;
-}
-
-async function speakOnce(
-  text: string,
-  settings: SpeechSettings,
-  session: PausableSpeechSession,
-): Promise<'done' | 'cancelled'> {
-  while (true) {
-    if (session.cancelRequested) return 'cancelled';
-    await waitWhilePaused(session);
-    if (session.cancelRequested) return 'cancelled';
-
-    const result = await speakWithSettings(text, settings);
-    if (session.cancelRequested) return 'cancelled';
-
-    if (result === 'aborted' || session.status === 'paused') {
-      await waitSpeechEngineIdle();
-      continue;
-    }
-
-    return 'done';
-  }
 }
 
 async function runPausableSpeechRunner(
@@ -134,14 +97,14 @@ async function runPausableSpeechRunner(
   const settings = session.settings;
   if (!settings) return;
 
+  const myToken = (session.runToken += 1);
   session.cancelRequested = false;
-  if (session.status !== 'paused') {
-    session.status = 'playing';
-  }
+  session.status = 'playing';
 
   try {
     while (session.segmentIndex < session.segments.length) {
-      if (session.cancelRequested) return;
+      if (session.cancelRequested || session.runToken !== myToken) return;
+      if (session.status !== 'playing') return;
 
       const text = session.segments[session.segmentIndex]?.trim() ?? '';
       if (!text) {
@@ -149,35 +112,29 @@ async function runPausableSpeechRunner(
         continue;
       }
 
-      const outcome = await speakOnce(text, settings, session);
-      if (session.cancelRequested) return;
+      const result = await speakWithSettings(text, settings);
 
-      if (outcome === 'done' && session.status === 'playing') {
+      // 다른 러너로 교체됐거나 취소/일시정지된 경우: 인덱스 보존 후 종료.
+      if (session.cancelRequested || session.runToken !== myToken) return;
+      if (session.status !== 'playing') return;
+
+      if (result === 'done') {
         session.segmentIndex += 1;
+      } else {
+        // 의도치 않은 중단: 엔진 정리 후 같은 구간 재시도.
+        await waitSpeechEngineIdle();
       }
     }
+
+    session.status = 'idle';
+    session.segmentIndex = 0;
+    if (activeSession === session) activeSession = null;
   } finally {
-    runnerPromise = null;
-
-    if (session.cancelRequested) {
-      session.status = 'idle';
-      session.segmentIndex = 0;
-      if (activeSession === session) activeSession = null;
-      return;
-    }
-
-    if (
-      session.status === 'playing' &&
-      session.segmentIndex >= session.segments.length
-    ) {
-      session.status = 'idle';
-      session.segmentIndex = 0;
-      if (activeSession === session) activeSession = null;
-    }
+    if (session.runToken === myToken) runnerPromise = null;
   }
 }
 
-/** 일시정지 가능한 TTS — 일시정지 시 구간 인덱스 유지, 이어듣기 시 같은 위치부터 */
+/** 일시정지 가능한 TTS — 일시정지 시 구간 인덱스 보존, 이어듣기 시 그 위치부터 재개 */
 export function runPausableSpeechSegments(
   segments: string[],
   settings: SpeechSettings,
@@ -188,10 +145,6 @@ export function runPausableSpeechSegments(
   session.segmentIndex = 0;
   session.cancelRequested = false;
   session.status = 'playing';
-
-  if (runnerPromise) {
-    return runnerPromise;
-  }
 
   runnerPromise = runPausableSpeechRunner(session);
   return runnerPromise;
