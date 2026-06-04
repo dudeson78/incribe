@@ -54,13 +54,6 @@ function closingLine(reference: string): string {
   return `${referenceToSpeech(reference)} 말씀`;
 }
 
-function ensureSession(): PausableSpeechSession {
-  if (!session || session.id !== SESSION_ID) {
-    session = beginPausableSpeechSession(SESSION_ID);
-  }
-  return session;
-}
-
 export function getTodayTrainingSpeechStatus(): TrainingSpeechStatus {
   return getPausableSpeechStatus(SESSION_ID);
 }
@@ -79,13 +72,13 @@ export function isTodayTrainingSpeechCancelled(): boolean {
 }
 
 export async function pauseTodayTrainingSpeech(): Promise<boolean> {
-  const s = ensureSession();
-  return pausePausableSpeechSession(s);
+  if (!session) return false;
+  return pausePausableSpeechSession(session);
 }
 
 export async function resumeTodayTrainingSpeech(): Promise<boolean> {
-  const s = ensureSession();
-  return resumePausableSpeechSession(s);
+  if (!session) return false;
+  return resumePausableSpeechSession(session);
 }
 
 /** 오늘 훈련구절 리스트 순서로 쉐도잉 안내 낭독 */

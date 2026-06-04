@@ -14,9 +14,13 @@ export type PausableSpeechSession = {
   status: PausableSpeechStatus;
   cancelRequested: boolean;
   pauseWaiters: Array<() => void>;
+  segments: string[];
+  segmentIndex: number;
+  settings: SpeechSettings | null;
 };
 
 let activeSession: PausableSpeechSession | null = null;
+let runnerPromise: Promise<void> | null = null;
 
 function notifyPauseWaiters(session: PausableSpeechSession): void {
   while (session.pauseWaiters.length > 0) {
@@ -51,6 +55,9 @@ export function beginPausableSpeechSession(id: string): PausableSpeechSession {
     status: 'idle',
     cancelRequested: false,
     pauseWaiters: [],
+    segments: [],
+    segmentIndex: 0,
+    settings: null,
   };
   activeSession = session;
   return session;
@@ -63,9 +70,11 @@ export function cancelPausableSpeechSession(
   if (!target) return;
   target.cancelRequested = true;
   target.status = 'idle';
+  target.segmentIndex = 0;
   clearSpeechAbortFlag();
   notifyPauseWaiters(target);
   stopSpeech();
+  runnerPromise = null;
   if (activeSession === target) activeSession = null;
 }
 
@@ -82,10 +91,18 @@ export async function resumePausableSpeechSession(
   session: PausableSpeechSession,
 ): Promise<boolean> {
   if (session.status !== 'paused') return false;
+  if (!session.settings || session.segments.length === 0) return false;
+
   session.status = 'playing';
+  session.cancelRequested = false;
   clearSpeechAbortFlag();
   await waitSpeechEngineIdle();
   notifyPauseWaiters(session);
+
+  if (!runnerPromise) {
+    void runPausableSpeechRunner(session);
+  }
+
   return true;
 }
 
@@ -101,38 +118,81 @@ async function speakOnce(
 
     const result = await speakWithSettings(text, settings);
     if (session.cancelRequested) return 'cancelled';
-    if (result === 'done') return 'done';
-    await waitSpeechEngineIdle();
-    await waitWhilePaused(session);
+
+    if (result === 'aborted' || session.status === 'paused') {
+      await waitSpeechEngineIdle();
+      continue;
+    }
+
+    return 'done';
   }
 }
 
-/** 일시정지 가능한 TTS — 구간마다 stop 후 재개 시 같은 구간부터 다시 읽음 */
-export async function runPausableSpeechSegments(
+async function runPausableSpeechRunner(
+  session: PausableSpeechSession,
+): Promise<void> {
+  const settings = session.settings;
+  if (!settings) return;
+
+  session.cancelRequested = false;
+  if (session.status !== 'paused') {
+    session.status = 'playing';
+  }
+
+  try {
+    while (session.segmentIndex < session.segments.length) {
+      if (session.cancelRequested) return;
+
+      const text = session.segments[session.segmentIndex]?.trim() ?? '';
+      if (!text) {
+        session.segmentIndex += 1;
+        continue;
+      }
+
+      const outcome = await speakOnce(text, settings, session);
+      if (session.cancelRequested) return;
+
+      if (outcome === 'done' && session.status === 'playing') {
+        session.segmentIndex += 1;
+      }
+    }
+  } finally {
+    runnerPromise = null;
+
+    if (session.cancelRequested) {
+      session.status = 'idle';
+      session.segmentIndex = 0;
+      if (activeSession === session) activeSession = null;
+      return;
+    }
+
+    if (
+      session.status === 'playing' &&
+      session.segmentIndex >= session.segments.length
+    ) {
+      session.status = 'idle';
+      session.segmentIndex = 0;
+      if (activeSession === session) activeSession = null;
+    }
+  }
+}
+
+/** 일시정지 가능한 TTS — 일시정지 시 구간 인덱스 유지, 이어듣기 시 같은 위치부터 */
+export function runPausableSpeechSegments(
   segments: string[],
   settings: SpeechSettings,
   session: PausableSpeechSession,
 ): Promise<void> {
+  session.segments = segments;
+  session.settings = settings;
+  session.segmentIndex = 0;
   session.cancelRequested = false;
   session.status = 'playing';
 
-  try {
-    for (const segment of segments) {
-      const trimmed = segment.trim();
-      if (!trimmed) continue;
-      if ((await speakOnce(trimmed, settings, session)) === 'cancelled') {
-        return;
-      }
-    }
-  } finally {
-    if (session.cancelRequested) {
-      session.status = 'idle';
-      if (activeSession === session) activeSession = null;
-      return;
-    }
-    if (session.status === 'playing') {
-      session.status = 'idle';
-      if (activeSession === session) activeSession = null;
-    }
+  if (runnerPromise) {
+    return runnerPromise;
   }
+
+  runnerPromise = runPausableSpeechRunner(session);
+  return runnerPromise;
 }

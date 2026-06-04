@@ -14,13 +14,6 @@ const VERSE_READ_REPEATS = 3;
 
 let session: ReturnType<typeof beginPausableSpeechSession> | null = null;
 
-function ensureSession() {
-  if (!session || session.id !== SESSION_ID) {
-    session = beginPausableSpeechSession(SESSION_ID);
-  }
-  return session;
-}
-
 export function getVerseCardSpeechStatus(): PausableSpeechStatus {
   return getPausableSpeechStatus(SESSION_ID);
 }
@@ -33,11 +26,13 @@ export function cancelVerseCardSpeech(): void {
 }
 
 export async function pauseVerseCardSpeech(): Promise<boolean> {
-  return pausePausableSpeechSession(ensureSession());
+  if (!session) return false;
+  return pausePausableSpeechSession(session);
 }
 
 export async function resumeVerseCardSpeech(): Promise<boolean> {
-  return resumePausableSpeechSession(ensureSession());
+  if (!session) return false;
+  return resumePausableSpeechSession(session);
 }
 
 /** 훈련 카드 — 본문만 3회 낭독 (일시정지·이어듣기만) */
