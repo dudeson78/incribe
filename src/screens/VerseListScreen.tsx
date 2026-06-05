@@ -256,126 +256,10 @@ export function VerseListScreen({ navigation }: Props) {
             <Text style={styles.ref} numberOfLines={2}>
               {item.reference}
             </Text>
-            <View style={styles.refActions}>
-              <Pressable
-                onPress={() =>
-                  navigation.navigate('VerseForm', { verseId: item.id })
-                }
-                style={({ pressed }) => [
-                  styles.actionTextBtn,
-                  styles.editBtn,
-                  pressed && styles.keywordBtnPressed,
-                  (blocked || deletingId === item.id) && styles.actionBtnDisabled,
-                ]}
-                accessibilityLabel={t('verses.a11yEdit', {
-                  ref: item.reference,
-                })}
-                accessibilityRole="button"
-                hitSlop={hitSlopComfortable}
-                disabled={blocked || deletingId === item.id}
-              >
-                <Text style={styles.editBtnText} numberOfLines={1}>
-                  {t('verses.edit')}
-                </Text>
-              </Pressable>
-              <Pressable
-                onPress={() => confirmDelete(item.id, item.reference)}
-                style={({ pressed }) => [
-                  styles.actionTextBtn,
-                  styles.deleteBtn,
-                  pressed && styles.keywordBtnPressed,
-                  blocked && styles.actionBtnDisabled,
-                ]}
-                accessibilityLabel={t('verses.a11yDelete', {
-                  ref: item.reference,
-                })}
-                accessibilityRole="button"
-                hitSlop={hitSlopComfortable}
-                disabled={blocked}
-              >
-                {deletingId === item.id ? (
-                  <ActivityIndicator size="small" color={colors.errorBorder} />
-                ) : (
-                  <Text style={styles.deleteBtnText} numberOfLines={1}>
-                    {t('verses.delete')}
-                  </Text>
-                )}
-              </Pressable>
-              <Pressable
-                onPress={() => openKeywords(item)}
-                style={({ pressed }) => [
-                  styles.keywordBtn,
-                  pressed && styles.keywordBtnPressed,
-                  blocked && styles.keywordBtnDisabled,
-                ]}
-                accessibilityLabel={t('verses.keywordA11y', {
-                  ref: item.reference,
-                })}
-                accessibilityRole="button"
-                hitSlop={hitSlopComfortable}
-                disabled={blocked}
-              >
-                <Text
-                  style={[
-                    styles.keywordBtnText,
-                    blocked && styles.keywordBtnTextDisabled,
-                  ]}
-                  numberOfLines={1}
-                >
-                  {t('verses.keyword')}
-                </Text>
-              </Pressable>
-              <Pressable
-                onPress={() => openMnemonics(item)}
-                style={({ pressed }) => [
-                  styles.keywordBtn,
-                  pressed && styles.keywordBtnPressed,
-                  blocked && styles.keywordBtnDisabled,
-                ]}
-                accessibilityLabel={t('verses.mnemonicsA11y', {
-                  ref: item.reference,
-                })}
-                accessibilityRole="button"
-                hitSlop={hitSlopComfortable}
-                disabled={blocked}
-              >
-                <Text
-                  style={[
-                    styles.keywordBtnText,
-                    blocked && styles.keywordBtnTextDisabled,
-                  ]}
-                  numberOfLines={1}
-                >
-                  {t('verses.mnemonics')}
-                </Text>
-              </Pressable>
-              <Pressable
-                onPress={() => openRema(item)}
-                style={({ pressed }) => [
-                  styles.keywordBtn,
-                  pressed && styles.keywordBtnPressed,
-                  blocked && styles.keywordBtnDisabled,
-                ]}
-                accessibilityLabel={t('verses.remaA11y', {
-                  ref: item.reference,
-                })}
-                accessibilityRole="button"
-                hitSlop={hitSlopComfortable}
-                disabled={blocked}
-              >
-                <Text
-                  style={[
-                    styles.keywordBtnText,
-                    blocked && styles.keywordBtnTextDisabled,
-                  ]}
-                  numberOfLines={1}
-                >
-                  {t('verses.rema')}
-                </Text>
-              </Pressable>
-            </View>
           </View>
-          <Text style={styles.snippet}>{item.text}</Text>
+          <View style={styles.snippetBox}>
+            <Text style={styles.snippet}>{item.text}</Text>
+          </View>
           {schedule ? (
             <VersePracticeHistoryTable
               verse={item}
@@ -383,6 +267,124 @@ export function VerseListScreen({ navigation }: Props) {
               logs={logsByVerse[item.id] ?? []}
             />
           ) : null}
+          <View style={styles.refActions}>
+            <Pressable
+              onPress={() =>
+                navigation.navigate('VerseForm', { verseId: item.id })
+              }
+              style={({ pressed }) => [
+                styles.actionTextBtn,
+                styles.editBtn,
+                pressed && styles.keywordBtnPressed,
+                (blocked || deletingId === item.id) && styles.actionBtnDisabled,
+              ]}
+              accessibilityLabel={t('verses.a11yEdit', {
+                ref: item.reference,
+              })}
+              accessibilityRole="button"
+              hitSlop={hitSlopComfortable}
+              disabled={blocked || deletingId === item.id}
+            >
+              <Text style={styles.editBtnText} numberOfLines={1}>
+                {t('verses.edit')}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => confirmDelete(item.id, item.reference)}
+              style={({ pressed }) => [
+                styles.actionTextBtn,
+                styles.deleteBtn,
+                pressed && styles.keywordBtnPressed,
+                blocked && styles.actionBtnDisabled,
+              ]}
+              accessibilityLabel={t('verses.a11yDelete', {
+                ref: item.reference,
+              })}
+              accessibilityRole="button"
+              hitSlop={hitSlopComfortable}
+              disabled={blocked}
+            >
+              {deletingId === item.id ? (
+                <ActivityIndicator size="small" color={colors.errorBorder} />
+              ) : (
+                <Text style={styles.deleteBtnText} numberOfLines={1}>
+                  {t('verses.delete')}
+                </Text>
+              )}
+            </Pressable>
+            <Pressable
+              onPress={() => openKeywords(item)}
+              style={({ pressed }) => [
+                styles.keywordBtn,
+                pressed && styles.keywordBtnPressed,
+                blocked && styles.keywordBtnDisabled,
+              ]}
+              accessibilityLabel={t('verses.keywordA11y', {
+                ref: item.reference,
+              })}
+              accessibilityRole="button"
+              hitSlop={hitSlopComfortable}
+              disabled={blocked}
+            >
+              <Text
+                style={[
+                  styles.keywordBtnText,
+                  blocked && styles.keywordBtnTextDisabled,
+                ]}
+                numberOfLines={1}
+              >
+                {t('verses.keyword')}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => openMnemonics(item)}
+              style={({ pressed }) => [
+                styles.keywordBtn,
+                pressed && styles.keywordBtnPressed,
+                blocked && styles.keywordBtnDisabled,
+              ]}
+              accessibilityLabel={t('verses.mnemonicsA11y', {
+                ref: item.reference,
+              })}
+              accessibilityRole="button"
+              hitSlop={hitSlopComfortable}
+              disabled={blocked}
+            >
+              <Text
+                style={[
+                  styles.keywordBtnText,
+                  blocked && styles.keywordBtnTextDisabled,
+                ]}
+                numberOfLines={1}
+              >
+                {t('verses.mnemonics')}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => openRema(item)}
+              style={({ pressed }) => [
+                styles.keywordBtn,
+                pressed && styles.keywordBtnPressed,
+                blocked && styles.keywordBtnDisabled,
+              ]}
+              accessibilityLabel={t('verses.remaA11y', {
+                ref: item.reference,
+              })}
+              accessibilityRole="button"
+              hitSlop={hitSlopComfortable}
+              disabled={blocked}
+            >
+              <Text
+                style={[
+                  styles.keywordBtnText,
+                  blocked && styles.keywordBtnTextDisabled,
+                ]}
+                numberOfLines={1}
+              >
+                {t('verses.rema')}
+              </Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     );
@@ -757,9 +759,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     alignSelf: 'stretch',
     gap: 4,
+    marginTop: 10,
   },
   actionTextBtn: {
     paddingHorizontal: 8,
@@ -917,11 +920,20 @@ const styles = StyleSheet.create({
   keywordModalDisabled: {
     opacity: 0.55,
   },
+  snippetBox: {
+    backgroundColor: '#E8F2FB',
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: '#BBD9F2',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginTop: 4,
+  },
   snippet: {
     fontSize: typography.body,
     lineHeight: 26,
     color: colors.forest,
-    opacity: 0.85,
+    opacity: 0.9,
   },
   empty: {
     padding: 24,

@@ -27,7 +27,6 @@ export const ko = {
     a11yEdit: '{{ref}} 수정',
     a11yDelete: '{{ref}} 삭제',
     deleteSuccess: '구절이 삭제되었습니다.',
-    historyTitle: '연습 이력',
     historyColCategory: '회차',
     historySession: '{{n}}회',
     historyShort: '단기',

@@ -142,7 +142,6 @@ export function VersePracticeHistoryTable({ verse, schedule, logs }: Props) {
 
   return (
     <View style={styles.wrap}>
-      <Text style={styles.section}>{t('verses.historyTitle')}</Text>
       <View style={styles.table}>
         <View style={styles.tr}>
           <View style={[styles.cell, styles.labelCell, styles.headerLabelCell]}>
@@ -178,13 +177,6 @@ const styles = StyleSheet.create({
   wrap: {
     alignSelf: 'stretch',
     marginTop: 4,
-  },
-  section: {
-    fontSize: typography.chip,
-    fontWeight: '600',
-    color: colors.textSecondary,
-    marginBottom: 3,
-    letterSpacing: 0.15,
   },
   table: {
     alignSelf: 'stretch',
