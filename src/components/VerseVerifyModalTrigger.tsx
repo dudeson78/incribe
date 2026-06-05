@@ -16,6 +16,7 @@ import {
   cancelVerseCardSpeech,
   speakVerseOnce,
 } from '../lib/verseCardSpeech';
+import { toSpeakableReference } from '../lib/speakableReference';
 import { colors, typography } from '../theme/colors';
 import { radius, touchTarget } from '../theme/layout';
 
@@ -125,13 +126,16 @@ export function VerseVerifyModalTrigger({
     const runId = ++listenRunRef.current;
     setListenStatus('playing');
     try {
-      await speakVerseOnce(body, speechSettings);
+      // 본문을 먼저 읽고, 마지막에 참조를 풀어서(잠 1:1 → 잠언 1장 1절) 읽는다.
+      const spokenRef = toSpeakableReference(refTrimmed);
+      const speakText = spokenRef ? `${body}. ${spokenRef}` : body;
+      await speakVerseOnce(speakText, speechSettings);
     } finally {
       if (listenRunRef.current === runId) {
         setListenStatus('idle');
       }
     }
-  }, [body, speechSettings]);
+  }, [body, refTrimmed, speechSettings]);
 
   function onListenPress() {
     if (disabled || !body) return;

@@ -9,10 +9,11 @@ import {
 } from '../../lib/quizTextUtils';
 import { colors, typography } from '../../theme/colors';
 import { radius, touchTarget } from '../../theme/layout';
-import {
-  QuizOrderDragList,
-  type OrderDragItem,
-} from './QuizOrderDragList';
+
+type OrderItem = {
+  id: string;
+  text: string;
+};
 
 type Props = {
   row: ScheduledRow;
@@ -30,7 +31,7 @@ function arraysEqualOrder(a: string[], b: string[]): boolean {
   return true;
 }
 
-function buildOrderItems(segments: string[], roundKey: number): OrderDragItem[] {
+function buildOrderItems(segments: string[], roundKey: number): OrderItem[] {
   return segments.map((text, i) => ({
     id: `${roundKey}-${i}`,
     text,
@@ -53,7 +54,7 @@ export function QuizOrderMode({
     [text],
   );
 
-  const [items, setItems] = useState<OrderDragItem[]>([]);
+  const [items, setItems] = useState<OrderItem[]>([]);
 
   useEffect(() => {
     const segs = splitVerseIntoSegments(text);
@@ -72,11 +73,6 @@ export function QuizOrderMode({
         </Pressable>
       </View>
     );
-  }
-
-  function onReorder(next: OrderDragItem[]) {
-    setItems(next);
-    setFeedback('idle');
   }
 
   function moveItem(index: number, dir: -1 | 1) {
@@ -120,15 +116,12 @@ export function QuizOrderMode({
 
       <Text style={styles.dragHint}>{t('quiz.orderDragHint')}</Text>
 
-      <QuizOrderDragList
-        items={items}
-        onReorder={onReorder}
-        dragA11yLabel={t('quiz.orderDragHandleA11y')}
-        renderCard={(item, index, dragging) => (
+      <View style={styles.list}>
+        {items.map((item, index) => (
           <View
+            key={item.id}
             style={[
               styles.segmentCard,
-              dragging && styles.segmentCardDragging,
               feedback === 'ok' && styles.segmentCardOk,
             ]}
           >
@@ -165,8 +158,8 @@ export function QuizOrderMode({
               </Pressable>
             </View>
           </View>
-        )}
-      />
+        ))}
+      </View>
 
       {feedback === 'ok' ? (
         <View style={[styles.fb, styles.fbOk]}>
@@ -182,9 +175,11 @@ export function QuizOrderMode({
         </View>
       ) : null}
 
-      <Pressable style={styles.btnPri} onPress={checkOrder}>
-        <Text style={styles.btnPriTxt}>{t('quiz.orderCheck')}</Text>
-      </Pressable>
+      {feedback !== 'ok' ? (
+        <Pressable style={styles.btnPri} onPress={checkOrder}>
+          <Text style={styles.btnPriTxt}>{t('quiz.orderCheck')}</Text>
+        </Pressable>
+      ) : null}
       <Pressable style={styles.btnSec} onPress={reshuffle}>
         <Text style={styles.btnSecTxt}>{t('quiz.orderReshuffle')}</Text>
       </Pressable>
@@ -255,6 +250,9 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 2,
   },
+  list: {
+    gap: 8,
+  },
   segmentCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -265,11 +263,6 @@ const styles = StyleSheet.create({
     borderColor: colors.borderTertiary,
     padding: 14,
     minHeight: touchTarget.min + 10,
-  },
-  segmentCardDragging: {
-    borderColor: colors.forest,
-    borderWidth: 1.5,
-    backgroundColor: `${colors.forest}08`,
   },
   segmentCardOk: {
     borderColor: colors.successBorder,

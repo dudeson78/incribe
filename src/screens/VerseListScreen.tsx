@@ -741,13 +741,12 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   refRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: 'column',
+    alignItems: 'stretch',
     gap: 8,
     marginBottom: 4,
   },
   ref: {
-    flex: 1,
     minWidth: 0,
     fontSize: typography.min,
     fontWeight: '700',
@@ -756,12 +755,11 @@ const styles = StyleSheet.create({
   },
   refActions: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     flexWrap: 'wrap',
     justifyContent: 'flex-end',
-    flexShrink: 1,
+    alignSelf: 'stretch',
     gap: 4,
-    paddingTop: 2,
   },
   actionTextBtn: {
     paddingHorizontal: 8,
