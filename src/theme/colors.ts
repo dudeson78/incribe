@@ -25,12 +25,17 @@ export const colors = {
   successBorder: '#2E7D32',
   errorBg: '#FFEBEE',
   errorBorder: '#C62828',
+  /** 파스텔 블루 — 말씀 본문 영역 / 빈칸 퀴즈 정답 강조 */
+  pastelBlueBg: '#E8F0FE',
+  pastelBlueBorderSoft: '#BBD9F2',
+  pastelBlueBorder: '#4A80D9',
+  pastelBlueText: '#2E5BBF',
 } as const;
 
 export const typography = {
-  caption: 12,
+  caption: 13,
   min: 15,
-  chip: 11,
+  chip: 12,
   ref: 15,
   versePreview: 14,
   body: 17,

@@ -295,11 +295,11 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     textAlign: 'center',
     backgroundColor: `${colors.white}aa`,
-    borderRadius: 6,
+    borderRadius: radius.sm,
   },
   blankInputOk: {
-    borderBottomColor: '#4A80D9',
-    backgroundColor: '#E8F0FE',
+    borderBottomColor: colors.pastelBlueBorder,
+    backgroundColor: colors.pastelBlueBg,
   },
   blankInputBad: {
     borderBottomColor: colors.errorBorder,
@@ -311,13 +311,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   fbOk: {
-    backgroundColor: '#E8F0FE',
-    borderColor: '#4A80D9',
+    backgroundColor: colors.pastelBlueBg,
+    borderColor: colors.pastelBlueBorder,
   },
   fbOkTxt: {
     fontSize: typography.min,
     fontWeight: '700',
-    color: '#2E5BBF',
+    color: colors.pastelBlueText,
     textAlign: 'center',
   },
   fbBad: {

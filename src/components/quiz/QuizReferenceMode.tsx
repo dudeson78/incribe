@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
   },
   feedback: {
     padding: 16,
-    borderRadius: 12,
+    borderRadius: radius.md,
     marginBottom: 16,
     borderWidth: 1,
   },

@@ -15,7 +15,7 @@ import {
   supabase,
 } from '../supabase/client';
 import { colors, typography } from '../theme/colors';
-import { touchTarget } from '../theme/layout';
+import { radius, touchTarget } from '../theme/layout';
 
 /**
  * `EXPO_PUBLIC_BYPASS_EMAIL_AUTH_GATE=true` 이면 로그인 화면 없이 바로 메인.
@@ -188,7 +188,7 @@ const gateStyles = StyleSheet.create({
     minHeight: touchTarget.min,
     minWidth: touchTarget.min * 3,
     paddingHorizontal: 20,
-    borderRadius: 12,
+    borderRadius: radius.md,
     backgroundColor: colors.orange,
     justifyContent: 'center',
     alignItems: 'center',

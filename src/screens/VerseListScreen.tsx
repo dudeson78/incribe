@@ -24,7 +24,7 @@ import { normalizeSchedule, useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import type { VersesStackParamList } from '../navigation/types';
 import { colors, typography } from '../theme/colors';
-import { hitSlopComfortable, touchTarget } from '../theme/layout';
+import { hitSlopComfortable, radius, touchTarget } from '../theme/layout';
 import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<VersesStackParamList, 'VerseList'>;
@@ -248,25 +248,24 @@ export function VerseListScreen({ navigation }: Props) {
     const schedule = normalizeSchedule(item);
     return (
       <View style={styles.row}>
-        <View style={styles.circle}>
-          <Text style={styles.circleText}>{n}</Text>
+        <View style={styles.refRow}>
+          <View style={styles.circle}>
+            <Text style={styles.circleText}>{n}</Text>
+          </View>
+          <Text style={styles.ref} numberOfLines={2}>
+            {item.reference}
+          </Text>
         </View>
-        <View style={styles.main}>
-          <View style={styles.refRow}>
-            <Text style={styles.ref} numberOfLines={2}>
-              {item.reference}
-            </Text>
-          </View>
-          <View style={styles.snippetBox}>
-            <Text style={styles.snippet}>{item.text}</Text>
-          </View>
-          {schedule ? (
-            <VersePracticeHistoryTable
-              verse={item}
-              schedule={schedule}
-              logs={logsByVerse[item.id] ?? []}
-            />
-          ) : null}
+        <View style={styles.snippetBox}>
+          <Text style={styles.snippet}>{item.text}</Text>
+        </View>
+        {schedule ? (
+          <VersePracticeHistoryTable
+            verse={item}
+            schedule={schedule}
+            logs={logsByVerse[item.id] ?? []}
+          />
+        ) : null}
           <View style={styles.refActions}>
             <Pressable
               onPress={() =>
@@ -386,7 +385,6 @@ export function VerseListScreen({ navigation }: Props) {
             </Pressable>
           </View>
         </View>
-      </View>
     );
   };
 
@@ -430,6 +428,9 @@ export function VerseListScreen({ navigation }: Props) {
           <View style={styles.keywordModalCard}>
             <Text style={styles.keywordModalTitle}>
               {t('verses.keywordModalTitle')}
+            </Text>
+            <Text style={styles.keywordModalHint}>
+              {t('verses.keywordModalHint')}
             </Text>
             {keywordModal ? (
               <Text style={styles.keywordModalRef} numberOfLines={2}>
@@ -514,6 +515,9 @@ export function VerseListScreen({ navigation }: Props) {
           <View style={styles.keywordModalCard}>
             <Text style={styles.keywordModalTitle}>
               {t('verses.mnemonicsModalTitle')}
+            </Text>
+            <Text style={styles.keywordModalHint}>
+              {t('verses.mnemonicsModalHint')}
             </Text>
             {mnemonicsModal ? (
               <Text style={styles.keywordModalRef} numberOfLines={2}>
@@ -608,6 +612,9 @@ export function VerseListScreen({ navigation }: Props) {
             <Text style={styles.keywordModalTitle}>
               {t('verses.remaModalTitle')}
             </Text>
+            <Text style={styles.keywordModalHint}>
+              {t('verses.remaModalHint')}
+            </Text>
             {remaModal ? (
               <Text style={styles.keywordModalRef} numberOfLines={2}>
                 {remaModal.reference}
@@ -701,7 +708,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 7,
     marginRight: 6,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     backgroundColor: colors.forest,
     justifyContent: 'center',
     alignItems: 'center',
@@ -715,20 +722,20 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: 'column',
+    alignItems: 'stretch',
     backgroundColor: colors.card,
-    borderRadius: 14,
+    borderRadius: radius.lg,
     padding: 14,
     marginBottom: 12,
     borderWidth: 1,
     borderColor: `${colors.forest}22`,
-    gap: 12,
+    gap: 10,
   },
   circle: {
     width: 28,
     height: 28,
-    borderRadius: 14,
+    borderRadius: radius.lg,
     backgroundColor: colors.circleNumBg,
     alignItems: 'center',
     justifyContent: 'center',
@@ -738,17 +745,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
   },
-  main: {
-    flex: 1,
-    minWidth: 0,
-  },
   refRow: {
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    gap: 8,
-    marginBottom: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   ref: {
+    flex: 1,
     minWidth: 0,
     fontSize: typography.min,
     fontWeight: '700',
@@ -762,12 +765,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'stretch',
     gap: 4,
-    marginTop: 10,
   },
   actionTextBtn: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     borderWidth: 1,
     minHeight: touchTarget.min * 0.65,
     justifyContent: 'center',
@@ -797,7 +799,7 @@ const styles = StyleSheet.create({
   keywordBtn: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     borderWidth: 1,
     borderColor: `${colors.orange}99`,
     backgroundColor: `${colors.orange}14`,
@@ -832,7 +834,7 @@ const styles = StyleSheet.create({
   },
   keywordModalCard: {
     backgroundColor: colors.card,
-    borderRadius: 16,
+    borderRadius: radius.lg,
     padding: 18,
     borderWidth: 1,
     borderColor: `${colors.forest}22`,
@@ -845,6 +847,12 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.forest,
   },
+  keywordModalHint: {
+    fontSize: typography.min,
+    lineHeight: 21,
+    color: colors.muted,
+    marginTop: -4,
+  },
   keywordModalRef: {
     fontSize: typography.min,
     fontWeight: '700',
@@ -854,7 +862,7 @@ const styles = StyleSheet.create({
   },
   keywordModalBodyScroll: {
     maxHeight: 200,
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.creamBorder,
     backgroundColor: colors.cream,
@@ -870,7 +878,7 @@ const styles = StyleSheet.create({
     minHeight: 88,
     borderWidth: 0.5,
     borderColor: colors.borderSecondary,
-    borderRadius: 12,
+    borderRadius: radius.md,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: typography.body,
@@ -890,7 +898,7 @@ const styles = StyleSheet.create({
   keywordModalGhost: {
     paddingVertical: 10,
     paddingHorizontal: 12,
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: 0.5,
     borderColor: colors.borderSecondary,
     backgroundColor: colors.backgroundSecondary,
@@ -905,7 +913,7 @@ const styles = StyleSheet.create({
   keywordModalPri: {
     paddingVertical: 10,
     paddingHorizontal: 16,
-    borderRadius: 12,
+    borderRadius: radius.md,
     backgroundColor: colors.forest,
     minHeight: touchTarget.min * 0.75,
     minWidth: 100,
@@ -921,13 +929,12 @@ const styles = StyleSheet.create({
     opacity: 0.55,
   },
   snippetBox: {
-    backgroundColor: '#E8F2FB',
+    backgroundColor: colors.pastelBlueBg,
     borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: '#BBD9F2',
+    borderColor: colors.pastelBlueBorderSoft,
     paddingVertical: 12,
     paddingHorizontal: 14,
-    marginTop: 4,
   },
   snippet: {
     fontSize: typography.body,

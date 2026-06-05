@@ -20,7 +20,7 @@ import { useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import { supabase } from '../supabase/client';
 import { colors, settingsSectionTitle, typography } from '../theme/colors';
-import { touchTarget } from '../theme/layout';
+import { radius, touchTarget } from '../theme/layout';
 
 const DEFAULT_GOAL = 52;
 
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
     padding: 18,
     marginBottom: 14,
     backgroundColor: colors.card,
-    borderRadius: 16,
+    borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: `${colors.forest}18`,
   },
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     paddingVertical: 10,
     paddingHorizontal: 18,
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: 1,
     borderColor: `${colors.orange}88`,
     backgroundColor: `${colors.orange}14`,
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderColor: `${colors.forest}44`,
-    borderRadius: 12,
+    borderRadius: radius.md,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: typography.body,
@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
     minWidth: touchTarget.min,
     minHeight: touchTarget.min,
     paddingHorizontal: 16,
-    borderRadius: 12,
+    borderRadius: radius.md,
     backgroundColor: colors.orange,
     alignItems: 'center',
     justifyContent: 'center',

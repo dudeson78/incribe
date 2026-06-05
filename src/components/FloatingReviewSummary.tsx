@@ -3,6 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import { colors, typography } from '../theme/colors';
+import { radius } from '../theme/layout';
 
 type FloatingReviewSummaryProps = {
   doneToday: number;
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
     left: 16,
     right: 16,
     backgroundColor: colors.white,
-    borderRadius: 16,
+    borderRadius: radius.lg,
     paddingVertical: 14,
     paddingHorizontal: 18,
     flexDirection: 'row',

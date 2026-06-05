@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     padding: 18,
     marginBottom: 14,
     backgroundColor: colors.card,
-    borderRadius: 16,
+    borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: `${colors.forest}18`,
   },

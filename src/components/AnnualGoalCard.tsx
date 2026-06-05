@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { colors, typography } from '../theme/colors';
+import { radius } from '../theme/layout';
 
 type AnnualGoalCardProps = {
   goalTarget: number;
@@ -45,7 +46,7 @@ export function AnnualGoalCard({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.forest,
-    borderRadius: 16,
+    borderRadius: radius.lg,
     padding: 20,
     marginBottom: 12,
   },
@@ -90,13 +91,13 @@ const styles = StyleSheet.create({
   },
   track: {
     height: 6,
-    borderRadius: 3,
+    borderRadius: radius.xs,
     backgroundColor: 'rgba(255,255,255,0.25)',
     overflow: 'hidden',
   },
   fill: {
     height: '100%',
     backgroundColor: colors.white,
-    borderRadius: 3,
+    borderRadius: radius.xs,
   },
 });

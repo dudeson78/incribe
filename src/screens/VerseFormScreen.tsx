@@ -19,7 +19,7 @@ import { useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import type { VersesStackParamList } from '../navigation/types';
 import { colors, labelTypography, typography } from '../theme/colors';
-import { touchTarget } from '../theme/layout';
+import { radius, touchTarget } from '../theme/layout';
 import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<VersesStackParamList, 'VerseForm'>;
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   errBanner: {
     backgroundColor: `${colors.orange}22`,
     padding: 12,
-    borderRadius: 10,
+    borderRadius: radius.md,
     marginBottom: 12,
   },
   errText: {
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   area: {
     borderWidth: 0.5,
     borderColor: colors.borderSecondary,
-    borderRadius: 10,
+    borderRadius: radius.md,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: typography.body,
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   saveBtn: {
     backgroundColor: colors.forest,
     paddingVertical: 14,
-    borderRadius: 14,
+    borderRadius: radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: touchTarget.min,

@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { colors, typography } from '../theme/colors';
+import { radius } from '../theme/layout';
 
 const SESSION_SIZE = 7;
 
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     gap: 10,
     backgroundColor: colors.backgroundPrimary,
-    borderRadius: 16,
+    borderRadius: radius.lg,
     borderWidth: 0.5,
     borderColor: colors.borderTertiary,
     paddingHorizontal: 12,
@@ -157,7 +158,7 @@ const styles = StyleSheet.create({
     flex: 1,
     aspectRatio: 1,
     maxHeight: 40,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     borderWidth: 1.5,
     borderColor: colors.borderSecondary,
     alignItems: 'center',

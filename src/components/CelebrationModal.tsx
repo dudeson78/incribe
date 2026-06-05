@@ -9,7 +9,7 @@ import {
 import { useTranslation } from 'react-i18next';
 
 import { colors, typography } from '../theme/colors';
-import { touchTarget } from '../theme/layout';
+import { radius, touchTarget } from '../theme/layout';
 
 export type CelebrationVariant =
   | 'shortDailyComplete'
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.card,
-    borderRadius: 20,
+    borderRadius: radius.xl,
     padding: 28,
     alignItems: 'center',
     borderWidth: 2,
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.orange,
     paddingVertical: 14,
     paddingHorizontal: 28,
-    borderRadius: 14,
+    borderRadius: radius.lg,
     minWidth: 200,
     width: '100%',
     maxWidth: 300,
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.errorBg,
     paddingVertical: 14,
     paddingHorizontal: 28,
-    borderRadius: 14,
+    borderRadius: radius.lg,
     minWidth: 200,
     width: '100%',
     maxWidth: 300,

@@ -14,7 +14,6 @@ import { AnnualGoalCard } from '../components/AnnualGoalCard';
 import { HomeGroupedReview } from '../components/HomeGroupedReview';
 import { TodayPracticeVerseBadge } from '../components/TodayPracticeVerseBadge';
 import { TodaysReviewList } from '../components/TodaysReviewList';
-import { UserTodayVerseCard } from '../components/UserTodayVerseCard';
 import {
   useVerses,
   orderTodayScheduledRows,
@@ -26,9 +25,9 @@ import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
 import { mapAppError } from '../i18n/mapAppError';
 import type { RootTabParamList } from '../navigation/tabParams';
 import { useSettings } from '../context/SettingsContext';
-import { pickVerseOfDay } from '../lib/pickVerseOfDay';
 import type { VerseWithSchedule } from '../types/verses';
 import { colors, typography } from '../theme/colors';
+import { radius } from '../theme/layout';
 import { useTranslation } from 'react-i18next';
 
 export function HomeScreen() {
@@ -106,12 +105,6 @@ export function HomeScreen() {
       doneToday: 0,
       dueToday: 0,
     } satisfies DashboardSummary);
-
-  const verseOfDay = useMemo(
-    () =>
-      savedVerses.length ? pickVerseOfDay(savedVerses, new Date()) : null,
-    [savedVerses],
-  );
 
   const pendingSessions = useMemo(
     () =>
@@ -263,9 +256,6 @@ export function HomeScreen() {
           </View>
         ) : null}
 
-        {!loading && verseOfDay ? (
-          <UserTodayVerseCard verse={verseOfDay} />
-        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
@@ -286,7 +276,7 @@ const styles = StyleSheet.create({
   },
   banner: {
     backgroundColor: `${colors.orange}22`,
-    borderRadius: 12,
+    borderRadius: radius.md,
     padding: 14,
     marginBottom: 16,
     borderWidth: 0.5,
@@ -306,7 +296,7 @@ const styles = StyleSheet.create({
   },
   emptyVersesBox: {
     backgroundColor: colors.card,
-    borderRadius: 12,
+    borderRadius: radius.md,
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
@@ -324,7 +314,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     paddingVertical: 12,
     paddingHorizontal: 18,
-    borderRadius: 12,
+    borderRadius: radius.md,
     backgroundColor: colors.forest,
     alignItems: 'center',
     justifyContent: 'center',

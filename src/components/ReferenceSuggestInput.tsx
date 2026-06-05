@@ -10,6 +10,7 @@ import {
 
 import { filterReferenceSuggestions } from '../constants/referenceSuggestions';
 import { colors, labelTypography, typography } from '../theme/colors';
+import { radius } from '../theme/layout';
 import { useTranslation } from 'react-i18next';
 
 type ReferenceSuggestInputProps = {
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: `${colors.forest}44`,
-    borderRadius: 12,
+    borderRadius: radius.md,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: typography.body,
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
   dropdown: {
     marginTop: 6,
     maxHeight: 200,
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: 1,
     borderColor: `${colors.forest}33`,
     backgroundColor: colors.card,

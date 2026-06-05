@@ -21,7 +21,7 @@ import { isDevelopmentRuntime } from '../lib/isDevelopmentRuntime';
 import { mapAppError } from '../i18n/mapAppError';
 import { supabase } from '../supabase/client';
 import { colors, labelTypography, typography } from '../theme/colors';
-import { touchTarget } from '../theme/layout';
+import { radius, touchTarget } from '../theme/layout';
 
 function looksLikeEmail(s: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
@@ -635,7 +635,7 @@ const styles = StyleSheet.create({
   },
   btnOutlined: {
     minHeight: touchTarget.min,
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: 2,
     borderColor: colors.forest,
     backgroundColor: colors.card,
@@ -717,7 +717,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: `${colors.forest}33`,
-    borderRadius: 12,
+    borderRadius: radius.md,
     paddingHorizontal: 14,
     paddingVertical: Platform.OS === 'web' ? 12 : 10,
     fontSize: typography.body,
@@ -728,7 +728,7 @@ const styles = StyleSheet.create({
   btnPrimaryWide: {
     marginTop: 14,
     minHeight: touchTarget.min,
-    borderRadius: 12,
+    borderRadius: radius.md,
     backgroundColor: colors.orange,
     alignItems: 'center',
     justifyContent: 'center',
@@ -765,7 +765,7 @@ const styles = StyleSheet.create({
   privacyNoticeBox: {
     marginTop: 10,
     padding: 14,
-    borderRadius: 12,
+    borderRadius: radius.md,
     backgroundColor: colors.card,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: `${colors.forest}33`,
@@ -785,7 +785,7 @@ const styles = StyleSheet.create({
   checkOuter: {
     width: 22,
     height: 22,
-    borderRadius: 4,
+    borderRadius: radius.xs,
     borderWidth: 2,
     borderColor: colors.forest,
     marginTop: 2,

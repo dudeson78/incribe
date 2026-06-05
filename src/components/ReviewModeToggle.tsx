@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { colors, typography } from '../theme/colors';
-import { touchTarget } from '../theme/layout';
+import { radius, touchTarget } from '../theme/layout';
 
 export type ReviewDisplayMode = 'full' | 'verseOnly';
 
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     backgroundColor: colors.backgroundSecondary,
-    borderRadius: 10,
+    borderRadius: radius.md,
     padding: 3,
     marginBottom: 16,
   },
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
-    borderRadius: 6,
+    borderRadius: radius.sm,
   },
   segmentActive: {
     backgroundColor: colors.backgroundPrimary,

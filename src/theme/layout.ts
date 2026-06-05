@@ -6,8 +6,13 @@ export const touchTarget = {
 /** Padding around small touch targets (with hitSlop). */
 export const hitSlopComfortable = 12;
 
-/** Prototype-aligned corner radius */
+/** 코너 반경 스케일 — 매직넘버 대신 이 토큰을 사용 */
 export const radius = {
-  md: 10,
+  xs: 4,
+  sm: 8,
+  md: 12,
   lg: 16,
+  xl: 20,
+  /** 완전한 알약/원형 */
+  pill: 999,
 };

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import { colors, typography } from '../theme/colors';
+import { radius } from '../theme/layout';
 
 type SectionOrangeHeaderProps = {
   title: string;
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 12,
+    borderRadius: radius.md,
     marginBottom: 8,
     backgroundColor: colors.orange,
   },
