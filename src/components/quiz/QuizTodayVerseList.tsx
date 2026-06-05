@@ -2,6 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import type { ScheduledRow } from '../../hooks/useVerses';
+import { EmptyStatePanel } from '../EmptyStatePanel';
 import { colors, typography } from '../../theme/colors';
 import { verseTypography } from '../../theme/fonts';
 import { radius, screenPadding, touchTarget } from '../../theme/layout';
@@ -44,10 +45,11 @@ export function QuizTodayVerseList({
 
   if (rows.length === 0) {
     return (
-      <View style={styles.emptyCard}>
-        <Text style={styles.emptyTitle}>{t('quiz.noTrainingToday')}</Text>
-        <Text style={styles.emptyBody}>{t('quiz.noTrainingTodayHint')}</Text>
-      </View>
+      <EmptyStatePanel
+        variant="leaves"
+        title={t('quiz.noTrainingToday')}
+        body={t('quiz.noTrainingTodayHint')}
+      />
     );
   }
 
@@ -243,27 +245,5 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '300',
     color: colors.orange,
-  },
-  emptyCard: {
-    marginHorizontal: 16,
-    marginTop: 8,
-    padding: 22,
-    backgroundColor: colors.cream,
-    borderRadius: radius.lg,
-    borderWidth: 0.5,
-    borderColor: colors.creamBorder,
-  },
-  emptyTitle: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.forest,
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  emptyBody: {
-    fontSize: typography.min,
-    lineHeight: 22,
-    color: colors.textPrimary,
-    textAlign: 'center',
   },
 });

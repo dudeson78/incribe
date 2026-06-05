@@ -5,7 +5,6 @@ import {
   FlatList,
   KeyboardAvoidingView,
   ListRenderItem,
-  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -16,7 +15,9 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 
+import { EmptyStatePanel } from '../components/EmptyStatePanel';
 import { AppButton } from '../components/ui/AppButton';
+import { FadeModal } from '../components/ui/FadeModal';
 import { VerseMetaCoachmark } from '../components/VerseMetaCoachmark';
 import { VersePracticeHistoryTable } from '../components/VersePracticeHistoryTable';
 import type { ReviewLogRow, VerseWithSchedule } from '../types/verses';
@@ -378,17 +379,16 @@ export function VerseListScreen({ navigation }: Props) {
           { paddingBottom: tabScrollPadding },
         ]}
         ListEmptyComponent={
-          <View style={styles.empty}>
-            <Text style={styles.emptyTitle}>{t('verses.emptyTitle')}</Text>
-            <Text style={styles.emptyBody}>{t('verses.emptyBody')}</Text>
-          </View>
+          <EmptyStatePanel
+            variant="scroll"
+            title={t('verses.emptyTitle')}
+            body={t('verses.emptyBody')}
+          />
         }
       />
 
-      <Modal
+      <FadeModal
         visible={keywordModal !== null}
-        transparent
-        animationType="fade"
         onRequestClose={closeKeywordModal}
       >
         <KeyboardAvoidingView
@@ -460,12 +460,10 @@ export function VerseListScreen({ navigation }: Props) {
             </View>
           </View>
         </KeyboardAvoidingView>
-      </Modal>
+      </FadeModal>
 
-      <Modal
+      <FadeModal
         visible={mnemonicsModal !== null}
-        transparent
-        animationType="fade"
         onRequestClose={closeMnemonicsModal}
       >
         <KeyboardAvoidingView
@@ -540,12 +538,10 @@ export function VerseListScreen({ navigation }: Props) {
             </View>
           </View>
         </KeyboardAvoidingView>
-      </Modal>
+      </FadeModal>
 
-      <Modal
+      <FadeModal
         visible={remaModal !== null}
-        transparent
-        animationType="fade"
         onRequestClose={closeRemaModal}
       >
         <KeyboardAvoidingView
@@ -620,7 +616,7 @@ export function VerseListScreen({ navigation }: Props) {
             </View>
           </View>
         </KeyboardAvoidingView>
-      </Modal>
+      </FadeModal>
     </>
   );
 }
@@ -810,20 +806,5 @@ const styles = StyleSheet.create({
   snippet: {
     ...verseTypography.body,
     color: colors.textPrimary,
-  },
-  empty: {
-    padding: 24,
-    alignItems: 'center',
-  },
-  emptyTitle: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.forest,
-    marginBottom: 8,
-  },
-  emptyBody: {
-    fontSize: typography.min,
-    color: colors.muted,
-    textAlign: 'center',
   },
 });

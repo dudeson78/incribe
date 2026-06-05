@@ -1,13 +1,8 @@
-import {
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { AppButton } from './ui/AppButton';
+import { FadeModal } from './ui/FadeModal';
 import { colors, typography } from '../theme/colors';
 import { radius } from '../theme/layout';
 
@@ -52,12 +47,7 @@ export function CelebrationModal({
   }
 
   return (
-    <Modal
-      visible={visible}
-      animationType="fade"
-      transparent
-      onRequestClose={dismiss}
-    >
+    <FadeModal visible={visible} onRequestClose={dismiss}>
       <View style={styles.wrap}>
         <Pressable
           style={styles.backdropHit}
@@ -145,7 +135,7 @@ export function CelebrationModal({
           ) : null}
         </View>
       </View>
-    </Modal>
+    </FadeModal>
   );
 }
 

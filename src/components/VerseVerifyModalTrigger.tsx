@@ -1,12 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useSettings } from '../context/SettingsContext';
@@ -17,6 +10,7 @@ import {
 } from '../lib/verseCardSpeech';
 import { toSpeakableReference } from '../lib/speakableReference';
 import { AppButton } from './ui/AppButton';
+import { FadeModal } from './ui/FadeModal';
 import { colors, typography } from '../theme/colors';
 import { modalTheme } from '../theme/modal';
 import { radius, touchTarget } from '../theme/layout';
@@ -44,12 +38,7 @@ function VerifyModal({
   const { t } = useTranslation();
 
   return (
-    <Modal
-      visible={visible}
-      animationType="fade"
-      transparent
-      onRequestClose={onClose}
-    >
+    <FadeModal visible={visible} onRequestClose={onClose}>
       <View style={modalTheme.shell}>
         <Pressable
           style={modalTheme.backdrop}
@@ -75,7 +64,7 @@ function VerifyModal({
           />
         </View>
       </View>
-    </Modal>
+    </FadeModal>
   );
 }
 

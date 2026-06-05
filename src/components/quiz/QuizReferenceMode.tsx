@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { EmptyStatePanel } from '../EmptyStatePanel';
 import { AppButton } from '../ui/AppButton';
 import { useVerses } from '../../hooks/useVerses';
 import { referencesMatch } from '../../lib/referenceMatch';
@@ -94,9 +95,12 @@ export function QuizReferenceMode({ embedded = false }: { embedded?: boolean }) 
 
   if (!current || pool.length === 0) {
     return (
-      <View style={[styles.emptyBox, embedded && styles.embeddedSection]}>
-        <Text style={styles.emptyTitle}>{t('quiz.emptyTitle')}</Text>
-        <Text style={styles.emptyBody}>{t('quiz.emptyBody')}</Text>
+      <View style={[styles.emptyWrap, embedded && styles.embeddedSection]}>
+        <EmptyStatePanel
+          variant="quiz"
+          title={t('quiz.emptyTitle')}
+          body={t('quiz.emptyBody')}
+        />
       </View>
     );
   }
@@ -202,23 +206,9 @@ const styles = StyleSheet.create({
     fontSize: typography.min,
     color: colors.textSecondary,
   },
-  emptyBox: {
-    padding: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyTitle: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.forest,
-    marginBottom: 8,
-  },
-  emptyBody: {
-    fontSize: typography.body,
-    lineHeight: 26,
-    color: colors.textPrimary,
-    opacity: 0.9,
-    textAlign: 'center',
+  emptyWrap: {
+    padding: 8,
+    alignItems: 'stretch',
   },
   instructionBox: {
     width: '100%',

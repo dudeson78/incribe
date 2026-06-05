@@ -7,7 +7,9 @@ import {
 } from 'react-native';
 
 import type { CelebrationVariant } from './CelebrationModal';
+import { EmptyStatePanel } from './EmptyStatePanel';
 import { CelebrationModal } from './CelebrationModal';
+import { FadeIn } from './ui/FadeIn';
 import { SevenCheckTable } from './SevenCheckTable';
 import { VerseVerifyModalTrigger } from './VerseVerifyModalTrigger';
 import { verseTeaser } from '../lib/verseTeaser';
@@ -214,9 +216,7 @@ export function TodaysReviewList({
     const trimmed = alternateEmptyCaption?.trim();
     const emptyCopy = trimmed ? trimmed : t('memorize.noMoreVersesToday');
     return (
-      <View style={styles.empty}>
-        <Text style={styles.emptyMessage}>{emptyCopy}</Text>
-      </View>
+      <EmptyStatePanel variant="leaves" body={emptyCopy} />
     );
   }
 
@@ -284,7 +284,7 @@ export function TodaysReviewList({
         })}
       </Text>
 
-      <View key={verse.id} style={styles.block}>
+      <FadeIn key={verse.id} style={styles.block}>
         <View style={styles.versePaper}>
           <Text style={styles.refLine}>{verse.reference}</Text>
 
@@ -326,7 +326,7 @@ export function TodaysReviewList({
             disabled={locked}
           />
         </View>
-      </View>
+      </FadeIn>
 
       <CelebrationModal
         visible={sessionEnd !== null}
@@ -362,20 +362,6 @@ const styles = StyleSheet.create({
   loader: {
     marginTop: 14,
     paddingVertical: 32,
-  },
-  empty: {
-    padding: 20,
-    borderRadius: radius.lg,
-    backgroundColor: colors.backgroundSecondary,
-    borderWidth: 0.5,
-    borderColor: colors.borderTertiary,
-  },
-  emptyMessage: {
-    fontSize: typography.body,
-    lineHeight: 26,
-    color: colors.textPrimary,
-    opacity: 0.9,
-    textAlign: 'center',
   },
   block: {
     gap: 16,

@@ -6,10 +6,11 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { AppButton } from '../components/ui/AppButton';
+import { FadeModal } from '../components/ui/FadeModal';
 import { colors, typography } from '../theme/colors';
 import { radius } from '../theme/layout';
 
@@ -80,12 +81,7 @@ export function DialogProvider({ children }: { children: ReactNode }) {
     <DialogContext.Provider value={api}>
       {children}
       {dialog !== null ? (
-        <Modal
-          visible
-          transparent
-          animationType="fade"
-          onRequestClose={() => close(false)}
-        >
+        <FadeModal visible onRequestClose={() => close(false)}>
           <View style={styles.backdrop}>
             <Pressable
               style={StyleSheet.absoluteFill}
@@ -135,7 +131,7 @@ export function DialogProvider({ children }: { children: ReactNode }) {
               </View>
             </View>
           </View>
-        </Modal>
+        </FadeModal>
       ) : null}
     </DialogContext.Provider>
   );

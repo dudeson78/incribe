@@ -1,15 +1,9 @@
 import { useEffect, useState } from 'react';
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { AppButton } from './ui/AppButton';
+import { FadeModal } from './ui/FadeModal';
 import { colors, typography } from '../theme/colors';
 import { modalTheme } from '../theme/modal';
 import { radius, touchTarget } from '../theme/layout';
@@ -54,10 +48,8 @@ export function RemaModalTrigger({
         <Text style={styles.triggerText}>{t('rema.viewAction')}</Text>
       </Pressable>
 
-      <Modal
+      <FadeModal
         visible={visible}
-        animationType="fade"
-        transparent
         onRequestClose={() => setVisible(false)}
       >
         <View style={modalTheme.shell}>
@@ -87,7 +79,7 @@ export function RemaModalTrigger({
             />
           </View>
         </View>
-      </Modal>
+      </FadeModal>
     </>
   );
 }

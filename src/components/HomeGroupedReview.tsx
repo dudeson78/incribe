@@ -6,6 +6,7 @@ import {
   orderTodayScheduledRows,
   type ScheduledRow,
 } from '../hooks/useVerses';
+import { FadeIn } from './ui/FadeIn';
 import { colors, typography } from '../theme/colors';
 import { radius } from '../theme/layout';
 
@@ -147,7 +148,7 @@ export function HomeGroupedReview({
       </Pressable>
 
       {expanded ? (
-      <View style={styles.card}>
+      <FadeIn style={styles.card}>
         <View style={styles.tableHeader}>
           <View style={styles.headRow}>
             <View style={[styles.col, styles.headCell, styles.colHeadCentered]}>
@@ -271,7 +272,7 @@ export function HomeGroupedReview({
             </Pressable>
           );
         })}
-      </View>
+      </FadeIn>
       ) : null}
     </View>
   );

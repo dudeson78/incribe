@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { EmptyStatePanel } from '../components/EmptyStatePanel';
 import { AppButton } from '../components/ui/AppButton';
 import { AnnualGoalCard } from '../components/AnnualGoalCard';
 import { HomeGroupedReview } from '../components/HomeGroupedReview';
@@ -185,10 +186,10 @@ export function HomeScreen() {
         ) : null}
 
         {!loading && !error && savedVerses.length === 0 ? (
-          <View style={styles.emptyVersesBox}>
-            <Text style={styles.emptyVersesText}>
-              {t('home.emptyVersesHint', { tab: t('tabs.verses') })}
-            </Text>
+          <EmptyStatePanel
+            variant="seedling"
+            body={t('home.emptyVersesHint', { tab: t('tabs.verses') })}
+          >
             <AppButton
               label={t('home.emptyVersesCta', { tab: t('tabs.verses') })}
               onPress={() => navigation.navigate('VersesTab')}
@@ -197,7 +198,7 @@ export function HomeScreen() {
                 tab: t('tabs.verses'),
               })}
             />
-          </View>
+          </EmptyStatePanel>
         ) : null}
 
         <AnnualGoalCard
@@ -286,21 +287,5 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     color: colors.textPrimary,
     opacity: 0.92,
-  },
-  emptyVersesBox: {
-    backgroundColor: colors.card,
-    borderRadius: radius.md,
-    padding: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: colors.forestTintBorder,
-    gap: 14,
-    alignItems: 'center',
-  },
-  emptyVersesText: {
-    fontSize: typography.min,
-    lineHeight: 22,
-    color: colors.textPrimary,
-    textAlign: 'center',
   },
 });
