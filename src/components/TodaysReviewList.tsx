@@ -12,13 +12,11 @@ import { CelebrationModal } from './CelebrationModal';
 import { FadeIn } from './ui/FadeIn';
 import { SevenCheckTable } from './SevenCheckTable';
 import { VerseVerifyModalTrigger } from './VerseVerifyModalTrigger';
-import { verseTeaser } from '../lib/verseTeaser';
 import type { ScheduledRow } from '../hooks/useVerses';
 import { computeAfterReview } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import { useDialog } from '../context/DialogContext';
 import { colors, typography } from '../theme/colors';
-import { verseTypography } from '../theme/fonts';
 import { cardPadding, radius } from '../theme/layout';
 import { differenceInCalendarDays, startOfDay } from 'date-fns';
 import type { TFunction } from 'i18next';
@@ -265,8 +263,6 @@ export function TodaysReviewList({
       })
     : t('seven.captionRecite');
 
-  const teaser = verseTeaser(verse.text);
-
   return (
     <View style={styles.list}>
       <Text
@@ -286,15 +282,21 @@ export function TodaysReviewList({
 
       <FadeIn key={verse.id} style={styles.block}>
         <View style={styles.versePaper}>
-          <Text style={styles.refLine}>{verse.reference}</Text>
-
-          {teaser.length > 0 ? (
-            <View style={styles.verseTeaserBox}>
-              <Text style={styles.verseTeaser} selectable={false}>
-                {teaser}
-              </Text>
-            </View>
-          ) : null}
+          <View
+            style={styles.refHeroBox}
+            accessibilityRole="text"
+            accessibilityLabel={verse.reference}
+          >
+            <Text
+              style={styles.refHeroText}
+              numberOfLines={2}
+              adjustsFontSizeToFit
+              minimumFontScale={0.45}
+              selectable={false}
+            >
+              {verse.reference}
+            </Text>
+          </View>
 
           <View style={styles.tableInCard}>
             <SevenCheckTable
@@ -383,20 +385,23 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     gap: 14,
   },
-  refLine: {
-    ...verseTypography.reference,
-    textAlign: 'center',
-  },
-  verseTeaserBox: {
+  refHeroBox: {
     backgroundColor: colors.sky,
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.pastelBlueBorderSoft,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    minHeight: 120,
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  verseTeaser: {
-    ...verseTypography.body,
+  refHeroText: {
+    width: '100%',
+    fontSize: typography.goalNumber,
+    fontWeight: '700',
+    color: colors.forest,
     textAlign: 'center',
+    lineHeight: 44,
   },
 });

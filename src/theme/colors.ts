@@ -14,24 +14,24 @@ export const colors = {
   orange: '#E8B88A',
   dawn: '#E8B88A',
 
-  /** 캔버스 — 아침 안개 */
-  mist: '#F7F5F0',
-  background: '#F7F5F0',
-  backgroundPrimary: '#F7F5F0',
-  backgroundSecondary: '#F0EDE6',
+  /** 캔버스 — 흰 배경 (원래 톤 복원) */
+  mist: '#FFFFFF',
+  background: '#FFFFFF',
+  backgroundPrimary: '#FFFFFF',
+  backgroundSecondary: '#F5F5F5',
 
-  /** 말씀·카드 — 양피지 */
-  parchment: '#FBF8F2',
-  cream: '#FBF8F2',
-  card: '#FBF8F2',
-  creamBorder: '#E8E2D6',
+  /** 말씀·카드 — 흰 카드, 파스텔은 sky·sage 등 액센트만 */
+  parchment: '#FFFFFF',
+  cream: '#FFFFFF',
+  card: '#FFFFFF',
+  creamBorder: '#E0E0E0',
 
   white: '#FFFFFF',
-  textPrimary: '#2A332E',
-  textSecondary: '#6B756F',
-  borderSecondary: '#E0DDD6',
-  borderTertiary: '#EBE8E2',
-  muted: '#6B756F',
+  textPrimary: '#1E2822',
+  textSecondary: '#5C665E',
+  borderSecondary: '#D8DCD9',
+  borderTertiary: '#E8E8E8',
+  muted: '#5C665E',
 
   /** 단기 트랙 — dawn 틴트 */
   badgeShortBg: '#F5E8D8',

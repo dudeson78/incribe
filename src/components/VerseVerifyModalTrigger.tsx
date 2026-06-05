@@ -84,7 +84,6 @@ export function VerseVerifyModalTrigger({
   const [mnemonicsVisible, setMnemonicsVisible] = useState(false);
   const [remaVisible, setRemaVisible] = useState(false);
   const [listenStatus, setListenStatus] = useState<'idle' | 'playing'>('idle');
-  const [showAidButtons, setShowAidButtons] = useState(false);
   const listenRunRef = useRef(0);
 
   const refTrimmed = typeof reference === 'string' ? reference.trim() : '';
@@ -102,7 +101,6 @@ export function VerseVerifyModalTrigger({
       setRemaVisible(false);
       cancelVerseCardSpeech();
       setListenStatus('idle');
-      setShowAidButtons(false);
     }
   }, [disabled]);
 
@@ -177,29 +175,7 @@ export function VerseVerifyModalTrigger({
           />
         </View>
 
-        <Pressable
-          style={({ pressed }) => [
-            styles.moreToggle,
-            pressed && styles.triggerPressed,
-            disabled && styles.triggerDisabled,
-          ]}
-          onPress={() => {
-            if (disabled) return;
-            setShowAidButtons((v) => !v);
-          }}
-          disabled={disabled}
-          accessibilityRole="button"
-          accessibilityLabel={t('seven.verifyMoreA11y')}
-        >
-          <Text style={styles.moreToggleText}>
-            {showAidButtons
-              ? t('seven.verifyMoreCloseBtn')
-              : t('seven.verifyMoreBtn')}
-          </Text>
-        </Pressable>
-
-        {showAidButtons ? (
-          <View style={styles.triggerAidRow}>
+        <View style={styles.triggerAidRow}>
             <Pressable
               style={({ pressed }) => [
                 styles.trigger,
@@ -262,8 +238,7 @@ export function VerseVerifyModalTrigger({
                 {t('seven.verifyRemaBtn')}
               </Text>
             </Pressable>
-          </View>
-        ) : null}
+        </View>
       </View>
 
       <VerifyModal
@@ -349,57 +324,22 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   trigger: {
-    paddingVertical: 9,
-    paddingHorizontal: 6,
-    borderRadius: radius.md,
+    paddingVertical: 6,
+    paddingHorizontal: 4,
+    borderRadius: radius.sm,
     borderWidth: 1,
-    minHeight: touchTarget.min * 0.92,
+    minHeight: touchTarget.min * 0.72,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 4,
-  },
-  triggerHalf: {
-    flex: 1,
-    minWidth: 0,
   },
   triggerAidThird: {
     flex: 1,
     minWidth: 0,
   },
-  triggerPrimaryLg: {
-    paddingVertical: 12,
-    minHeight: touchTarget.min,
-  },
-  moreToggle: {
-    alignSelf: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    borderRadius: radius.pill,
-    borderWidth: 1,
+  /** 암기 보조 — 말씀확인·말씀듣기 아래 작은 3버튼 */
+  triggerAid: {
     borderColor: colors.borderSecondary,
     backgroundColor: colors.backgroundSecondary,
-    minHeight: touchTarget.min * 0.7,
-    justifyContent: 'center',
-  },
-  moreToggleText: {
-    fontSize: typography.caption,
-    fontWeight: '600',
-    color: colors.muted,
-  },
-  /** 1차 행위: 포레스트 틴트 */
-  triggerPrimary: {
-    borderColor: colors.forestTintBorder,
-    backgroundColor: colors.forestTint,
-  },
-  /** 암기 보조: 크림 톤으로 한 단계 가라앉힘 */
-  triggerAid: {
-    borderColor: colors.borderTertiary,
-    backgroundColor: colors.cream,
-  },
-  /** 재생 중: 오렌지 액센트로 상태 표시 */
-  triggerListenActive: {
-    borderColor: colors.orangeTintBorder,
-    backgroundColor: colors.orangeTint,
   },
   triggerPressed: {
     opacity: 0.88,
@@ -412,22 +352,9 @@ const styles = StyleSheet.create({
     lineHeight: 15,
     textAlign: 'center',
   },
-  triggerTextLg: {
-    fontSize: typography.caption,
-    lineHeight: 17,
-    textAlign: 'center',
-  },
-  triggerTextPrimary: {
-    fontWeight: '700',
-    color: colors.forest,
-  },
   triggerTextAid: {
     fontWeight: '600',
-    color: colors.muted,
-  },
-  triggerTextActive: {
-    fontWeight: '800',
-    color: colors.orange,
+    color: colors.textSecondary,
   },
   body: {
     ...modalTheme.body,

@@ -1,12 +1,11 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import {
   orderTodayScheduledRows,
   type ScheduledRow,
 } from '../hooks/useVerses';
-import { FadeIn } from './ui/FadeIn';
 import { colors, typography } from '../theme/colors';
 import { radius } from '../theme/layout';
 
@@ -114,7 +113,6 @@ export function HomeGroupedReview({
   onSelectVerse,
 }: HomeGroupedReviewProps) {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = useState(false);
 
   const entries = useMemo((): ListedRow[] => {
     return orderTodayScheduledRows(items).map((row) => ({
@@ -127,28 +125,7 @@ export function HomeGroupedReview({
 
   return (
     <View style={styles.wrap}>
-      <Pressable
-        style={({ pressed }) => [
-          styles.toggleHeader,
-          pressed && styles.toggleHeaderPressed,
-        ]}
-        onPress={() => setExpanded((v) => !v)}
-        accessibilityRole="button"
-        accessibilityState={{ expanded }}
-        accessibilityLabel={
-          expanded
-            ? t('home.reviewListCollapseA11y')
-            : t('home.reviewListExpandA11y')
-        }
-      >
-        <Text style={styles.toggleTitle}>
-          {t('home.reviewListToggle', { n: entries.length })}
-        </Text>
-        <Text style={styles.toggleChevron}>{expanded ? '∧' : '∨'}</Text>
-      </Pressable>
-
-      {expanded ? (
-      <FadeIn style={styles.card}>
+      <View style={styles.card}>
         <View style={styles.tableHeader}>
           <View style={styles.headRow}>
             <View style={[styles.col, styles.headCell, styles.colHeadCentered]}>
@@ -272,8 +249,7 @@ export function HomeGroupedReview({
             </Pressable>
           );
         })}
-      </FadeIn>
-      ) : null}
+      </View>
     </View>
   );
 }
@@ -281,33 +257,6 @@ export function HomeGroupedReview({
 const styles = StyleSheet.create({
   wrap: {
     marginBottom: 8,
-    gap: 8,
-  },
-  toggleHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.creamBorder,
-    backgroundColor: colors.parchment,
-    minHeight: 44,
-  },
-  toggleHeaderPressed: {
-    opacity: 0.9,
-  },
-  toggleTitle: {
-    fontSize: typography.caption,
-    fontWeight: '600',
-    color: colors.textSecondary,
-  },
-  toggleChevron: {
-    fontSize: typography.min,
-    fontWeight: '600',
-    color: colors.muted,
-    lineHeight: 20,
   },
   card: {
     backgroundColor: colors.backgroundPrimary,
