@@ -76,12 +76,6 @@ export function DialogProvider({ children }: { children: ReactNode }) {
 
   const api = useMemo<DialogApi>(() => ({ confirm, alert }), [confirm, alert]);
 
-  const isConfirm = dialog?.kind === 'confirm';
-  const destructive = isConfirm && (dialog?.opts as ConfirmOptions).destructive;
-  const confirmLabel = isConfirm
-    ? (dialog?.opts as ConfirmOptions).confirmText ?? t('common.confirm')
-    : (dialog?.opts as AlertOptions).okText ?? t('common.ok');
-
   return (
     <DialogContext.Provider value={api}>
       {children}
@@ -105,12 +99,11 @@ export function DialogProvider({ children }: { children: ReactNode }) {
                 <Text style={styles.message}>{dialog.opts.message}</Text>
               </View>
               <View style={styles.actions}>
-                {isConfirm ? (
+                {dialog.kind === 'confirm' ? (
                   <View style={styles.btnRow}>
                     <AppButton
                       label={
-                        (dialog.opts as ConfirmOptions).cancelText ??
-                        t('common.cancel')
+                        dialog.opts.cancelText ?? t('common.cancel')
                       }
                       onPress={() => close(false)}
                       variant="secondary"
@@ -119,9 +112,13 @@ export function DialogProvider({ children }: { children: ReactNode }) {
                       style={styles.btnHalf}
                     />
                     <AppButton
-                      label={confirmLabel}
+                      label={
+                        dialog.opts.confirmText ?? t('common.confirm')
+                      }
                       onPress={() => close(true)}
-                      variant={destructive ? 'danger' : 'primary'}
+                      variant={
+                        dialog.opts.destructive ? 'danger' : 'primary'
+                      }
                       size="md"
                       fullWidth={false}
                       style={styles.btnHalf}
@@ -129,7 +126,7 @@ export function DialogProvider({ children }: { children: ReactNode }) {
                   </View>
                 ) : (
                   <AppButton
-                    label={confirmLabel}
+                    label={dialog.opts.okText ?? t('common.ok')}
                     onPress={() => close(true)}
                     variant="primary"
                     size="md"
