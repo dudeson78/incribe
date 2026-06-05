@@ -77,13 +77,7 @@ export function QuizTodayVerseList({
   });
 
   const verseChipRow = (
-    <ScrollView
-      horizontal
-      nestedScrollEnabled
-      showsHorizontalScrollIndicator={false}
-      keyboardShouldPersistTaps="handled"
-      contentContainerStyle={styles.chipScrollContent}
-    >
+    <View style={styles.chipWrap}>
       {rows.map((row) => {
         const selected = selectedVerseId === row.verse.id;
         const solved = solvedVerseIds?.has(row.verse.id) ?? false;
@@ -119,7 +113,7 @@ export function QuizTodayVerseList({
           </Pressable>
         );
       })}
-    </ScrollView>
+    </View>
   );
 
   if (embedded && compactChipRow) {
@@ -161,16 +155,14 @@ const styles = StyleSheet.create({
   embeddedRows: {
     gap: 6,
   },
-  chipScrollContent: {
+  chipWrap: {
     flexDirection: 'row',
-    alignItems: 'stretch',
+    flexWrap: 'wrap',
+    alignItems: 'center',
     gap: 8,
     paddingVertical: 2,
-    paddingRight: 4,
-    flexGrow: 0,
   },
   chip: {
-    alignSelf: 'stretch',
     paddingHorizontal: 12,
     paddingVertical: 10,
     justifyContent: 'center',

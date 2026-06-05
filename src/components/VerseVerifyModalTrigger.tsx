@@ -166,7 +166,12 @@ export function VerseVerifyModalTrigger({
           accessibilityRole="button"
           accessibilityLabel={t('seven.verifyScriptureA11y')}
         >
-          <Text style={styles.triggerText} numberOfLines={2}>
+          <Text
+            style={styles.triggerText}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
+          >
             {t('seven.verifyScriptureBtn')}
           </Text>
         </Pressable>
@@ -186,7 +191,12 @@ export function VerseVerifyModalTrigger({
           accessibilityRole="button"
           accessibilityLabel={t('seven.verifyRemaA11y')}
         >
-          <Text style={styles.triggerText} numberOfLines={2}>
+          <Text
+            style={styles.triggerText}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
+          >
             {t('seven.verifyRemaBtn')}
           </Text>
         </Pressable>
@@ -212,7 +222,9 @@ export function VerseVerifyModalTrigger({
               styles.triggerText,
               listenStatus !== 'idle' && styles.triggerTextActive,
             ]}
-            numberOfLines={2}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
           >
             {listenLabel}
           </Text>
@@ -233,7 +245,12 @@ export function VerseVerifyModalTrigger({
           accessibilityRole="button"
           accessibilityLabel={t('seven.verifyKeywordA11y')}
         >
-          <Text style={styles.triggerText} numberOfLines={2}>
+          <Text
+            style={styles.triggerText}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
+          >
             {t('seven.verifyKeywordBtn')}
           </Text>
         </Pressable>
@@ -253,7 +270,12 @@ export function VerseVerifyModalTrigger({
           accessibilityRole="button"
           accessibilityLabel={t('seven.verifyMnemonicsA11y')}
         >
-          <Text style={styles.triggerText} numberOfLines={2}>
+          <Text
+            style={styles.triggerText}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
+          >
             {t('seven.verifyMnemonicsBtn')}
           </Text>
         </Pressable>
@@ -328,17 +350,17 @@ const styles = StyleSheet.create({
   triggerRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
-    gap: 5,
+    gap: 4,
     marginTop: 12,
   },
   trigger: {
-    paddingVertical: 10,
-    paddingHorizontal: 3,
+    paddingVertical: 9,
+    paddingHorizontal: 2,
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: `${colors.forest}44`,
     backgroundColor: `${colors.forest}0d`,
-    minHeight: touchTarget.min * 1.18,
+    minHeight: touchTarget.min * 0.92,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
@@ -357,8 +379,8 @@ const styles = StyleSheet.create({
     opacity: 0.45,
   },
   triggerText: {
-    fontSize: typography.chip,
-    lineHeight: 15,
+    fontSize: 10,
+    lineHeight: 13,
     fontWeight: '600',
     color: colors.forest,
     textAlign: 'center',

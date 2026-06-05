@@ -79,6 +79,17 @@ export function QuizOrderMode({
     setFeedback('idle');
   }
 
+  function moveItem(index: number, dir: -1 | 1) {
+    setItems((prev) => {
+      const target = index + dir;
+      if (target < 0 || target >= prev.length) return prev;
+      const next = [...prev];
+      [next[index], next[target]] = [next[target]!, next[index]!];
+      return next;
+    });
+    setFeedback('idle');
+  }
+
   function checkOrder() {
     const ok = arraysEqualOrder(order, correctSegments);
     setFeedback(ok ? 'ok' : 'bad');
@@ -123,6 +134,36 @@ export function QuizOrderMode({
           >
             <Text style={styles.segIx}>{index + 1}</Text>
             <Text style={styles.segTxt}>{item.text}</Text>
+            <View style={styles.arrowCol}>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.arrowBtn,
+                  pressed && styles.arrowBtnPressed,
+                  index === 0 && styles.arrowBtnDisabled,
+                ]}
+                onPress={() => moveItem(index, -1)}
+                disabled={index === 0}
+                hitSlop={4}
+                accessibilityRole="button"
+                accessibilityLabel={t('quiz.orderMoveUpA11y')}
+              >
+                <Text style={styles.arrowTxt}>▲</Text>
+              </Pressable>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.arrowBtn,
+                  pressed && styles.arrowBtnPressed,
+                  index === items.length - 1 && styles.arrowBtnDisabled,
+                ]}
+                onPress={() => moveItem(index, 1)}
+                disabled={index === items.length - 1}
+                hitSlop={4}
+                accessibilityRole="button"
+                accessibilityLabel={t('quiz.orderMoveDownA11y')}
+              >
+                <Text style={styles.arrowTxt}>▼</Text>
+              </Pressable>
+            </View>
           </View>
         )}
       />
@@ -253,6 +294,33 @@ const styles = StyleSheet.create({
     fontSize: typography.min,
     lineHeight: 22,
     color: colors.textPrimary,
+  },
+  arrowCol: {
+    alignSelf: 'center',
+    gap: 6,
+    marginLeft: 2,
+  },
+  arrowBtn: {
+    width: 32,
+    height: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 6,
+    borderWidth: 0.5,
+    borderColor: colors.borderTertiary,
+    backgroundColor: colors.backgroundSecondary,
+  },
+  arrowBtnPressed: {
+    opacity: 0.85,
+    backgroundColor: `${colors.forest}14`,
+  },
+  arrowBtnDisabled: {
+    opacity: 0.3,
+  },
+  arrowTxt: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.forest,
   },
   fb: {
     padding: 14,

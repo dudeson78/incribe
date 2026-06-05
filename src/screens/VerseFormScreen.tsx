@@ -32,7 +32,6 @@ export function VerseFormScreen({ navigation, route }: Props) {
 
   const [reference, setReference] = useState('');
   const [text, setText] = useState('');
-  const [rema, setRema] = useState('');
   const [loading, setLoading] = useState(!!verseId);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +40,6 @@ export function VerseFormScreen({ navigation, route }: Props) {
     if (!verseId) {
       setReference('');
       setText('');
-      setRema('');
       setLoading(false);
       return;
     }
@@ -56,7 +54,6 @@ export function VerseFormScreen({ navigation, route }: Props) {
       }
       setReference(found.reference);
       setText(found.text);
-      setRema(found.rema ?? '');
     } catch (e) {
       setError(mapAppError(e, t));
     } finally {
@@ -82,13 +79,11 @@ export function VerseFormScreen({ navigation, route }: Props) {
         await updateVerse(verseId, {
           reference: refTrim,
           text: textTrim,
-          rema: rema.trim() || null,
         });
       } else {
         await addVerse({
           reference: refTrim,
           text: textTrim,
-          rema: rema.trim() || null,
           verse_group: 'short',
         });
       }
@@ -147,20 +142,6 @@ export function VerseFormScreen({ navigation, route }: Props) {
             multiline
             textAlignVertical="top"
             accessibilityLabel={t('verseForm.bodyA11y')}
-          />
-        </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>{t('verseForm.meditationOptional')}</Text>
-          <TextInput
-            style={styles.area}
-            value={rema}
-            onChangeText={setRema}
-            placeholder={t('verseForm.phMeditation')}
-            placeholderTextColor={`${colors.muted}99`}
-            multiline
-            textAlignVertical="top"
-            accessibilityLabel={t('verseForm.remaA11y')}
           />
         </View>
 

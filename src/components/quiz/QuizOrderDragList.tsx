@@ -80,7 +80,8 @@ function DraggableRow({
 
   const pan = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
+      /** 시작 시점엔 responder를 잡지 않아 카드 안 화살표 버튼 등 자식 탭이 동작하게 한다. 실제 이동(dy/dx>2)이 있을 때만 드래그로 전환. */
+      onStartShouldSetPanResponder: () => false,
       onMoveShouldSetPanResponder: (_, gesture) =>
         Math.abs(gesture.dy) > 2 || Math.abs(gesture.dx) > 2,
       onPanResponderTerminationRequest: () => false,

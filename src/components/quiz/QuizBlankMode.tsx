@@ -40,6 +40,10 @@ export function QuizBlankMode({
   const [roundKey, setRoundKey] = useState(0);
   const [guesses, setGuesses] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<'idle' | 'ok' | 'bad'>('idle');
+  /** 정답 확인 시 각 빈칸별 판정 — 'ok'(맞음, 파랑) / 'bad'(틀림, 빨강) / null(미확인) */
+  const [slotResults, setSlotResults] = useState<Array<'ok' | 'bad' | null>>(
+    [],
+  );
 
   const challenge = useMemo(() => {
     const keywords = row.verse.keywords ?? null;
@@ -56,6 +60,7 @@ export function QuizBlankMode({
   useEffect(() => {
     if (!challenge?.blankIndices.length) return;
     setGuesses(Array(challenge.blankIndices.length).fill(''));
+    setSlotResults(Array(challenge.blankIndices.length).fill(null));
     setFeedback('idle');
   }, [challenge, roundKey]);
 
@@ -92,20 +97,23 @@ export function QuizBlankMode({
       next[slot] = v;
       return next;
     });
+    setSlotResults((prev) => {
+      if (prev[slot] == null) return prev;
+      const next = [...prev];
+      next[slot] = null;
+      return next;
+    });
     setFeedback('idle');
   }
 
   function verify() {
-    let ok = true;
-    for (let s = 0; s < C.answers.length; s++) {
-      if (
-        normalizeQuizToken(guesses[s] ?? '') !==
-        normalizeQuizToken(C.answers[s] ?? '')
-      ) {
-        ok = false;
-        break;
-      }
-    }
+    const results = C.answers.map((ans, s) =>
+      normalizeQuizToken(guesses[s] ?? '') === normalizeQuizToken(ans ?? '')
+        ? ('ok' as const)
+        : ('bad' as const),
+    );
+    setSlotResults(results);
+    const ok = results.every((r) => r === 'ok');
     setFeedback(ok ? 'ok' : 'bad');
     if (ok) {
       onBlankSolved?.(row.verse.id);
@@ -155,8 +163,8 @@ export function QuizBlankMode({
                 key={`b-slot-${si}-r-${roundKey}`}
                 style={[
                   styles.blankInput,
-                  feedback === 'ok' && styles.blankInputOk,
-                  feedback === 'bad' && styles.blankInputBad,
+                  slotResults[si] === 'ok' && styles.blankInputOk,
+                  slotResults[si] === 'bad' && styles.blankInputBad,
                 ]}
                 value={guesses[si] ?? ''}
                 onChangeText={(v) => setGuess(si, v)}
@@ -187,9 +195,11 @@ export function QuizBlankMode({
         </View>
       ) : null}
 
-      <Pressable style={styles.btnPri} onPress={verify}>
-        <Text style={styles.btnPriTxt}>{t('quiz.blankCheck')}</Text>
-      </Pressable>
+      {feedback !== 'ok' ? (
+        <Pressable style={styles.btnPri} onPress={verify}>
+          <Text style={styles.btnPriTxt}>{t('quiz.blankCheck')}</Text>
+        </Pressable>
+      ) : null}
 
       <Pressable style={styles.btnSec} onPress={reshuffleBlanks}>
         <Text style={styles.btnSecTxt}>{t('quiz.blankRegenerate')}</Text>
@@ -288,8 +298,8 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   blankInputOk: {
-    borderBottomColor: colors.successBorder,
-    backgroundColor: colors.successBg,
+    borderBottomColor: '#4A80D9',
+    backgroundColor: '#E8F0FE',
   },
   blankInputBad: {
     borderBottomColor: colors.errorBorder,
@@ -301,13 +311,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   fbOk: {
-    backgroundColor: colors.successBg,
-    borderColor: colors.successBorder,
+    backgroundColor: '#E8F0FE',
+    borderColor: '#4A80D9',
   },
   fbOkTxt: {
     fontSize: typography.min,
     fontWeight: '700',
-    color: colors.successBorder,
+    color: '#2E5BBF',
     textAlign: 'center',
   },
   fbBad: {

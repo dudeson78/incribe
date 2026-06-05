@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import type { ReactNode } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -27,8 +28,33 @@ const WEB_TAB_BAR_VIEWPORT_FIXED = {
 } as unknown as ViewStyle;
 
 /** 픽토그램 줄 · 아래 줄에 탭 이름 */
-const TAB_ICON_PX = 20;
-const TAB_TEXT_ICON_PX = 17;
+const TAB_ICON_PX = 22;
+/** 글리프(?, ☰, ⚙)는 폰트 line box 여백 탓에 실제보다 작아 보임 — 박스 크기에 맞춰 키운다. */
+const TAB_GLYPH_PX = 20;
+
+/** 모든 탭 아이콘을 동일한 정사각형 박스에 중앙 정렬해 크기를 통일한다(글리프/벡터 혼용에도 시각 크기 일치). */
+function TabIconBox({ children }: { children: ReactNode }) {
+  return <View style={styles.iconBox}>{children}</View>;
+}
+
+/** 텍스트 글리프 아이콘 — line box 여백 제거(정사각형) 후 박스 중앙 정렬 */
+function GlyphIcon({ char, color }: { char: string; color: string }) {
+  return (
+    <TabIconBox>
+      <Text
+        style={{
+          color,
+          fontSize: TAB_GLYPH_PX,
+          lineHeight: TAB_GLYPH_PX,
+          textAlign: 'center',
+          includeFontPadding: false,
+        }}
+      >
+        {char}
+      </Text>
+    </TabIconBox>
+  );
+}
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const VersesStack = createNativeStackNavigator<VersesStackParamList>();
@@ -84,23 +110,25 @@ function MainTabs() {
         tabBarLabelPosition: 'below-icon',
         tabBarShowLabel: true,
         tabBarIconStyle: {
-          marginBottom: 2,
+          marginBottom: 0,
         },
         tabBarLabelStyle: {
-          fontSize: 13,
+          fontSize: 12,
           fontWeight: '600',
-          marginTop: 2,
-          lineHeight: 16,
+          marginTop: 0,
+          lineHeight: 14,
           textAlign: 'center',
+          includeFontPadding: false,
         },
         tabBarItemStyle: {
           paddingVertical: 4,
-          /** 웹·좁은 창에서 플렉스로 탭 줄이 접히거나 밀려 보이지 않게 */
+          /** 웹·좁은 창에서 플렉스로 탭 줄이 접히거나 밀려 보이지 않게. overflow visible로 라벨 하단이 아이템 박스에서 잘리는 것 방지 */
           ...(Platform.OS === 'web'
             ? ({
                 flexGrow: 1,
                 flexShrink: 1,
                 minWidth: 0,
+                overflow: 'visible',
               } as const)
             : {}),
         },
@@ -115,8 +143,8 @@ function MainTabs() {
                   Platform.OS === 'android' || Platform.OS === 'ios' ? 64 : 68,
               }),
           /** BottomTabBar가 `paddingBottom: insets.bottom`을 적용하지만 `tabBarStyle`이 마지막이라 여기서 paddingBottom을 주면 그 값으로 덮여 세이프에리어가 깨져 하단에 빈 공간이 보일 수 있음. 네이티브는 라이브러리 패딩만 쓴다. */
-          paddingTop: Platform.OS === 'web' ? 8 : 4,
-          ...(Platform.OS === 'web' ? ({ paddingBottom: 12 } as const) : null),
+          paddingTop: 4,
+          ...(Platform.OS === 'web' ? ({ paddingBottom: 8 } as const) : null),
           backgroundColor: colors.backgroundPrimary,
           borderTopWidth: 0.5,
           borderTopColor: colors.borderTertiary,
@@ -147,7 +175,9 @@ function MainTabs() {
           title: t('tabs.home'),
           tabBarLabel: t('tabs.home'),
           tabBarIcon: ({ color }) => (
-            <Ionicons name="bulb-outline" size={TAB_ICON_PX} color={color} />
+            <TabIconBox>
+              <Ionicons name="bulb-outline" size={TAB_ICON_PX} color={color} />
+            </TabIconBox>
           ),
         }}
       />
@@ -157,9 +187,7 @@ function MainTabs() {
         options={{
           title: t('tabs.quiz'),
           tabBarLabel: t('tabs.quiz'),
-          tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: TAB_TEXT_ICON_PX }}>?</Text>
-          ),
+          tabBarIcon: ({ color }) => <GlyphIcon char="?" color={color} />,
         }}
       />
       <Tab.Screen
@@ -168,9 +196,7 @@ function MainTabs() {
         options={{
           title: t('tabs.verses'),
           tabBarLabel: t('tabs.verses'),
-          tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: TAB_TEXT_ICON_PX }}>☰</Text>
-          ),
+          tabBarIcon: ({ color }) => <GlyphIcon char="☰" color={color} />,
         }}
       />
       <Tab.Screen
@@ -179,9 +205,7 @@ function MainTabs() {
         options={{
           title: t('tabs.settings'),
           tabBarLabel: t('tabs.settings'),
-          tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: TAB_TEXT_ICON_PX }}>⚙</Text>
-          ),
+          tabBarIcon: ({ color }) => <GlyphIcon char="⚙" color={color} />,
         }}
       />
     </Tab.Navigator>
@@ -203,5 +227,12 @@ const styles = StyleSheet.create({
   navigationRoot: {
     flex: 1,
     ...(Platform.OS === 'web' ? ({ minHeight: 0 } as const) : null),
+  },
+  /** 모든 탭 아이콘 공통 박스 — 정사각형(높이=너비)으로 시각 크기 통일 */
+  iconBox: {
+    width: TAB_ICON_PX,
+    height: TAB_ICON_PX,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
