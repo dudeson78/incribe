@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCallback, useLayoutEffect, useState } from 'react';
 import {
@@ -28,9 +27,6 @@ import { colors, typography } from '../theme/colors';
 import { hitSlopComfortable, touchTarget } from '../theme/layout';
 import { useTranslation } from 'react-i18next';
 
-/** 참조 줄과 무게 맞춤으로 작게 */
-const REF_ICON_SZ = typography.caption + 2;
-
 type Props = NativeStackScreenProps<VersesStackParamList, 'VerseList'>;
 
 export function VerseListScreen({ navigation }: Props) {
@@ -59,6 +55,9 @@ export function VerseListScreen({ navigation }: Props) {
     useState<VerseWithSchedule | null>(null);
   const [mnemonicsDraft, setMnemonicsDraft] = useState('');
   const [mnemonicsSaving, setMnemonicsSaving] = useState(false);
+  const [remaModal, setRemaModal] = useState<VerseWithSchedule | null>(null);
+  const [remaDraft, setRemaDraft] = useState('');
+  const [remaSaving, setRemaSaving] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -186,7 +185,8 @@ export function VerseListScreen({ navigation }: Props) {
     deletingId !== null ||
     longBusyId !== null ||
     keywordSaving ||
-    mnemonicsSaving;
+    mnemonicsSaving ||
+    remaSaving;
 
   function openKeywords(v: VerseWithSchedule) {
     setKeywordDraft(v.keywords?.trim() ? (v.keywords ?? '') : '');
@@ -252,6 +252,38 @@ export function VerseListScreen({ navigation }: Props) {
     }
   }
 
+  function openRema(v: VerseWithSchedule) {
+    setRemaDraft(v.rema?.trim() ? (v.rema ?? '') : '');
+    setRemaModal(v);
+  }
+
+  function closeRemaModal() {
+    if (remaSaving) return;
+    setRemaModal(null);
+  }
+
+  async function saveRema() {
+    if (!remaModal) return;
+    const raw = remaDraft.trim();
+    setRemaSaving(true);
+    try {
+      await updateVerse(remaModal.id, {
+        rema: raw.length > 0 ? raw : null,
+      });
+      await load();
+      setRemaModal(null);
+    } catch (e) {
+      const body = mapAppError(e, t);
+      if (Platform.OS === 'web') {
+        globalThis.alert(`${t('errors.title')}\n\n${body}`);
+      } else {
+        Alert.alert(t('errors.title'), body);
+      }
+    } finally {
+      setRemaSaving(false);
+    }
+  }
+
   const renderItem: ListRenderItem<VerseWithSchedule> = ({ item, index }) => {
     const n = index + 1;
     const schedule = normalizeSchedule(item);
@@ -271,8 +303,10 @@ export function VerseListScreen({ navigation }: Props) {
                   navigation.navigate('VerseForm', { verseId: item.id })
                 }
                 style={({ pressed }) => [
-                  styles.iconHit,
-                  pressed && styles.iconHitPressed,
+                  styles.actionTextBtn,
+                  styles.editBtn,
+                  pressed && styles.keywordBtnPressed,
+                  (blocked || deletingId === item.id) && styles.actionBtnDisabled,
                 ]}
                 accessibilityLabel={t('verses.a11yEdit', {
                   ref: item.reference,
@@ -281,21 +315,17 @@ export function VerseListScreen({ navigation }: Props) {
                 hitSlop={hitSlopComfortable}
                 disabled={blocked || deletingId === item.id}
               >
-                <Ionicons
-                  name="pencil-outline"
-                  size={REF_ICON_SZ}
-                  color={
-                    blocked || deletingId === item.id
-                      ? `${colors.forest}55`
-                      : colors.forest
-                  }
-                />
+                <Text style={styles.editBtnText} numberOfLines={1}>
+                  {t('verses.edit')}
+                </Text>
               </Pressable>
               <Pressable
                 onPress={() => confirmDelete(item.id, item.reference)}
                 style={({ pressed }) => [
-                  styles.iconHit,
-                  pressed && styles.iconHitPressed,
+                  styles.actionTextBtn,
+                  styles.deleteBtn,
+                  pressed && styles.keywordBtnPressed,
+                  blocked && styles.actionBtnDisabled,
                 ]}
                 accessibilityLabel={t('verses.a11yDelete', {
                   ref: item.reference,
@@ -305,15 +335,11 @@ export function VerseListScreen({ navigation }: Props) {
                 disabled={blocked}
               >
                 {deletingId === item.id ? (
-                  <ActivityIndicator size="small" color={colors.forest} />
+                  <ActivityIndicator size="small" color={colors.errorBorder} />
                 ) : (
-                  <Ionicons
-                    name="trash-outline"
-                    size={REF_ICON_SZ}
-                    color={
-                      blocked ? `${colors.forest}55` : `${colors.forest}b3`
-                    }
-                  />
+                  <Text style={styles.deleteBtnText} numberOfLines={1}>
+                    {t('verses.delete')}
+                  </Text>
                 )}
               </Pressable>
               <Pressable
@@ -362,6 +388,30 @@ export function VerseListScreen({ navigation }: Props) {
                   numberOfLines={1}
                 >
                   {t('verses.mnemonics')}
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => openRema(item)}
+                style={({ pressed }) => [
+                  styles.keywordBtn,
+                  pressed && styles.keywordBtnPressed,
+                  blocked && styles.keywordBtnDisabled,
+                ]}
+                accessibilityLabel={t('verses.remaA11y', {
+                  ref: item.reference,
+                })}
+                accessibilityRole="button"
+                hitSlop={hitSlopComfortable}
+                disabled={blocked}
+              >
+                <Text
+                  style={[
+                    styles.keywordBtnText,
+                    blocked && styles.keywordBtnTextDisabled,
+                  ]}
+                  numberOfLines={1}
+                >
+                  {t('verses.rema')}
                 </Text>
               </Pressable>
               <Pressable
@@ -606,6 +656,99 @@ export function VerseListScreen({ navigation }: Props) {
           </View>
         </KeyboardAvoidingView>
       </Modal>
+
+      <Modal
+        visible={remaModal !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={closeRemaModal}
+      >
+        <KeyboardAvoidingView
+          style={styles.keywordModalBackdrop}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <Pressable
+            style={styles.keywordModalDismiss}
+            onPress={closeRemaModal}
+          />
+          <View style={styles.keywordModalCard}>
+            <Text style={styles.keywordModalTitle}>
+              {t('verses.remaModalTitle')}
+            </Text>
+            {remaModal ? (
+              <Text style={styles.keywordModalRef} numberOfLines={2}>
+                {remaModal.reference}
+              </Text>
+            ) : null}
+            {remaModal ? (
+              <ScrollView
+                style={styles.keywordModalBodyScroll}
+                nestedScrollEnabled
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator
+              >
+                <Text style={styles.keywordModalBodyText} selectable>
+                  {(remaModal.text ?? '').trim().length > 0
+                    ? remaModal.text
+                    : '—'}
+                </Text>
+              </ScrollView>
+            ) : null}
+            <TextInput
+              style={styles.keywordInput}
+              value={remaDraft}
+              onChangeText={setRemaDraft}
+              placeholder={t('verses.remaPlaceholder')}
+              placeholderTextColor={colors.muted}
+              multiline
+              editable={!remaSaving}
+              autoCorrect={false}
+            />
+            <View style={styles.keywordModalBtns}>
+              <Pressable
+                style={[
+                  styles.keywordModalGhost,
+                  remaSaving && styles.keywordModalDisabled,
+                ]}
+                onPress={closeRemaModal}
+                disabled={remaSaving}
+              >
+                <Text style={styles.keywordModalGhostTxt}>
+                  {t('verses.remaCancel')}
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.keywordModalGhost,
+                  remaSaving && styles.keywordModalDisabled,
+                ]}
+                onPress={() => setRemaDraft('')}
+                disabled={remaSaving}
+              >
+                <Text style={styles.keywordModalGhostTxt}>
+                  {t('verses.remaClear')}
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.keywordModalPri,
+                  remaSaving && styles.keywordModalDisabled,
+                ]}
+                onPress={() => void saveRema()}
+                disabled={remaSaving}
+              >
+                {remaSaving ? (
+                  <ActivityIndicator color={colors.white} size="small" />
+                ) : (
+                  <Text style={styles.keywordModalPriTxt}>
+                    {t('verses.remaSave')}
+                  </Text>
+                )}
+              </Pressable>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </>
   );
 }
@@ -677,18 +820,41 @@ const styles = StyleSheet.create({
   refActions: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
+    flexShrink: 1,
     gap: 4,
     paddingTop: 2,
   },
-  iconHit: {
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-    borderRadius: 6,
+  actionTextBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    minHeight: touchTarget.min * 0.65,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  iconHitPressed: {
-    opacity: 0.72,
+  actionBtnDisabled: {
+    opacity: 0.45,
+  },
+  editBtn: {
+    borderColor: `${colors.forest}55`,
+    backgroundColor: `${colors.forest}0f`,
+  },
+  editBtnText: {
+    fontSize: typography.caption,
+    fontWeight: '700',
+    color: colors.forest,
+  },
+  deleteBtn: {
+    borderColor: `${colors.errorBorder}80`,
+    backgroundColor: `${colors.errorBorder}12`,
+  },
+  deleteBtnText: {
+    fontSize: typography.caption,
+    fontWeight: '700',
+    color: colors.errorBorder,
   },
   jumpLongBtn: {
     paddingHorizontal: 8,

@@ -55,6 +55,13 @@ export const ko = {
     mnemonicsSave: '저장',
     mnemonicsClear: '비우기',
     mnemonicsCancel: '취소',
+    rema: '묵상',
+    remaA11y: '{{ref}} 묵상(느낀점·의미) 메모 편집',
+    remaModalTitle: '묵상 관리',
+    remaPlaceholder: '이 구절을 읽고 느낀 점, 구절의 의미 등을 자유롭게 메모해 보세요',
+    remaSave: '저장',
+    remaClear: '비우기',
+    remaCancel: '취소',
   },
   verseForm: {
     titleAdd: '구절 추가',

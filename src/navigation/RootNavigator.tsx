@@ -87,10 +87,10 @@ function MainTabs() {
           marginBottom: 2,
         },
         tabBarLabelStyle: {
-          fontSize: 11,
+          fontSize: 13,
           fontWeight: '600',
           marginTop: 2,
-          lineHeight: 14,
+          lineHeight: 16,
           textAlign: 'center',
         },
         tabBarItemStyle: {

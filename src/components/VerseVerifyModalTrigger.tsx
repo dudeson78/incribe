@@ -155,7 +155,9 @@ export function VerseVerifyModalTrigger({
           accessibilityRole="button"
           accessibilityLabel={t('seven.verifyScriptureA11y')}
         >
-          <Text style={styles.triggerText}>{t('seven.verifyScriptureBtn')}</Text>
+          <Text style={styles.triggerText} numberOfLines={1}>
+            {t('seven.verifyScriptureBtn')}
+          </Text>
         </Pressable>
 
         <Pressable
@@ -179,6 +181,7 @@ export function VerseVerifyModalTrigger({
               styles.triggerText,
               listenStatus !== 'idle' && styles.triggerTextActive,
             ]}
+            numberOfLines={1}
           >
             {listenLabel}
           </Text>
@@ -199,7 +202,9 @@ export function VerseVerifyModalTrigger({
           accessibilityRole="button"
           accessibilityLabel={t('seven.verifyKeywordA11y')}
         >
-          <Text style={styles.triggerText}>{t('seven.verifyKeywordBtn')}</Text>
+          <Text style={styles.triggerText} numberOfLines={1}>
+            {t('seven.verifyKeywordBtn')}
+          </Text>
         </Pressable>
 
         <Pressable
@@ -217,7 +222,7 @@ export function VerseVerifyModalTrigger({
           accessibilityRole="button"
           accessibilityLabel={t('seven.verifyMnemonicsA11y')}
         >
-          <Text style={styles.triggerText}>
+          <Text style={styles.triggerText} numberOfLines={1}>
             {t('seven.verifyMnemonicsBtn')}
           </Text>
         </Pressable>
@@ -276,17 +281,17 @@ const styles = StyleSheet.create({
   triggerRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
-    gap: 6,
+    gap: 5,
     marginTop: 12,
   },
   trigger: {
-    paddingVertical: 6,
-    paddingHorizontal: 8,
+    paddingVertical: 9,
+    paddingHorizontal: 4,
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: `${colors.forest}44`,
     backgroundColor: `${colors.forest}0d`,
-    minHeight: touchTarget.min * 0.75,
+    minHeight: touchTarget.min * 0.9,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
