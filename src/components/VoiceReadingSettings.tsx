@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Platform,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -59,6 +59,7 @@ export function VoiceReadingSettings() {
   const [voiceCategory, setVoiceCategory] =
     useState<SpeechVoiceCategoryFilter>('all');
   const [previewing, setPreviewing] = useState(false);
+  const [voicePickerVisible, setVoicePickerVisible] = useState(false);
   const previewRunRef = useRef(0);
 
   const loadVoices = useCallback(async () => {
@@ -102,7 +103,12 @@ export function VoiceReadingSettings() {
       voiceURI: voice?.id ?? null,
       language: voice?.language ?? speechSettings.language,
     });
+    setVoicePickerVisible(false);
   }
+
+  const currentVoiceLabel = selectedVoice
+    ? selectedVoice.name
+    : t('settings.speechVoiceSystem');
 
   async function previewSpeech() {
     const runId = ++previewRunRef.current;
@@ -130,138 +136,23 @@ export function VoiceReadingSettings() {
   return (
     <View style={styles.block}>
       <Text style={styles.blockTitle}>{t('settings.speechSection')}</Text>
-      <Text style={styles.hint}>{t('settings.speechHint')}</Text>
-
-      {Platform.OS === 'web' ? (
-        <Text style={styles.platformNote}>{t('settings.speechWebNote')}</Text>
-      ) : (
-        <Text style={styles.platformNote}>{t('settings.speechNativeNote')}</Text>
-      )}
 
       <View style={styles.controlGroup}>
-        <View style={styles.controlHeader}>
-          <Text style={styles.controlLabel}>{t('settings.speechVoice')}</Text>
-          <Pressable
-            onPress={() => void loadVoices()}
-            hitSlop={8}
-            accessibilityRole="button"
-            accessibilityLabel={t('settings.speechReloadVoicesA11y')}
-          >
-            <Text style={styles.linkAction}>{t('settings.speechReloadVoices')}</Text>
-          </Pressable>
-        </View>
-
-        <TextInput
-          style={styles.searchInput}
-          value={voiceQuery}
-          onChangeText={setVoiceQuery}
-          placeholder={t('settings.speechVoiceSearchPh')}
-          placeholderTextColor={`${colors.muted}99`}
-          accessibilityLabel={t('settings.speechVoiceSearchA11y')}
-        />
-
-        <View style={styles.categoryRow}>
-          {VOICE_CATEGORY_FILTERS.map((cat) => {
-            const selected = voiceCategory === cat;
-            return (
-              <Pressable
-                key={cat}
-                onPress={() => setVoiceCategory(cat)}
-                style={({ pressed }) => [
-                  styles.categoryChip,
-                  selected && styles.categoryChipSelected,
-                  pressed && styles.categoryChipPressed,
-                ]}
-                accessibilityRole="radio"
-                accessibilityState={{ selected }}
-                accessibilityLabel={categoryLabel(cat)}
-              >
-                <Text
-                  style={[
-                    styles.categoryChipText,
-                    selected && styles.categoryChipTextSelected,
-                  ]}
-                >
-                  {categoryLabel(cat)}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-
-        <Text style={styles.categoryNote}>{t('settings.speechVoiceCategoryNote')}</Text>
-
-        {voicesLoading ? (
-          <View style={styles.voiceLoading}>
-            <ActivityIndicator color={colors.forest} />
-            <Text style={styles.voiceLoadingText}>
-              {t('settings.speechVoicesLoading')}
-            </Text>
-          </View>
-        ) : (
-          <ScrollView
-            style={styles.voiceList}
-            nestedScrollEnabled
-            keyboardShouldPersistTaps="handled"
-          >
-            <Pressable
-              onPress={() => selectVoice(null)}
-              style={({ pressed }) => [
-                styles.voiceRow,
-                speechSettings.voiceURI == null && styles.voiceRowSelected,
-                pressed && styles.voiceRowPressed,
-              ]}
-              accessibilityRole="radio"
-              accessibilityState={{ selected: speechSettings.voiceURI == null }}
-            >
-              <Text style={styles.voiceName}>{t('settings.speechVoiceSystem')}</Text>
-              <Text style={styles.voiceMeta}>{t('settings.speechVoiceSystemHint')}</Text>
-            </Pressable>
-
-            {filteredVoices.length === 0 ? (
-              <Text style={styles.emptyVoices}>
-                {voiceCategory === 'all'
-                  ? t('settings.speechNoVoices')
-                  : t('settings.speechNoVoicesInCategory')}
-              </Text>
-            ) : (
-              filteredVoices.map((voice) => {
-                const selected = speechSettings.voiceURI === voice.id;
-                return (
-                  <Pressable
-                    key={voice.id}
-                    onPress={() => selectVoice(voice)}
-                    style={({ pressed }) => [
-                      styles.voiceRow,
-                      selected && styles.voiceRowSelected,
-                      pressed && styles.voiceRowPressed,
-                    ]}
-                    accessibilityRole="radio"
-                    accessibilityState={{ selected }}
-                  >
-                    <Text style={styles.voiceName} numberOfLines={2}>
-                      {voice.name}
-                    </Text>
-                    <Text style={styles.voiceMeta}>
-                      {voice.language}
-                      {' · '}
-                      {voiceCategoryBadge(voice.category)}
-                    </Text>
-                  </Pressable>
-                );
-              })
-            )}
-          </ScrollView>
-        )}
-
-        {selectedVoice ? (
-          <Text style={styles.selectedVoiceCaption}>
-            {t('settings.speechSelectedVoice', {
-              name: selectedVoice.name,
-              lang: selectedVoice.language,
-            })}
+        <Text style={styles.controlLabel}>{t('settings.speechVoice')}</Text>
+        <Pressable
+          style={({ pressed }) => [
+            styles.voiceSelectBtn,
+            pressed && styles.voiceRowPressed,
+          ]}
+          onPress={() => setVoicePickerVisible(true)}
+          accessibilityRole="button"
+          accessibilityLabel={t('settings.speechVoicePickA11y')}
+        >
+          <Text style={styles.voiceSelectBtnText} numberOfLines={1}>
+            {currentVoiceLabel}
           </Text>
-        ) : null}
+          <Text style={styles.voiceSelectChevron}>▾</Text>
+        </Pressable>
       </View>
 
       <View style={styles.controlGroup}>
@@ -344,6 +235,164 @@ export function VoiceReadingSettings() {
           <Text style={styles.resetBtnText}>{t('settings.speechReset')}</Text>
         </Pressable>
       </View>
+
+      <Modal
+        visible={voicePickerVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setVoicePickerVisible(false)}
+      >
+        <View style={styles.modalWrap}>
+          <Pressable
+            style={styles.modalBackdrop}
+            onPress={() => setVoicePickerVisible(false)}
+            accessibilityRole="button"
+            accessibilityLabel={t('settings.speechVoiceModalDone')}
+          />
+          <View style={styles.modalCard}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                {t('settings.speechVoiceModalTitle')}
+              </Text>
+              <Pressable
+                onPress={() => void loadVoices()}
+                hitSlop={8}
+                accessibilityRole="button"
+                accessibilityLabel={t('settings.speechReloadVoicesA11y')}
+              >
+                <Text style={styles.linkAction}>
+                  {t('settings.speechReloadVoices')}
+                </Text>
+              </Pressable>
+            </View>
+
+            <TextInput
+              style={styles.searchInput}
+              value={voiceQuery}
+              onChangeText={setVoiceQuery}
+              placeholder={t('settings.speechVoiceSearchPh')}
+              placeholderTextColor={`${colors.muted}99`}
+              accessibilityLabel={t('settings.speechVoiceSearchA11y')}
+            />
+
+            <View style={styles.categoryRow}>
+              {VOICE_CATEGORY_FILTERS.map((cat) => {
+                const selected = voiceCategory === cat;
+                return (
+                  <Pressable
+                    key={cat}
+                    onPress={() => setVoiceCategory(cat)}
+                    style={({ pressed }) => [
+                      styles.categoryChip,
+                      selected && styles.categoryChipSelected,
+                      pressed && styles.categoryChipPressed,
+                    ]}
+                    accessibilityRole="radio"
+                    accessibilityState={{ selected }}
+                    accessibilityLabel={categoryLabel(cat)}
+                  >
+                    <Text
+                      style={[
+                        styles.categoryChipText,
+                        selected && styles.categoryChipTextSelected,
+                      ]}
+                    >
+                      {categoryLabel(cat)}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+
+            {voicesLoading ? (
+              <View style={styles.voiceLoading}>
+                <ActivityIndicator color={colors.forest} />
+                <Text style={styles.voiceLoadingText}>
+                  {t('settings.speechVoicesLoading')}
+                </Text>
+              </View>
+            ) : (
+              <ScrollView
+                style={styles.voiceListModal}
+                nestedScrollEnabled
+                keyboardShouldPersistTaps="handled"
+              >
+                <Pressable
+                  onPress={() => selectVoice(null)}
+                  style={({ pressed }) => [
+                    styles.voiceRow,
+                    speechSettings.voiceURI == null && styles.voiceRowSelected,
+                    pressed && styles.voiceRowPressed,
+                  ]}
+                  accessibilityRole="radio"
+                  accessibilityState={{
+                    selected: speechSettings.voiceURI == null,
+                  }}
+                >
+                  <Text style={styles.voiceName}>
+                    {t('settings.speechVoiceSystem')}
+                  </Text>
+                  <Text style={styles.voiceMeta}>
+                    {t('settings.speechVoiceSystemHint')}
+                  </Text>
+                </Pressable>
+
+                {filteredVoices.length === 0 ? (
+                  <Text style={styles.emptyVoices}>
+                    {voiceCategory === 'all'
+                      ? t('settings.speechNoVoices')
+                      : t('settings.speechNoVoicesInCategory')}
+                  </Text>
+                ) : (
+                  filteredVoices.map((voice) => {
+                    const selected = speechSettings.voiceURI === voice.id;
+                    return (
+                      <Pressable
+                        key={voice.id}
+                        onPress={() => selectVoice(voice)}
+                        style={({ pressed }) => [
+                          styles.voiceRow,
+                          selected && styles.voiceRowSelected,
+                          pressed && styles.voiceRowPressed,
+                        ]}
+                        accessibilityRole="radio"
+                        accessibilityState={{ selected }}
+                      >
+                        <Text style={styles.voiceName} numberOfLines={2}>
+                          {voice.name}
+                        </Text>
+                        <Text style={styles.voiceMeta}>
+                          {voice.language}
+                          {' · '}
+                          {voiceCategoryBadge(voice.category)}
+                        </Text>
+                      </Pressable>
+                    );
+                  })
+                )}
+              </ScrollView>
+            )}
+
+            <Text style={styles.categoryNote}>
+              {t('settings.speechVoiceCategoryNote')}
+            </Text>
+
+            <Pressable
+              onPress={() => setVoicePickerVisible(false)}
+              style={({ pressed }) => [
+                styles.modalDoneBtn,
+                pressed && styles.previewBtnPressed,
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel={t('settings.speechVoiceModalDone')}
+            >
+              <Text style={styles.modalDoneText}>
+                {t('settings.speechVoiceModalDone')}
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -445,6 +494,78 @@ const styles = StyleSheet.create({
   voiceLoadingText: {
     fontSize: typography.chip,
     color: colors.textSecondary,
+  },
+  voiceSelectBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    minHeight: touchTarget.min,
+    borderWidth: 1,
+    borderColor: `${colors.forest}33`,
+    borderRadius: radius.md,
+    backgroundColor: colors.backgroundPrimary,
+  },
+  voiceSelectBtnText: {
+    flex: 1,
+    fontSize: typography.min,
+    fontWeight: '600',
+    color: colors.textPrimary,
+  },
+  voiceSelectChevron: {
+    fontSize: typography.min,
+    color: colors.forest,
+    fontWeight: '700',
+  },
+  modalWrap: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  modalBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(45, 90, 61, 0.45)',
+  },
+  modalCard: {
+    backgroundColor: colors.card,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 18,
+    paddingTop: 16,
+    paddingBottom: 24,
+    gap: 12,
+    maxHeight: '82%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  modalTitle: {
+    fontSize: typography.refLarge,
+    fontWeight: '700',
+    color: colors.forest,
+  },
+  voiceListModal: {
+    maxHeight: 340,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.borderTertiary,
+    borderRadius: radius.md,
+    backgroundColor: colors.backgroundPrimary,
+  },
+  modalDoneBtn: {
+    minHeight: touchTarget.min,
+    borderRadius: radius.lg,
+    backgroundColor: colors.forest,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalDoneText: {
+    fontSize: typography.min,
+    fontWeight: '700',
+    color: colors.white,
   },
   voiceList: {
     maxHeight: 220,

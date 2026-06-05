@@ -361,6 +361,9 @@ export const ko = {
     speechNativeNote:
       '앱(iOS/Android)에서는 기기에 설치된 TTS 음성 목록을 사용합니다.',
     speechVoice: '음성',
+    speechVoicePickA11y: '음성 선택 열기',
+    speechVoiceModalTitle: '음성 선택',
+    speechVoiceModalDone: '완료',
     speechReloadVoices: '새로고침',
     speechReloadVoicesA11y: '음성 목록 새로고침',
     speechVoiceSearchPh: '음성 이름·언어 검색',
