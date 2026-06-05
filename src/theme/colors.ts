@@ -1,44 +1,70 @@
-/** Matches `bible_memory_app_prototype.html` tokens */
+/**
+ * 「말씀의 정원」 파스텔 팔레트 v1
+ * mist·parchment·olive·dawn·sky·sage·rose
+ *
+ * 기존 키(forest, orange, cream…)는 유지하되 값만 새 팔레트로 매핑해
+ * 전역 import 변경 없이 1주차 톤 전환.
+ */
 export const colors = {
-  forest: '#2D5A3D',
-  orange: '#FF8C42',
-  /** Screen scroll area (warm gray canvas) */
-  background: '#EFEEE8',
-  backgroundPrimary: '#FFFFFF',
-  backgroundSecondary: '#F0EFE9',
-  textPrimary: '#1E2822',
-  textSecondary: '#5C665E',
-  borderSecondary: '#D8DCD9',
-  borderTertiary: '#E4E6E4',
-  /** Verse / quiz paper card */
-  cream: '#F9F6F0',
-  creamBorder: '#D4C9A8',
-  card: '#FFFFFF',
+  /** 브랜드 — 올리브 (구 forest) */
+  forest: '#5A7D62',
+  olive: '#5A7D62',
+
+  /** 강조 — 새벽빛 (구 orange) */
+  orange: '#E8B88A',
+  dawn: '#E8B88A',
+
+  /** 캔버스 — 아침 안개 */
+  mist: '#F7F5F0',
+  background: '#F7F5F0',
+  backgroundPrimary: '#F7F5F0',
+  backgroundSecondary: '#F0EDE6',
+
+  /** 말씀·카드 — 양피지 */
+  parchment: '#FBF8F2',
+  cream: '#FBF8F2',
+  card: '#FBF8F2',
+  creamBorder: '#E8E2D6',
+
   white: '#FFFFFF',
-  muted: '#5C665E',
-  badgeShortBg: '#FFF3E0',
-  badgeShortText: '#E65100',
-  badgeLongBg: '#E8F5E9',
-  badgeLongText: '#2E7D32',
-  circleNumBg: '#E8F5E9',
-  successBg: '#E8F5E9',
-  successBorder: '#2E7D32',
-  errorBg: '#FFEBEE',
-  errorBorder: '#C62828',
-  /** 모달 딤 + 버튼 틴트 (rgba 하드코딩 대신 여기서 관리) */
-  overlayBackdrop: 'rgba(30, 40, 34, 0.52)',
-  forestTint: 'rgba(45, 90, 61, 0.09)',
-  forestTintBorder: 'rgba(45, 90, 61, 0.34)',
-  forestTintActive: 'rgba(45, 90, 61, 0.16)',
-  orangeTint: 'rgba(255, 140, 66, 0.11)',
-  orangeTintBorder: 'rgba(255, 140, 66, 0.48)',
-  /** 파괴적 확인 버튼 — 채움형 */
-  dangerSolid: '#C62828',
-  /** 파스텔 블루 — 말씀 본문 영역 / 빈칸 퀴즈 정답 강조 */
-  pastelBlueBg: '#E8F0FE',
-  pastelBlueBorderSoft: '#BBD9F2',
-  pastelBlueBorder: '#4A80D9',
-  pastelBlueText: '#2E5BBF',
+  textPrimary: '#2A332E',
+  textSecondary: '#6B756F',
+  borderSecondary: '#E0DDD6',
+  borderTertiary: '#EBE8E2',
+  muted: '#6B756F',
+
+  /** 단기 트랙 — dawn 틴트 */
+  badgeShortBg: '#F5E8D8',
+  badgeShortText: '#8B6B4A',
+
+  /** 장기·성장 — sage */
+  sage: '#DDE8DC',
+  badgeLongBg: '#DDE8DC',
+  badgeLongText: '#4A6B52',
+  circleNumBg: '#DDE8DC',
+  successBg: '#DDE8DC',
+  successBorder: '#5A7D62',
+
+  /** 주의 — rose 파스텔 */
+  rose: '#F5D5D8',
+  errorBg: '#F5D5D8',
+  errorBorder: '#9E4B55',
+  dangerSolid: '#9E4B55',
+
+  /** 모달 딤 + 버튼 틴트 */
+  overlayBackdrop: 'rgba(42, 51, 46, 0.38)',
+  forestTint: 'rgba(90, 125, 98, 0.10)',
+  forestTintBorder: 'rgba(90, 125, 98, 0.30)',
+  forestTintActive: 'rgba(90, 125, 98, 0.18)',
+  orangeTint: 'rgba(232, 184, 138, 0.18)',
+  orangeTintBorder: 'rgba(232, 184, 138, 0.45)',
+
+  /** 말씀 하이라이트 — sky (구 pastel blue) */
+  sky: '#D6E8F5',
+  pastelBlueBg: '#D6E8F5',
+  pastelBlueBorderSoft: '#B8D4E8',
+  pastelBlueBorder: '#7AADC8',
+  pastelBlueText: '#4A7A94',
 } as const;
 
 export const typography = {

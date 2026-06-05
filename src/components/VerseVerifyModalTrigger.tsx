@@ -483,11 +483,6 @@ const styles = StyleSheet.create({
     gap: 14,
     maxHeight: '78%',
     zIndex: 1,
-    shadowColor: colors.forest,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.14,
-    shadowRadius: 18,
-    elevation: 8,
   },
   refTitle: {
     fontSize: typography.refLarge,

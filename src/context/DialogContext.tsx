@@ -165,11 +165,6 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: colors.creamBorder,
     overflow: 'hidden',
-    shadowColor: colors.forest,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.16,
-    shadowRadius: 20,
-    elevation: 10,
   },
   body: {
     paddingHorizontal: 24,

@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   },
   backdropHit: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(45, 90, 61, 0.45)',
+    backgroundColor: colors.overlayBackdrop,
   },
   card: {
     backgroundColor: colors.card,

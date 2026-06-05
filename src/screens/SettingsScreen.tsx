@@ -19,7 +19,7 @@ import { useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import { supabase } from '../supabase/client';
 import { colors, settingsSectionTitle, typography } from '../theme/colors';
-import { radius, touchTarget } from '../theme/layout';
+import { radius, screenPadding, touchTarget } from '../theme/layout';
 
 const DEFAULT_GOAL = 52;
 
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: screenPadding,
     paddingVertical: 10,
     gap: 12,
     backgroundColor: colors.backgroundPrimary,
@@ -306,8 +306,8 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   scroll: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingHorizontal: screenPadding,
+    paddingTop: screenPadding,
     flexGrow: 1,
   },
   settingBlock: {
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: `${colors.forest}18`,
+    borderColor: colors.forestTint,
   },
   blockTitle: settingsSectionTitle,
   hint: {

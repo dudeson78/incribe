@@ -27,7 +27,7 @@ import type { RootTabParamList } from '../navigation/tabParams';
 import { useSettings } from '../context/SettingsContext';
 import type { VerseWithSchedule } from '../types/verses';
 import { colors, typography } from '../theme/colors';
-import { radius } from '../theme/layout';
+import { radius, screenPadding } from '../theme/layout';
 import { useTranslation } from 'react-i18next';
 
 export function HomeScreen() {
@@ -263,17 +263,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingHorizontal: screenPadding,
+    paddingTop: screenPadding,
     flexGrow: 1,
   },
   banner: {
-    backgroundColor: `${colors.orange}22`,
+    backgroundColor: colors.orangeTint,
     borderRadius: radius.md,
     padding: 14,
     marginBottom: 16,
     borderWidth: 0.5,
-    borderColor: `${colors.orange}55`,
+    borderColor: colors.orangeTintBorder,
   },
   bannerTitle: {
     fontSize: typography.min,
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: `${colors.forest}33`,
+    borderColor: colors.forestTintBorder,
     gap: 14,
     alignItems: 'center',
   },

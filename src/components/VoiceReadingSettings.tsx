@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
   },
   modalBackdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(45, 90, 61, 0.45)',
+    backgroundColor: colors.overlayBackdrop,
   },
   modalCard: {
     backgroundColor: colors.card,

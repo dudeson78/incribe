@@ -26,7 +26,7 @@ import { normalizeSchedule, useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import type { VersesStackParamList } from '../navigation/types';
 import { colors, typography } from '../theme/colors';
-import { hitSlopComfortable, radius, touchTarget } from '../theme/layout';
+import { hitSlopComfortable, radius, screenPadding, touchTarget } from '../theme/layout';
 import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<VersesStackParamList, 'VerseList'>;
@@ -627,7 +627,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   listContent: {
-    padding: 16,
+    padding: screenPadding,
     flexGrow: 1,
   },
   headerBtnWrap: {
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
     padding: 14,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: `${colors.forest}22`,
+    borderColor: colors.creamBorder,
     gap: 10,
   },
   circle: {
@@ -740,7 +740,7 @@ const styles = StyleSheet.create({
   },
   keywordModalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(24,35,31,0.48)',
+    backgroundColor: colors.overlayBackdrop,
     justifyContent: 'center',
     padding: 22,
   },
@@ -752,7 +752,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: 18,
     borderWidth: 1,
-    borderColor: `${colors.forest}22`,
+    borderColor: colors.creamBorder,
     gap: 10,
     zIndex: 1,
     maxHeight: '80%',

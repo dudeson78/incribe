@@ -3,7 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import { colors, typography } from '../theme/colors';
-import { radius } from '../theme/layout';
+import { radius, screenPadding } from '../theme/layout';
 
 type FloatingReviewSummaryProps = {
   doneToday: number;
@@ -39,9 +39,9 @@ export function FloatingReviewSummary({
 const styles = StyleSheet.create({
   wrap: {
     position: 'absolute',
-    left: 16,
-    right: 16,
-    backgroundColor: colors.white,
+    left: screenPadding,
+    right: screenPadding,
+    backgroundColor: colors.parchment,
     borderRadius: radius.lg,
     paddingVertical: 14,
     paddingHorizontal: 18,
@@ -49,12 +49,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: `${colors.forest}22`,
-    shadowColor: colors.forest,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 6,
+    borderColor: colors.creamBorder,
   },
   primary: {
     fontSize: typography.body,

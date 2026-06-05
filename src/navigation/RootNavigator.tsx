@@ -157,12 +157,12 @@ function MainTabs() {
                   left: 0,
                   right: 0,
                   zIndex: 100,
-                  elevation: Platform.OS === 'android' ? 16 : undefined,
-                  shadowColor: Platform.OS === 'ios' ? '#000000' : undefined,
+                  elevation: Platform.OS === 'android' ? 4 : undefined,
+                  shadowColor: Platform.OS === 'ios' ? colors.textPrimary : undefined,
                   shadowOffset:
-                    Platform.OS === 'ios' ? { width: 0, height: -2 } : undefined,
-                  shadowOpacity: Platform.OS === 'ios' ? 0.08 : undefined,
-                  shadowRadius: Platform.OS === 'ios' ? 6 : undefined,
+                    Platform.OS === 'ios' ? { width: 0, height: -1 } : undefined,
+                  shadowOpacity: Platform.OS === 'ios' ? 0.04 : undefined,
+                  shadowRadius: Platform.OS === 'ios' ? 3 : undefined,
                 } as const)
               : {}),
         },

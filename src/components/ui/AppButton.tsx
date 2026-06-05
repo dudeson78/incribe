@@ -65,7 +65,6 @@ export function AppButton({
         size === 'lg' ? styles.lg : size === 'sm' ? styles.sm : styles.md,
         fullWidth && styles.fullWidth,
         v.container,
-        v.shadow,
         pressed && !isDisabled && styles.pressed,
         isDisabled && styles.disabled,
         style,
@@ -99,20 +98,12 @@ const VARIANTS: Record<
     container: ViewStyle;
     label: { color: string; fontWeight?: '600' | '700' };
     spinner: string;
-    shadow?: ViewStyle;
   }
 > = {
   primary: {
     container: { backgroundColor: colors.forest },
     label: { color: colors.white, fontWeight: '700' },
     spinner: colors.white,
-    shadow: {
-      shadowColor: colors.forest,
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.22,
-      shadowRadius: 6,
-      elevation: 3,
-    },
   },
   secondary: {
     container: {
@@ -127,26 +118,12 @@ const VARIANTS: Record<
     container: { backgroundColor: colors.dangerSolid },
     label: { color: colors.white, fontWeight: '700' },
     spinner: colors.white,
-    shadow: {
-      shadowColor: colors.dangerSolid,
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.2,
-      shadowRadius: 6,
-      elevation: 3,
-    },
   },
   /** 긍정적 1차 CTA — 연간 목표 적용·축하 모달 등 */
   accent: {
     container: { backgroundColor: colors.orange },
     label: { color: colors.white, fontWeight: '700' },
     spinner: colors.white,
-    shadow: {
-      shadowColor: colors.orange,
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.22,
-      shadowRadius: 6,
-      elevation: 3,
-    },
   },
   /** 취소·보조 텍스트 버튼 */
   ghost: {
