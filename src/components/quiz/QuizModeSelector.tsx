@@ -1,12 +1,9 @@
-import type { ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 import { colors, typography } from '../../theme/colors';
+import { radius } from '../../theme/layout';
 
 export type QuizSurfaceMode = 'reference' | 'blank' | 'order';
-
-type IonName = ComponentProps<typeof Ionicons>['name'];
 
 type Props = {
   active: QuizSurfaceMode;
@@ -18,14 +15,28 @@ type Props = {
   };
 };
 
-const ICON_BOX = 72;
-const ICON_RADIUS = 16;
-const ICON_GLYPH = 34;
-
-const MODE_META: Record<QuizSurfaceMode, { icon: IonName }> = {
-  reference: { icon: 'book-outline' },
-  blank: { icon: 'document-text-outline' },
-  order: { icon: 'reorder-three-outline' },
+const MODE_CHIP: Record<
+  QuizSurfaceMode,
+  { bg: string; border: string; activeBg: string; activeBorder: string }
+> = {
+  blank: {
+    bg: colors.sky,
+    border: colors.pastelBlueBorderSoft,
+    activeBg: colors.pastelBlueBorder,
+    activeBorder: colors.pastelBlueText,
+  },
+  order: {
+    bg: colors.sage,
+    border: colors.successBorder,
+    activeBg: colors.forest,
+    activeBorder: colors.forest,
+  },
+  reference: {
+    bg: colors.orangeTint,
+    border: colors.orangeTintBorder,
+    activeBg: colors.orange,
+    activeBorder: colors.badgeShortText,
+  },
 };
 
 export function QuizModeSelector({ active, onChange, labels }: Props) {
@@ -39,36 +50,27 @@ export function QuizModeSelector({ active, onChange, labels }: Props) {
     <View style={styles.row}>
       {items.map(({ mode, title }) => {
         const on = active === mode;
-        const { icon } = MODE_META[mode];
+        const chip = MODE_CHIP[mode];
         return (
           <Pressable
             key={mode}
             onPress={() => onChange(mode)}
-            hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
+            hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
             style={({ pressed }) => [
-              styles.cell,
-              pressed && styles.cellPressed,
+              styles.chip,
+              {
+                backgroundColor: on ? chip.activeBg : chip.bg,
+                borderColor: on ? chip.activeBorder : chip.border,
+              },
+              pressed && styles.chipPressed,
             ]}
             accessibilityRole="button"
             accessibilityState={{ selected: on }}
             accessibilityLabel={title}
           >
-            <View
-              pointerEvents="none"
-              style={[
-                styles.iconBox,
-                on ? styles.iconBoxOn : styles.iconBoxOff,
-              ]}
-            >
-              <Ionicons
-                name={icon}
-                size={ICON_GLYPH}
-                color={on ? colors.white : colors.forest}
-              />
-            </View>
             <Text
               style={[styles.label, on ? styles.labelOn : styles.labelOff]}
-              numberOfLines={2}
+              numberOfLines={1}
             >
               {title}
             </Text>
@@ -82,48 +84,36 @@ export function QuizModeSelector({ active, onChange, labels }: Props) {
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 4,
+    paddingVertical: 6,
     gap: 8,
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
-  cell: {
+  chip: {
     flex: 1,
     minWidth: 0,
-    alignItems: 'center',
-  },
-  cellPressed: {
-    opacity: 0.88,
-  },
-  iconBox: {
-    width: ICON_BOX,
-    height: ICON_BOX,
-    borderRadius: ICON_RADIUS,
+    minHeight: 44,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: radius.pill,
+    borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
   },
-  iconBoxOff: {
-    backgroundColor: colors.backgroundPrimary,
-    borderColor: colors.borderSecondary,
-  },
-  iconBoxOn: {
-    backgroundColor: colors.forest,
-    borderColor: colors.forest,
+  chipPressed: {
+    opacity: 0.9,
   },
   label: {
-    marginTop: 8,
-    fontSize: typography.caption,
-    fontWeight: '600',
+    fontSize: typography.chip,
+    fontWeight: '700',
     textAlign: 'center',
-    width: '100%',
     letterSpacing: 0.1,
   },
   labelOn: {
-    color: colors.forest,
+    color: colors.white,
   },
   labelOff: {
-    color: colors.textSecondary,
-    fontWeight: '500',
+    color: colors.textPrimary,
+    fontWeight: '600',
   },
 });

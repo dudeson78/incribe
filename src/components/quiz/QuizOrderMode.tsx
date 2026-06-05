@@ -9,7 +9,9 @@ import {
   splitVerseIntoSegments,
 } from '../../lib/quizTextUtils';
 import { colors, typography } from '../../theme/colors';
-import { radius, touchTarget } from '../../theme/layout';
+import { verseTypography } from '../../theme/fonts';
+import { cardPadding, radius, touchTarget } from '../../theme/layout';
+import { parchmentCard } from '../../theme/surfaces';
 
 type OrderItem = {
   id: string;
@@ -263,17 +265,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 10,
-    backgroundColor: colors.backgroundPrimary,
-    borderRadius: radius.lg,
-    borderWidth: 0.5,
-    borderColor: colors.borderTertiary,
-    padding: 14,
+    ...parchmentCard,
+    padding: cardPadding - 4,
     minHeight: touchTarget.min + 10,
   },
   segmentCardOk: {
     borderColor: colors.successBorder,
     borderWidth: 2,
-    backgroundColor: colors.successBg,
+    backgroundColor: colors.sage,
+    paddingVertical: cardPadding,
   },
   segIx: {
     fontSize: typography.min,
@@ -290,9 +290,9 @@ const styles = StyleSheet.create({
   },
   segTxt: {
     flex: 1,
+    ...verseTypography.body,
     fontSize: typography.min,
     lineHeight: 22,
-    color: colors.textPrimary,
   },
   arrowCol: {
     alignSelf: 'center',
@@ -348,9 +348,9 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   fbReveal: {
+    ...verseTypography.body,
     fontSize: typography.min,
     lineHeight: 22,
-    color: colors.textPrimary,
   },
   primaryGap: {
     marginTop: 8,

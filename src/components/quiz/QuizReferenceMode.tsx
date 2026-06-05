@@ -17,7 +17,9 @@ import { useVerses } from '../../hooks/useVerses';
 import { referencesMatch } from '../../lib/referenceMatch';
 import type { VerseWithSchedule } from '../../types/verses';
 import { colors, typography } from '../../theme/colors';
-import { radius } from '../../theme/layout';
+import { verseTypography } from '../../theme/fonts';
+import { cardPadding, radius } from '../../theme/layout';
+import { parchmentCard } from '../../theme/surfaces';
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -238,18 +240,13 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   verseCard: {
-    backgroundColor: colors.cream,
-    borderRadius: radius.lg,
-    borderWidth: 0.5,
-    borderColor: colors.creamBorder,
-    padding: 22,
+    ...parchmentCard,
     marginBottom: 16,
     alignItems: 'center',
+    padding: cardPadding,
   },
   quizVerse: {
-    fontSize: typography.body,
-    lineHeight: 30,
-    color: colors.textPrimary,
+    ...verseTypography.bodyLarge,
     textAlign: 'center',
   },
   answerInput: {

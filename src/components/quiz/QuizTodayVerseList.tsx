@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 import type { ScheduledRow } from '../../hooks/useVerses';
 import { colors, typography } from '../../theme/colors';
-import { radius, touchTarget } from '../../theme/layout';
+import { verseTypography } from '../../theme/fonts';
+import { radius, screenPadding, touchTarget } from '../../theme/layout';
 
 type Props = {
   rows: ScheduledRow[];
@@ -200,7 +201,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   scrollContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: screenPadding,
     paddingBottom: 28,
     gap: 8,
   },
@@ -208,10 +209,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: colors.backgroundPrimary,
-    borderRadius: radius.lg,
-    borderWidth: 0.5,
-    borderColor: colors.borderTertiary,
+    backgroundColor: colors.parchment,
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    borderColor: colors.creamBorder,
     paddingHorizontal: 16,
     paddingVertical: 14,
     minHeight: touchTarget.min + 4,
@@ -234,9 +235,8 @@ const styles = StyleSheet.create({
   },
   refText: {
     flex: 1,
+    ...verseTypography.reference,
     fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.forest,
     lineHeight: 24,
   },
   chev: {

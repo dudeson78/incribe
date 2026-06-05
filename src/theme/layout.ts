@@ -9,6 +9,9 @@ export const hitSlopComfortable = 12;
 /** 화면 좌우 기본 여백 — 파스텔 v1 (16→20) */
 export const screenPadding = 20;
 
+/** parchment 카드 내부 패딩 */
+export const cardPadding = 20;
+
 /** 코너 반경 스케일 — 매직넘버 대신 이 토큰을 사용 */
 export const radius = {
   xs: 4,

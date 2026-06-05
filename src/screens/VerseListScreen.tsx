@@ -26,7 +26,9 @@ import { normalizeSchedule, useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import type { VersesStackParamList } from '../navigation/types';
 import { colors, typography } from '../theme/colors';
-import { hitSlopComfortable, radius, screenPadding, touchTarget } from '../theme/layout';
+import { verseTypography } from '../theme/fonts';
+import { modalTheme } from '../theme/modal';
+import { cardPadding, hitSlopComfortable, radius, screenPadding, touchTarget } from '../theme/layout';
 import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<VersesStackParamList, 'VerseList'>;
@@ -213,6 +215,8 @@ export function VerseListScreen({ navigation }: Props) {
     const schedule = normalizeSchedule(item);
     return (
       <View style={styles.row}>
+        <View style={styles.oliveBar} />
+        <View style={styles.rowInner}>
         <View style={styles.refRow}>
           <View style={styles.circle}>
             <Text style={styles.circleText}>{n}</Text>
@@ -350,6 +354,7 @@ export function VerseListScreen({ navigation }: Props) {
             </Pressable>
           </View>
         </View>
+      </View>
     );
   };
 
@@ -637,14 +642,23 @@ const styles = StyleSheet.create({
     minWidth: 100,
   },
   row: {
-    flexDirection: 'column',
+    flexDirection: 'row',
     alignItems: 'stretch',
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
-    padding: 14,
+    backgroundColor: colors.parchment,
+    borderRadius: radius.xl,
     marginBottom: 12,
     borderWidth: 1,
     borderColor: colors.creamBorder,
+    overflow: 'hidden',
+  },
+  oliveBar: {
+    width: 4,
+    backgroundColor: colors.forest,
+  },
+  rowInner: {
+    flex: 1,
+    minWidth: 0,
+    padding: cardPadding,
     gap: 10,
   },
   circle: {
@@ -668,9 +682,8 @@ const styles = StyleSheet.create({
   ref: {
     flex: 1,
     minWidth: 0,
+    ...verseTypography.reference,
     fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.forest,
     lineHeight: 22,
   },
   refActions: {
@@ -694,8 +707,8 @@ const styles = StyleSheet.create({
     opacity: 0.45,
   },
   editBtn: {
-    borderColor: `${colors.forest}55`,
-    backgroundColor: `${colors.forest}0f`,
+    borderColor: colors.forestTintBorder,
+    backgroundColor: colors.forestTint,
   },
   editBtnText: {
     fontSize: typography.caption,
@@ -739,55 +752,31 @@ const styles = StyleSheet.create({
     color: `${colors.orange}99`,
   },
   keywordModalBackdrop: {
-    flex: 1,
-    backgroundColor: colors.overlayBackdrop,
-    justifyContent: 'center',
-    padding: 22,
+    ...modalTheme.shellTop,
   },
   keywordModalDismiss: {
-    ...StyleSheet.absoluteFillObject,
+    ...modalTheme.backdrop,
   },
   keywordModalCard: {
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: colors.creamBorder,
-    gap: 10,
-    zIndex: 1,
+    ...modalTheme.card,
     maxHeight: '80%',
   },
   keywordModalTitle: {
-    fontSize: typography.title,
-    fontWeight: '800',
-    color: colors.forest,
+    ...modalTheme.title,
+    textAlign: 'left',
   },
   keywordModalHint: {
-    fontSize: typography.min,
-    lineHeight: 21,
-    color: colors.muted,
-    marginTop: -4,
+    ...modalTheme.hint,
   },
   keywordModalRef: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.forest,
-    opacity: 0.92,
-    lineHeight: 22,
+    ...modalTheme.ref,
+    textAlign: 'left',
   },
   keywordModalBodyScroll: {
-    maxHeight: 200,
-    borderRadius: radius.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.creamBorder,
-    backgroundColor: colors.cream,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    ...modalTheme.verseScroll,
   },
   keywordModalBodyText: {
-    fontSize: typography.body,
-    lineHeight: 26,
-    color: colors.textPrimary,
+    ...modalTheme.verseScrollText,
   },
   keywordInput: {
     minHeight: 88,
@@ -811,18 +800,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   snippetBox: {
-    backgroundColor: colors.pastelBlueBg,
-    borderRadius: radius.lg,
+    backgroundColor: colors.sky,
+    borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.pastelBlueBorderSoft,
     paddingVertical: 12,
     paddingHorizontal: 14,
   },
   snippet: {
-    fontSize: typography.body,
-    lineHeight: 26,
-    color: colors.forest,
-    opacity: 0.9,
+    ...verseTypography.body,
+    color: colors.textPrimary,
   },
   empty: {
     padding: 24,

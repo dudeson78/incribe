@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
-  ActivityIndicator,
   Modal,
   Pressable,
   ScrollView,
@@ -19,6 +18,7 @@ import {
 import { toSpeakableReference } from '../lib/speakableReference';
 import { AppButton } from './ui/AppButton';
 import { colors, typography } from '../theme/colors';
+import { modalTheme } from '../theme/modal';
 import { radius, touchTarget } from '../theme/layout';
 
 type VerseVerifyModalTriggerProps = {
@@ -50,18 +50,18 @@ function VerifyModal({
       transparent
       onRequestClose={onClose}
     >
-      <View style={styles.wrap}>
+      <View style={modalTheme.shell}>
         <Pressable
-          style={styles.backdropHit}
+          style={modalTheme.backdrop}
           onPress={onClose}
           accessibilityRole="button"
           accessibilityLabel={t('rema.modalCloseA11y')}
         />
-        <View style={styles.card}>
-          <Text style={styles.refTitle}>{title}</Text>
+        <View style={modalTheme.card}>
+          <Text style={modalTheme.ref}>{title}</Text>
           <ScrollView
-            style={styles.scroll}
-            contentContainerStyle={styles.scrollContent}
+            style={modalTheme.scroll}
+            contentContainerStyle={modalTheme.scrollContent}
             showsVerticalScrollIndicator
             nestedScrollEnabled
           >
@@ -163,58 +163,29 @@ export function VerseVerifyModalTrigger({
     <>
       <View style={styles.triggerWrap}>
         <View style={styles.triggerPrimaryRow}>
-          <Pressable
-            style={({ pressed }) => [
-              styles.trigger,
-              styles.triggerHalf,
-              styles.triggerPrimaryLg,
-              pressed && styles.triggerPressed,
-              disabled && styles.triggerDisabled,
-            ]}
+          <AppButton
+            label={t('seven.verifyScriptureBtn')}
             onPress={() => {
               if (disabled) return;
               setScriptureVisible(true);
             }}
+            variant="secondary"
+            size="lg"
+            fullWidth={false}
             disabled={disabled}
-            accessibilityRole="button"
+            style={styles.primaryBtn}
             accessibilityLabel={t('seven.verifyScriptureA11y')}
-          >
-            <Text
-              style={[styles.triggerTextLg, styles.triggerTextPrimary]}
-              numberOfLines={1}
-            >
-              {t('seven.verifyScriptureBtn')}
-            </Text>
-          </Pressable>
-
-          <Pressable
-            style={({ pressed }) => [
-              styles.trigger,
-              styles.triggerHalf,
-              styles.triggerPrimaryLg,
-              listenStatus !== 'idle' && styles.triggerListenActive,
-              pressed && styles.triggerPressed,
-              (disabled || !body) && styles.triggerDisabled,
-            ]}
+          />
+          <AppButton
+            label={listenLabel}
             onPress={onListenPress}
+            variant={isListening ? 'accent' : 'primary'}
+            size="lg"
+            fullWidth={false}
             disabled={disabled || !body}
-            accessibilityRole="button"
+            style={styles.primaryBtn}
             accessibilityLabel={listenA11y}
-          >
-            {listenStatus === 'playing' ? (
-              <ActivityIndicator size="small" color={colors.orange} />
-            ) : null}
-            <Text
-              style={[
-                styles.triggerTextLg,
-                styles.triggerTextPrimary,
-                listenStatus !== 'idle' && styles.triggerTextActive,
-              ]}
-              numberOfLines={1}
-            >
-              {listenLabel}
-            </Text>
-          </Pressable>
+          />
         </View>
 
         <Pressable
@@ -378,7 +349,11 @@ const styles = StyleSheet.create({
   },
   triggerPrimaryRow: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 10,
+  },
+  primaryBtn: {
+    flex: 1,
+    minWidth: 0,
   },
   triggerAidRow: {
     flexDirection: 'row',
@@ -465,45 +440,8 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.orange,
   },
-  wrap: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 22,
-  },
-  backdropHit: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.overlayBackdrop,
-  },
-  card: {
-    backgroundColor: colors.cream,
-    borderRadius: radius.xl,
-    padding: 20,
-    borderWidth: 1.5,
-    borderColor: colors.creamBorder,
-    gap: 14,
-    maxHeight: '78%',
-    zIndex: 1,
-  },
-  refTitle: {
-    fontSize: typography.refLarge,
-    fontWeight: '700',
-    color: colors.forest,
-    textAlign: 'center',
-  },
-  scroll: {
-    flexGrow: 0,
-    maxHeight: 340,
-  },
-  scrollContent: {
-    paddingVertical: 4,
-    paddingHorizontal: 2,
-  },
   body: {
-    fontSize: typography.ref,
-    lineHeight: 28,
-    color: colors.textPrimary,
-    fontWeight: '400',
-    textAlign: 'left',
+    ...modalTheme.body,
   },
   emptyKeywords: {
     fontSize: typography.min,

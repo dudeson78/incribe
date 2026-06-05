@@ -9,7 +9,9 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { AppButton } from './ui/AppButton';
 import { colors, typography } from '../theme/colors';
+import { modalTheme } from '../theme/modal';
 import { radius, touchTarget } from '../theme/layout';
 
 type RemaModalTriggerProps = {
@@ -58,32 +60,31 @@ export function RemaModalTrigger({
         transparent
         onRequestClose={() => setVisible(false)}
       >
-        <View style={styles.wrap}>
+        <View style={modalTheme.shell}>
           <Pressable
-            style={styles.backdropHit}
+            style={modalTheme.backdrop}
             onPress={() => setVisible(false)}
             accessibilityRole="button"
             accessibilityLabel={t('rema.modalCloseA11y')}
           />
-          <View style={styles.card}>
-            <Text style={styles.title}>{t('rema.label')}</Text>
+          <View style={modalTheme.card}>
+            <Text style={modalTheme.title}>{t('rema.label')}</Text>
             <ScrollView
-              style={styles.scroll}
-              contentContainerStyle={styles.scrollContent}
+              style={modalTheme.scroll}
+              contentContainerStyle={modalTheme.scrollContent}
               showsVerticalScrollIndicator
               nestedScrollEnabled
             >
-              <Text style={styles.body} selectable>
+              <Text style={modalTheme.bodyItalic} selectable>
                 {trimmed}
               </Text>
             </ScrollView>
-            <Pressable
-              style={({ pressed }) => [styles.okBtn, pressed && styles.okBtnPressed]}
+            <AppButton
+              label={t('common.ok')}
               onPress={() => setVisible(false)}
+              size="md"
               accessibilityLabel={t('common.ok')}
-            >
-              <Text style={styles.okText}>{t('common.ok')}</Text>
-            </Pressable>
+            />
           </View>
         </View>
       </Modal>
@@ -99,8 +100,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: `${colors.forest}44`,
-    backgroundColor: `${colors.forest}0d`,
+    borderColor: colors.forestTintBorder,
+    backgroundColor: colors.forestTint,
     minHeight: touchTarget.min * 0.75,
     justifyContent: 'center',
   },
@@ -114,61 +115,5 @@ const styles = StyleSheet.create({
     fontSize: typography.caption,
     fontWeight: '600',
     color: colors.forest,
-  },
-  wrap: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 22,
-  },
-  backdropHit: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.overlayBackdrop,
-  },
-  card: {
-    backgroundColor: colors.card,
-    borderRadius: radius.xl,
-    padding: 20,
-    borderWidth: 1.5,
-    borderColor: colors.creamBorder,
-    gap: 14,
-    maxHeight: '78%',
-    zIndex: 1,
-  },
-  title: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.forest,
-    textAlign: 'center',
-  },
-  scroll: {
-    flexGrow: 0,
-    maxHeight: 320,
-  },
-  scrollContent: {
-    paddingVertical: 4,
-    paddingHorizontal: 2,
-  },
-  body: {
-    fontSize: typography.ref,
-    lineHeight: 26,
-    color: colors.textPrimary,
-    fontStyle: 'italic',
-    textAlign: 'left',
-  },
-  okBtn: {
-    alignSelf: 'stretch',
-    minHeight: touchTarget.min,
-    borderRadius: radius.md,
-    backgroundColor: colors.forest,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  okBtnPressed: {
-    opacity: 0.92,
-  },
-  okText: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.white,
   },
 });

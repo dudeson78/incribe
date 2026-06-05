@@ -21,6 +21,7 @@ import { QuizTodayVerseList } from '../components/quiz/QuizTodayVerseList';
 import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
 import { useVerses, type ScheduledRow } from '../hooks/useVerses';
 import { colors, typography } from '../theme/colors';
+import { screenPadding } from '../theme/layout';
 
 export function QuizScreen() {
   const tabScrollPadding = useBottomTabScrollPadding(24);
@@ -186,6 +187,7 @@ const styles = StyleSheet.create({
   },
   scrollOuterContent: {
     flexGrow: 1,
+    paddingHorizontal: screenPadding,
   },
   loader: {
     paddingVertical: 28,

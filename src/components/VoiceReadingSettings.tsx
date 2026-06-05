@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.overlayBackdrop,
   },
   modalCard: {
-    backgroundColor: colors.card,
+    backgroundColor: colors.parchment,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 18,

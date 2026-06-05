@@ -1,10 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { AppButton } from './ui/AppButton';
 import { colors, typography } from '../theme/colors';
-import { radius, touchTarget } from '../theme/layout';
+import { radius } from '../theme/layout';
 
 const STORAGE_KEY = '@inscribe/coachmark_verse_meta_v1';
 
@@ -43,14 +44,15 @@ export function VerseMetaCoachmark() {
     <View style={styles.card}>
       <Text style={styles.title}>{t('verses.metaCoachmarkTitle')}</Text>
       <Text style={styles.body}>{t('verses.metaCoachmarkBody')}</Text>
-      <Pressable
-        style={({ pressed }) => [styles.dismissBtn, pressed && styles.pressed]}
+      <AppButton
+        label={t('verses.metaCoachmarkDismiss')}
         onPress={() => void dismiss()}
-        accessibilityRole="button"
+        variant="secondary"
+        size="sm"
+        fullWidth={false}
+        style={styles.dismissBtn}
         accessibilityLabel={t('verses.metaCoachmarkDismiss')}
-      >
-        <Text style={styles.dismissText}>{t('verses.metaCoachmarkDismiss')}</Text>
-      </Pressable>
+      />
     </View>
   );
 }
@@ -60,7 +62,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     padding: 16,
     borderRadius: radius.lg,
-    backgroundColor: colors.pastelBlueBg,
+    backgroundColor: colors.sky,
     borderWidth: 1,
     borderColor: colors.pastelBlueBorderSoft,
     gap: 8,
@@ -78,19 +80,5 @@ const styles = StyleSheet.create({
   dismissBtn: {
     alignSelf: 'flex-end',
     marginTop: 2,
-    minHeight: touchTarget.min * 0.72,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: radius.md,
-    backgroundColor: colors.forest,
-    justifyContent: 'center',
-  },
-  dismissText: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.white,
-  },
-  pressed: {
-    opacity: 0.9,
   },
 });

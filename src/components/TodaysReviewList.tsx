@@ -8,15 +8,16 @@ import {
 
 import type { CelebrationVariant } from './CelebrationModal';
 import { CelebrationModal } from './CelebrationModal';
-import { SectionOrangeHeader } from './SectionOrangeHeader';
 import { SevenCheckTable } from './SevenCheckTable';
 import { VerseVerifyModalTrigger } from './VerseVerifyModalTrigger';
+import { verseTeaser } from '../lib/verseTeaser';
 import type { ScheduledRow } from '../hooks/useVerses';
 import { computeAfterReview } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import { useDialog } from '../context/DialogContext';
 import { colors, typography } from '../theme/colors';
-import { radius } from '../theme/layout';
+import { verseTypography } from '../theme/fonts';
+import { cardPadding, radius } from '../theme/layout';
 import { differenceInCalendarDays, startOfDay } from 'date-fns';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -264,21 +265,36 @@ export function TodaysReviewList({
       })
     : t('seven.captionRecite');
 
+  const teaser = verseTeaser(verse.text);
+
   return (
     <View style={styles.list}>
-      <SectionOrangeHeader
+      <Text
+        style={styles.progressHeader}
+        accessibilityRole="text"
         accessibilityLiveRegion="polite"
-        title={t('memorize.trainingCardTitle', {
-          n: queueOrdinalShown,
+        accessibilityLabel={t('memorize.trainingCardProgressA11y', {
+          current: queueOrdinalShown,
+          total: queueTotalShown,
         })}
-        accessibilityLabel={t('memorize.trainingCardTitleA11y', {
-          n: queueOrdinalShown,
+      >
+        {t('memorize.trainingCardProgress', {
+          current: queueOrdinalShown,
+          total: queueTotalShown,
         })}
-      />
+      </Text>
 
       <View key={verse.id} style={styles.block}>
         <View style={styles.versePaper}>
-          <Text style={styles.refLarge}>{verse.reference}</Text>
+          <Text style={styles.refLine}>{verse.reference}</Text>
+
+          {teaser.length > 0 ? (
+            <View style={styles.verseTeaserBox}>
+              <Text style={styles.verseTeaser} selectable={false}>
+                {teaser}
+              </Text>
+            </View>
+          ) : null}
 
           <View style={styles.tableInCard}>
             <SevenCheckTable
@@ -286,6 +302,7 @@ export function TodaysReviewList({
               heading={reciteHeading}
               caption={reciteCaption}
               disabled={locked}
+              embedded
               onAllFilled={() => {
                 let variant: CelebrationVariant = 'shortDailyComplete';
                 if (schedule.review_phase === 'long') {
@@ -332,10 +349,15 @@ export function TodaysReviewList({
 
 const styles = StyleSheet.create({
   list: {
-    gap: 12,
-    /** 그룹 목록·위 배지와 훈련카드 헤더 사이 간격 */
+    gap: 10,
     marginTop: 14,
     marginBottom: 24,
+  },
+  progressHeader: {
+    fontSize: typography.caption,
+    fontWeight: '600',
+    color: colors.textSecondary,
+    letterSpacing: 0.3,
   },
   loader: {
     marginTop: 14,
@@ -366,19 +388,29 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   versePaper: {
-    backgroundColor: colors.cream,
-    borderRadius: radius.lg,
-    borderWidth: 0.5,
+    alignSelf: 'stretch',
+    backgroundColor: colors.parchment,
+    borderRadius: radius.xl,
+    borderWidth: 1,
     borderColor: colors.creamBorder,
-    paddingHorizontal: 24,
-    paddingVertical: 22,
-    alignItems: 'center',
+    padding: cardPadding,
+    alignItems: 'stretch',
+    gap: 14,
   },
-  refLarge: {
-    fontSize: typography.refLarge,
-    fontWeight: '500',
-    color: colors.forest,
-    marginBottom: 10,
+  refLine: {
+    ...verseTypography.reference,
+    textAlign: 'center',
+  },
+  verseTeaserBox: {
+    backgroundColor: colors.sky,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.pastelBlueBorderSoft,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  verseTeaser: {
+    ...verseTypography.body,
     textAlign: 'center',
   },
 });

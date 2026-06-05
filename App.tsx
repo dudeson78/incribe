@@ -1,6 +1,6 @@
 import './src/i18n';
 import { useEffect } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -8,6 +8,7 @@ import { AppAuthGate } from './src/components/AppAuthGate';
 import { AppErrorBoundary } from './src/components/AppErrorBoundary';
 import { SettingsProvider } from './src/context/SettingsContext';
 import { DialogProvider } from './src/context/DialogContext';
+import { useAppFonts } from './src/hooks/useAppFonts';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { colors } from './src/theme/colors';
 
@@ -33,6 +34,15 @@ function useWebShieldAgainstPageTranslation(): void {
 
 export default function App() {
   useWebShieldAgainstPageTranslation();
+  const fontsLoaded = useAppFonts();
+
+  if (!fontsLoaded) {
+    return (
+      <View style={styles.fontSplash}>
+        <ActivityIndicator size="large" color={colors.forest} />
+      </View>
+    );
+  }
 
   const tree = (
     <>
@@ -77,5 +87,11 @@ const styles = StyleSheet.create({
   flexFillMinZero: {
     flex: 1,
     minHeight: 0,
+  },
+  fontSplash: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.background,
   },
 });

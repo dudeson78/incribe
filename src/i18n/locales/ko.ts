@@ -313,6 +313,9 @@ export const ko = {
     reviewListSessionPractice: '{{n}}회차',
     reviewListTrainingDoneStatus: '완료',
     reviewListTrainingPendingStatus: '미완료',
+    reviewListToggle: '오늘 훈련구절 · {{n}}개',
+    reviewListExpandA11y: '오늘 훈련구절 목록 펼치기',
+    reviewListCollapseA11y: '오늘 훈련구절 목록 접기',
     sectionLongRetrain: '장기 — 재연습(7회) 후 재일정',
     badgeShortDay: '{{n}}일차',
     badgeLongInterval: '간격 {{days}}일',
@@ -329,6 +332,9 @@ export const ko = {
     badgeReciteSession: '암송 — 참조만 표시 · 본문은 떠올리기',
     trainingCardTitle: '오늘 훈련: {{n}}번째 카드',
     trainingCardTitleA11y: '오늘 훈련: {{n}}번째 카드',
+    trainingCardProgress: '오늘 훈련 · {{current}}/{{total}}',
+    trainingCardProgressA11y:
+      '오늘 훈련 {{current}}번째, 총 {{total}}구절',
     noMoreVersesToday: '오늘은 더 이상 훈련할 구절이 없습니다',
     allSessionsDoneForToday:
       '축하합니다. 오늘 훈련을 마쳤습니다.',
