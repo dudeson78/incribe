@@ -145,8 +145,13 @@ export function VerseVerifyModalTrigger({
     void startVerseListen();
   }
 
-  const listenLabel = t('seven.verifyVerseListenBtn');
-  const listenA11y = t('seven.verifyVerseListenA11y');
+  const isListening = listenStatus === 'playing';
+  const listenLabel = isListening
+    ? t('seven.verifyVerseListenStopBtn')
+    : t('seven.verifyVerseListenBtn');
+  const listenA11y = isListening
+    ? t('seven.verifyVerseListenStopA11y')
+    : t('seven.verifyVerseListenA11y');
 
   return (
     <>
