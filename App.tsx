@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppAuthGate } from './src/components/AppAuthGate';
 import { SettingsProvider } from './src/context/SettingsContext';
+import { DialogProvider } from './src/context/DialogContext';
 import { RootNavigator } from './src/navigation/RootNavigator';
 
 /** Chrome/Google 등 페이지 번역기가 SPA 문구를 의미 치환으로 망가뜨리는 완화 (웹 전용). */
@@ -34,13 +35,15 @@ export default function App() {
   const tree = (
     <>
       <StatusBar style="dark" />
-      <AppAuthGate>
-        <SettingsProvider>
-          <View style={styles.flexFillMinZero}>
-            <RootNavigator />
-          </View>
-        </SettingsProvider>
-      </AppAuthGate>
+      <DialogProvider>
+        <AppAuthGate>
+          <SettingsProvider>
+            <View style={styles.flexFillMinZero}>
+              <RootNavigator />
+            </View>
+          </SettingsProvider>
+        </AppAuthGate>
+      </DialogProvider>
     </>
   );
 

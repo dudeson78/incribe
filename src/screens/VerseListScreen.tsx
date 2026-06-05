@@ -2,7 +2,6 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCallback, useLayoutEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   KeyboardAvoidingView,
   ListRenderItem,
@@ -20,6 +19,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { VersePracticeHistoryTable } from '../components/VersePracticeHistoryTable';
 import type { ReviewLogRow, VerseWithSchedule } from '../types/verses';
 import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
+import { useDialog } from '../context/DialogContext';
 import { normalizeSchedule, useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import type { VersesStackParamList } from '../navigation/types';
@@ -33,6 +33,7 @@ export function VerseListScreen({ navigation }: Props) {
   // 안드로이드는 탭바가 화면에 겹쳐 떠서(absolute) 목록 맨 아래(가장 먼저 추가한) 구절이 가려질 수 있어 여유를 넉넉히 둔다.
   const tabScrollPadding = useBottomTabScrollPadding(56);
   const { t } = useTranslation();
+  const dialog = useDialog();
   const {
     getAllVerses,
     getReviewLogsForVerseIds,
@@ -99,25 +100,15 @@ export function VerseListScreen({ navigation }: Props) {
     });
   }, [navigation, t]);
 
-  function confirmDelete(id: string, refLabel: string) {
-    const title = t('verses.deleteTitle');
-    const message = t('verses.deleteConfirm', { ref: refLabel });
-    if (Platform.OS === 'web') {
-      const ok =
-        typeof globalThis.confirm === 'function'
-          ? globalThis.confirm(`${title}\n\n${message}`)
-          : true;
-      if (ok) void doDelete(id);
-      return;
-    }
-    Alert.alert(title, message, [
-      { text: t('verses.cancel'), style: 'cancel' },
-      {
-        text: t('verses.delete'),
-        style: 'destructive',
-        onPress: () => void doDelete(id),
-      },
-    ]);
+  async function confirmDelete(id: string, refLabel: string) {
+    const ok = await dialog.confirm({
+      title: t('verses.deleteTitle'),
+      message: t('verses.deleteConfirm', { ref: refLabel }),
+      confirmText: t('verses.delete'),
+      cancelText: t('verses.cancel'),
+      destructive: true,
+    });
+    if (ok) void doDelete(id);
   }
 
   async function doDelete(id: string) {
@@ -125,17 +116,8 @@ export function VerseListScreen({ navigation }: Props) {
     try {
       await deleteVerse(id);
       await load();
-      if (Platform.OS === 'web') {
-        return;
-      }
-      Alert.alert(t('common.success'), t('verses.deleteSuccess'));
     } catch (e) {
-      const body = mapAppError(e, t);
-      if (Platform.OS === 'web') {
-        globalThis.alert(`${t('errors.title')}\n\n${body}`);
-      } else {
-        Alert.alert(t('errors.title'), body);
-      }
+      await dialog.alert({ title: t('errors.title'), message: mapAppError(e, t) });
     } finally {
       setDeletingId(null);
     }
@@ -168,12 +150,7 @@ export function VerseListScreen({ navigation }: Props) {
       await load();
       setKeywordModal(null);
     } catch (e) {
-      const body = mapAppError(e, t);
-      if (Platform.OS === 'web') {
-        globalThis.alert(`${t('errors.title')}\n\n${body}`);
-      } else {
-        Alert.alert(t('errors.title'), body);
-      }
+      await dialog.alert({ title: t('errors.title'), message: mapAppError(e, t) });
     } finally {
       setKeywordSaving(false);
     }
@@ -200,12 +177,7 @@ export function VerseListScreen({ navigation }: Props) {
       await load();
       setMnemonicsModal(null);
     } catch (e) {
-      const body = mapAppError(e, t);
-      if (Platform.OS === 'web') {
-        globalThis.alert(`${t('errors.title')}\n\n${body}`);
-      } else {
-        Alert.alert(t('errors.title'), body);
-      }
+      await dialog.alert({ title: t('errors.title'), message: mapAppError(e, t) });
     } finally {
       setMnemonicsSaving(false);
     }
@@ -232,12 +204,7 @@ export function VerseListScreen({ navigation }: Props) {
       await load();
       setRemaModal(null);
     } catch (e) {
-      const body = mapAppError(e, t);
-      if (Platform.OS === 'web') {
-        globalThis.alert(`${t('errors.title')}\n\n${body}`);
-      } else {
-        Alert.alert(t('errors.title'), body);
-      }
+      await dialog.alert({ title: t('errors.title'), message: mapAppError(e, t) });
     } finally {
       setRemaSaving(false);
     }
@@ -289,7 +256,7 @@ export function VerseListScreen({ navigation }: Props) {
               </Text>
             </Pressable>
             <Pressable
-              onPress={() => confirmDelete(item.id, item.reference)}
+              onPress={() => void confirmDelete(item.id, item.reference)}
               style={({ pressed }) => [
                 styles.actionTextBtn,
                 styles.deleteBtn,

@@ -17,6 +17,7 @@ import {
   speakVerseOnce,
 } from '../lib/verseCardSpeech';
 import { toSpeakableReference } from '../lib/speakableReference';
+import { AppButton } from './ui/AppButton';
 import { colors, typography } from '../theme/colors';
 import { radius, touchTarget } from '../theme/layout';
 
@@ -66,13 +67,12 @@ function VerifyModal({
           >
             {children}
           </ScrollView>
-          <Pressable
-            style={({ pressed }) => [styles.okBtn, pressed && styles.okBtnPressed]}
+          <AppButton
+            label={t('common.ok')}
             onPress={onClose}
+            size="md"
             accessibilityLabel={t('common.ok')}
-          >
-            <Text style={styles.okText}>{t('common.ok')}</Text>
-          </Pressable>
+          />
         </View>
       </View>
     </Modal>
@@ -159,11 +159,13 @@ export function VerseVerifyModalTrigger({
 
   return (
     <>
+      {/* 1차 행위(말씀확인·말씀듣기)는 포레스트 강조, 암기 보조(키워드·연상기법·레마)는 한 단계 가라앉은 중립색으로 위계 구분 */}
       <View style={styles.triggerRow}>
         <Pressable
           style={({ pressed }) => [
             styles.trigger,
             styles.triggerThird,
+            styles.triggerPrimary,
             pressed && styles.triggerPressed,
             disabled && styles.triggerDisabled,
           ]}
@@ -176,7 +178,7 @@ export function VerseVerifyModalTrigger({
           accessibilityLabel={t('seven.verifyScriptureA11y')}
         >
           <Text
-            style={styles.triggerText}
+            style={[styles.triggerText, styles.triggerTextPrimary]}
             numberOfLines={1}
             adjustsFontSizeToFit
             minimumFontScale={0.8}
@@ -189,31 +191,7 @@ export function VerseVerifyModalTrigger({
           style={({ pressed }) => [
             styles.trigger,
             styles.triggerThird,
-            pressed && styles.triggerPressed,
-            disabled && styles.triggerDisabled,
-          ]}
-          onPress={() => {
-            if (disabled) return;
-            setRemaVisible(true);
-          }}
-          disabled={disabled}
-          accessibilityRole="button"
-          accessibilityLabel={t('seven.verifyRemaA11y')}
-        >
-          <Text
-            style={styles.triggerText}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.8}
-          >
-            {t('seven.verifyRemaBtn')}
-          </Text>
-        </Pressable>
-
-        <Pressable
-          style={({ pressed }) => [
-            styles.trigger,
-            styles.triggerThird,
+            styles.triggerPrimary,
             listenStatus !== 'idle' && styles.triggerListenActive,
             pressed && styles.triggerPressed,
             (disabled || !body) && styles.triggerDisabled,
@@ -224,11 +202,12 @@ export function VerseVerifyModalTrigger({
           accessibilityLabel={listenA11y}
         >
           {listenStatus === 'playing' ? (
-            <ActivityIndicator size="small" color={colors.forest} />
+            <ActivityIndicator size="small" color={colors.orange} />
           ) : null}
           <Text
             style={[
               styles.triggerText,
+              styles.triggerTextPrimary,
               listenStatus !== 'idle' && styles.triggerTextActive,
             ]}
             numberOfLines={1}
@@ -243,6 +222,7 @@ export function VerseVerifyModalTrigger({
           style={({ pressed }) => [
             styles.trigger,
             styles.triggerThird,
+            styles.triggerAid,
             pressed && styles.triggerPressed,
             disabled && styles.triggerDisabled,
           ]}
@@ -255,7 +235,7 @@ export function VerseVerifyModalTrigger({
           accessibilityLabel={t('seven.verifyKeywordA11y')}
         >
           <Text
-            style={styles.triggerText}
+            style={[styles.triggerText, styles.triggerTextAid]}
             numberOfLines={1}
             adjustsFontSizeToFit
             minimumFontScale={0.8}
@@ -268,6 +248,7 @@ export function VerseVerifyModalTrigger({
           style={({ pressed }) => [
             styles.trigger,
             styles.triggerThird,
+            styles.triggerAid,
             pressed && styles.triggerPressed,
             disabled && styles.triggerDisabled,
           ]}
@@ -280,12 +261,38 @@ export function VerseVerifyModalTrigger({
           accessibilityLabel={t('seven.verifyMnemonicsA11y')}
         >
           <Text
-            style={styles.triggerText}
+            style={[styles.triggerText, styles.triggerTextAid]}
             numberOfLines={1}
             adjustsFontSizeToFit
             minimumFontScale={0.8}
           >
             {t('seven.verifyMnemonicsBtn')}
+          </Text>
+        </Pressable>
+
+        <Pressable
+          style={({ pressed }) => [
+            styles.trigger,
+            styles.triggerThird,
+            styles.triggerAid,
+            pressed && styles.triggerPressed,
+            disabled && styles.triggerDisabled,
+          ]}
+          onPress={() => {
+            if (disabled) return;
+            setRemaVisible(true);
+          }}
+          disabled={disabled}
+          accessibilityRole="button"
+          accessibilityLabel={t('seven.verifyRemaA11y')}
+        >
+          <Text
+            style={[styles.triggerText, styles.triggerTextAid]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
+          >
+            {t('seven.verifyRemaBtn')}
           </Text>
         </Pressable>
       </View>
@@ -368,8 +375,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: `${colors.forest}44`,
-    backgroundColor: `${colors.forest}0d`,
     minHeight: touchTarget.min * 0.92,
     justifyContent: 'center',
     alignItems: 'center',
@@ -380,9 +385,20 @@ const styles = StyleSheet.create({
     flexBasis: '30%',
     minWidth: 72,
   },
+  /** 1차 행위: 포레스트 틴트 */
+  triggerPrimary: {
+    borderColor: colors.forestTintBorder,
+    backgroundColor: colors.forestTint,
+  },
+  /** 암기 보조: 크림 톤으로 한 단계 가라앉힘 */
+  triggerAid: {
+    borderColor: colors.borderTertiary,
+    backgroundColor: colors.cream,
+  },
+  /** 재생 중: 오렌지 액센트로 상태 표시 */
   triggerListenActive: {
-    borderColor: colors.forest,
-    backgroundColor: `${colors.forest}14`,
+    borderColor: colors.orangeTintBorder,
+    backgroundColor: colors.orangeTint,
   },
   triggerPressed: {
     opacity: 0.88,
@@ -393,12 +409,19 @@ const styles = StyleSheet.create({
   triggerText: {
     fontSize: 12,
     lineHeight: 15,
-    fontWeight: '600',
-    color: colors.forest,
     textAlign: 'center',
   },
-  triggerTextActive: {
+  triggerTextPrimary: {
     fontWeight: '700',
+    color: colors.forest,
+  },
+  triggerTextAid: {
+    fontWeight: '600',
+    color: colors.muted,
+  },
+  triggerTextActive: {
+    fontWeight: '800',
+    color: colors.orange,
   },
   wrap: {
     flex: 1,
@@ -407,10 +430,10 @@ const styles = StyleSheet.create({
   },
   backdropHit: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(45, 90, 61, 0.45)',
+    backgroundColor: colors.overlayBackdrop,
   },
   card: {
-    backgroundColor: colors.card,
+    backgroundColor: colors.cream,
     borderRadius: radius.xl,
     padding: 20,
     borderWidth: 1.5,
@@ -418,6 +441,11 @@ const styles = StyleSheet.create({
     gap: 14,
     maxHeight: '78%',
     zIndex: 1,
+    shadowColor: colors.forest,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.14,
+    shadowRadius: 18,
+    elevation: 8,
   },
   refTitle: {
     fontSize: typography.refLarge,
@@ -464,21 +492,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.forest,
     textAlign: 'center',
-  },
-  okBtn: {
-    alignSelf: 'stretch',
-    minHeight: touchTarget.min,
-    borderRadius: radius.md,
-    backgroundColor: colors.forest,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  okBtnPressed: {
-    opacity: 0.92,
-  },
-  okText: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.white,
   },
 });

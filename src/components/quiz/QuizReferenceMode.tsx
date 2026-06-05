@@ -12,11 +12,12 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { AppButton } from '../ui/AppButton';
 import { useVerses } from '../../hooks/useVerses';
 import { referencesMatch } from '../../lib/referenceMatch';
 import type { VerseWithSchedule } from '../../types/verses';
 import { colors, typography } from '../../theme/colors';
-import { radius, touchTarget } from '../../theme/layout';
+import { radius } from '../../theme/layout';
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -151,20 +152,14 @@ export function QuizReferenceMode({ embedded = false }: { embedded?: boolean }) 
         </View>
       ) : null}
 
-      <Pressable
-        style={({ pressed }) => [
-          styles.btnPrimaryFull,
-          pressed && styles.pressed,
-        ]}
+      <AppButton
+        label={phase === 'input' ? t('quiz.check') : t('quiz.next')}
         onPress={onNext}
         accessibilityLabel={
           phase === 'input' ? t('quiz.a11yVerify') : t('quiz.a11yNextQ')
         }
-      >
-        <Text style={styles.btnPrimaryFullText}>
-          {phase === 'input' ? t('quiz.check') : t('quiz.next')}
-        </Text>
-      </Pressable>
+        style={styles.primaryGap}
+      />
     </>
   );
 
@@ -300,23 +295,8 @@ const styles = StyleSheet.create({
     fontSize: typography.min,
     color: colors.muted,
   },
-  btnPrimaryFull: {
-    width: '100%',
-    paddingVertical: 16,
-    borderRadius: radius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.forest,
+  primaryGap: {
     marginBottom: 8,
-    minHeight: touchTarget.min,
-  },
-  btnPrimaryFullText: {
-    fontSize: typography.body,
-    fontWeight: '500',
-    color: colors.white,
-  },
-  pressed: {
-    opacity: 0.9,
   },
   embeddedSection: {
     paddingBottom: 8,

@@ -2,10 +2,8 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,13 +11,15 @@ import {
   View,
 } from 'react-native';
 
+import { AppButton } from '../components/ui/AppButton';
 import { ReferenceSuggestInput } from '../components/ReferenceSuggestInput';
 import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
+import { useDialog } from '../context/DialogContext';
 import { useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import type { VersesStackParamList } from '../navigation/types';
 import { colors, labelTypography, typography } from '../theme/colors';
-import { radius, touchTarget } from '../theme/layout';
+import { radius } from '../theme/layout';
 import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<VersesStackParamList, 'VerseForm'>;
@@ -27,6 +27,7 @@ type Props = NativeStackScreenProps<VersesStackParamList, 'VerseForm'>;
 export function VerseFormScreen({ navigation, route }: Props) {
   const tabScrollPadding = useBottomTabScrollPadding(40);
   const { t } = useTranslation();
+  const dialog = useDialog();
   const verseId = route.params?.verseId;
   const { addVerse, updateVerse, getAllVerses } = useVerses();
 
@@ -87,14 +88,11 @@ export function VerseFormScreen({ navigation, route }: Props) {
           verse_group: 'short',
         });
       }
-      /** RN Web에서는 `Alert.alert`가 무시되거나 콜백이 실행되지 않아 이전 화면으로 못 넘어가는 경우가 많습니다. */
-      if (Platform.OS === 'web') {
-        navigation.goBack();
-      } else {
-        Alert.alert(t('common.success'), t('verseForm.saveSuccess'), [
-          { text: t('common.ok'), onPress: () => navigation.goBack() },
-        ]);
-      }
+      await dialog.alert({
+        title: t('common.success'),
+        message: t('verseForm.saveSuccess'),
+      });
+      navigation.goBack();
     } catch (e) {
       setError(mapAppError(e, t));
     } finally {
@@ -149,26 +147,14 @@ export function VerseFormScreen({ navigation, route }: Props) {
           <Text style={styles.hint}>{t('verseForm.hintShortTrack')}</Text>
         ) : null}
 
-        <Pressable
-          style={({ pressed }) => [
-            styles.saveBtn,
-            pressed && styles.savePressed,
-            saving && styles.saveDisabled,
-          ]}
+        <AppButton
+          label={verseId ? t('verseForm.saveEdit') : t('verseForm.save')}
           onPress={() => void onSave()}
-          disabled={saving}
+          loading={saving}
           accessibilityLabel={
             verseId ? t('verseForm.saveEditA11y') : t('verseForm.saveA11y')
           }
-        >
-          {saving ? (
-            <ActivityIndicator color={colors.white} size="small" />
-          ) : (
-            <Text style={styles.saveText}>
-              {verseId ? t('verseForm.saveEdit') : t('verseForm.save')}
-            </Text>
-          )}
-        </Pressable>
+        />
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -223,24 +209,5 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: colors.muted,
     marginBottom: 20,
-  },
-  saveBtn: {
-    backgroundColor: colors.forest,
-    paddingVertical: 14,
-    borderRadius: radius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: touchTarget.min,
-  },
-  savePressed: {
-    opacity: 0.92,
-  },
-  saveDisabled: {
-    opacity: 0.55,
-  },
-  saveText: {
-    fontSize: typography.min,
-    fontWeight: '800',
-    color: colors.white,
   },
 });

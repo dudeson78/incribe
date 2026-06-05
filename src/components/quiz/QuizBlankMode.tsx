@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { AppButton } from '../ui/AppButton';
 import type { ScheduledRow } from '../../hooks/useVerses';
 import {
   buildBlankChallengePreferKeywords,
@@ -196,9 +197,11 @@ export function QuizBlankMode({
       ) : null}
 
       {feedback !== 'ok' ? (
-        <Pressable style={styles.btnPri} onPress={verify}>
-          <Text style={styles.btnPriTxt}>{t('quiz.blankCheck')}</Text>
-        </Pressable>
+        <AppButton
+          label={t('quiz.blankCheck')}
+          onPress={verify}
+          style={styles.primaryGap}
+        />
       ) : null}
 
       <Pressable style={styles.btnSec} onPress={reshuffleBlanks}>
@@ -335,18 +338,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     color: colors.textPrimary,
   },
-  btnPri: {
-    backgroundColor: colors.forest,
-    borderRadius: radius.lg,
-    paddingVertical: 16,
-    alignItems: 'center',
+  primaryGap: {
     marginTop: 4,
-    minHeight: touchTarget.min,
-  },
-  btnPriTxt: {
-    color: colors.white,
-    fontSize: typography.body,
-    fontWeight: '700',
   },
   btnSec: {
     paddingVertical: 14,

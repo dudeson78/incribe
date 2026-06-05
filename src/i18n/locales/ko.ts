@@ -2,6 +2,8 @@
 export const ko = {
   common: {
     ok: '확인',
+    confirm: '확인',
+    cancel: '취소',
     success: '완료',
   },
   tabs: {

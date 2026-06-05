@@ -3,7 +3,6 @@ import type { Session } from '@supabase/supabase-js';
 import type { TFunction } from 'i18next';
 import {
   ActivityIndicator,
-  Alert,
   Keyboard,
   Platform,
   Pressable,
@@ -19,6 +18,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { developmentEmailAccepted, getDevEmailLocalPartRestriction } from '../lib/devEmailAllowlist';
 import { isDevelopmentRuntime } from '../lib/isDevelopmentRuntime';
 import { mapAppError } from '../i18n/mapAppError';
+import { useDialog, type DialogApi } from '../context/DialogContext';
 import { supabase } from '../supabase/client';
 import { colors, labelTypography, typography } from '../theme/colors';
 import { radius, touchTarget } from '../theme/layout';
@@ -27,25 +27,13 @@ function looksLikeEmail(s: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
 }
 
-function notifyError(err: unknown, t: TFunction) {
-  const body = mapAppError(err, t);
-  if (Platform.OS === 'web') {
-    globalThis.alert(`${t('errors.title')}\n\n${body}`);
-  } else {
-    Alert.alert(t('errors.title'), body);
-  }
-}
-
-function runAfterInteractions(fn: () => void) {
-  if (Platform.OS === 'web') {
-    setTimeout(fn, 0);
-    return;
-  }
-  fn();
+function notifyError(err: unknown, t: TFunction, dialog: DialogApi) {
+  void dialog.alert({ title: t('errors.title'), message: mapAppError(err, t) });
 }
 
 async function resolveEmailPasswordSession(
   t: TFunction,
+  dialog: DialogApi,
   hintSession: Session | null,
   context: 'signIn' | 'signUp' = 'signIn',
 ): Promise<Session | null> {
@@ -64,7 +52,7 @@ async function resolveEmailPasswordSession(
     }
     const { data, error } = await supabase.auth.getSession();
     if (error) {
-      notifyError(error, t);
+      notifyError(error, t, dialog);
       return null;
     }
     const cand = data.session;
@@ -81,6 +69,7 @@ async function resolveEmailPasswordSession(
           : t('auth.afterLoginNoSession'),
       ),
       t,
+      dialog,
     );
     return null;
   }
@@ -89,39 +78,29 @@ async function resolveEmailPasswordSession(
 
 function promptLoginSuccessThenEnter(
   t: TFunction,
+  dialog: DialogApi,
   onSessionEstablished?: () => void,
 ) {
-  const title = t('account.signIn');
-  const message =
-    `${t('account.signedInOk')}\n\n${t('auth.signInProceedHint')}`;
-  const enter = () => onSessionEstablished?.();
-
-  runAfterInteractions(() => {
-    if (Platform.OS === 'web') {
-      globalThis.alert(`${title}\n\n${message}`);
-      enter();
-      return;
-    }
-    Alert.alert(title, message, [{ text: t('common.ok'), onPress: enter }]);
-  });
+  void dialog
+    .alert({
+      title: t('account.signIn'),
+      message: `${t('account.signedInOk')}\n\n${t('auth.signInProceedHint')}`,
+    })
+    .then(() => onSessionEstablished?.());
 }
 
 function promptSignUpSuccessThenEnter(params: {
   t: TFunction;
+  dialog: DialogApi;
   detail: string;
   onDone: () => void;
 }) {
-  const title = params.t('account.signUpSuccessTitle');
-  runAfterInteractions(() => {
-    if (Platform.OS === 'web') {
-      globalThis.alert(`${title}\n\n${params.detail}`);
-      params.onDone();
-      return;
-    }
-    Alert.alert(title, params.detail, [
-      { text: params.t('common.ok'), onPress: params.onDone },
-    ]);
-  });
+  void params.dialog
+    .alert({
+      title: params.t('account.signUpSuccessTitle'),
+      message: params.detail,
+    })
+    .then(() => params.onDone());
 }
 
 type WelcomeStep = 'welcome' | 'signIn' | 'signUp';
@@ -135,6 +114,7 @@ export function EmailAuthLanding({
   onSessionEstablished,
 }: EmailAuthLandingProps) {
   const { t } = useTranslation();
+  const dialog = useDialog();
   const insets = useSafeAreaInsets();
   const [step, setStep] = useState<WelcomeStep>('welcome');
   const [fullName, setFullName] = useState('');
@@ -169,11 +149,11 @@ export function EmailAuthLanding({
     setProgressLine(null);
     try {
       if (!nm || !em || !pw) {
-        notifyError(new Error(t('account.fillSignUp')), t);
+        notifyError(new Error(t('account.fillSignUp')), t, dialog);
         return;
       }
       if (!looksLikeEmail(em)) {
-        notifyError(new Error(t('account.badEmail')), t);
+        notifyError(new Error(t('account.badEmail')), t, dialog);
         return;
       }
       if (isDevelopmentRuntime() && !developmentEmailAccepted(em)) {
@@ -184,15 +164,16 @@ export function EmailAuthLanding({
             }),
           ),
           t,
+          dialog,
         );
         return;
       }
       if (pw.length < 6) {
-        notifyError(new Error(t('account.weakPassword')), t);
+        notifyError(new Error(t('account.weakPassword')), t, dialog);
         return;
       }
       if (!privacyConsent) {
-        notifyError(new Error(t('auth.privacyConsentRequired')), t);
+        notifyError(new Error(t('auth.privacyConsentRequired')), t, dialog);
         return;
       }
       setProgressLine(t('auth.signUpWorking'));
@@ -209,12 +190,18 @@ export function EmailAuthLanding({
 
       if (data.session?.user && !data.session.user.is_anonymous) {
         setProgressLine(t('auth.signUpConfirmingSession'));
-        const sess = await resolveEmailPasswordSession(t, data.session, 'signUp');
+        const sess = await resolveEmailPasswordSession(
+          t,
+          dialog,
+          data.session,
+          'signUp',
+        );
         if (!sess) return;
         setPassword('');
         setProgressLine(null);
         promptSignUpSuccessThenEnter({
           t,
+          dialog,
           detail: t('account.signUpSuccessLoggedIn'),
           onDone: () => onSessionEstablished?.(),
         });
@@ -223,19 +210,14 @@ export function EmailAuthLanding({
 
       setPassword('');
       setProgressLine(null);
-      runAfterInteractions(() => {
-        const title = t('account.signUpSuccessTitle');
-        const detail = t('account.signUpSuccessVerifyEmail');
-        const back = () => returnToWelcomeAfterSignUp();
-        if (Platform.OS === 'web') {
-          globalThis.alert(`${title}\n\n${detail}`);
-          back();
-          return;
-        }
-        Alert.alert(title, detail, [{ text: t('common.ok'), onPress: back }]);
-      });
+      void dialog
+        .alert({
+          title: t('account.signUpSuccessTitle'),
+          message: t('account.signUpSuccessVerifyEmail'),
+        })
+        .then(() => returnToWelcomeAfterSignUp());
     } catch (e) {
-      notifyError(e, t);
+      notifyError(e, t, dialog);
     } finally {
       setBusy(false);
       setProgressLine(null);
@@ -249,11 +231,11 @@ export function EmailAuthLanding({
     setProgressLine(null);
     try {
       if (!em || !pw) {
-        notifyError(new Error(t('account.fillBoth')), t);
+        notifyError(new Error(t('account.fillBoth')), t, dialog);
         return;
       }
       if (!looksLikeEmail(em)) {
-        notifyError(new Error(t('account.badEmail')), t);
+        notifyError(new Error(t('account.badEmail')), t, dialog);
         return;
       }
       if (isDevelopmentRuntime() && !developmentEmailAccepted(em)) {
@@ -264,6 +246,7 @@ export function EmailAuthLanding({
             }),
           ),
           t,
+          dialog,
         );
         return;
       }
@@ -276,15 +259,16 @@ export function EmailAuthLanding({
       setProgressLine(t('auth.signInReadingSession'));
       const sess = await resolveEmailPasswordSession(
         t,
+        dialog,
         signData.session ?? null,
         'signIn',
       );
       if (!sess) return;
       setPassword('');
       setProgressLine(null);
-      promptLoginSuccessThenEnter(t, onSessionEstablished);
+      promptLoginSuccessThenEnter(t, dialog, onSessionEstablished);
     } catch (e) {
-      notifyError(e, t);
+      notifyError(e, t, dialog);
     } finally {
       setBusy(false);
       setProgressLine(null);
@@ -355,11 +339,11 @@ export function EmailAuthLanding({
     if (busy) return;
     Keyboard.dismiss();
     if (isSignUp && !privacyConsent) {
-      notifyError(new Error(t('auth.privacyConsentRequired')), t);
+      notifyError(new Error(t('auth.privacyConsentRequired')), t, dialog);
       return;
     }
     const p = isSignUp ? onSignUp() : onSignIn();
-    void p.catch((e) => notifyError(e, t));
+    void p.catch((e) => notifyError(e, t, dialog));
   }
 
   return (

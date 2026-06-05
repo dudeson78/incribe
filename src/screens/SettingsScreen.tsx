@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -15,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuthProfile } from '../hooks/useAuthProfile';
 import { VoiceReadingSettings } from '../components/VoiceReadingSettings';
 import { useSettings } from '../context/SettingsContext';
+import { useDialog } from '../context/DialogContext';
 import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
 import { useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
@@ -27,6 +26,7 @@ const DEFAULT_GOAL = 52;
 export function SettingsScreen() {
   const tabScrollPadding = useBottomTabScrollPadding(40);
   const { t } = useTranslation();
+  const dialog = useDialog();
   const authProfile = useAuthProfile();
   const { resetAllPracticeToNewVerseState } = useVerses();
   const {
@@ -105,60 +105,35 @@ export function SettingsScreen() {
     try {
       const n = await resetAllPracticeToNewVerseState();
 
-      const nothingMsg = `${t('settings.resetPracticeNothingTitle')}\n\n${t('settings.resetPracticeNothingBody')}`;
-      const doneMsg = `${t('common.success')}\n\n${t('settings.resetPracticeDone')}`;
-
       if (n === 0) {
-        if (Platform.OS === 'web') {
-          globalThis.alert(nothingMsg);
-        } else {
-          Alert.alert(
-            t('settings.resetPracticeNothingTitle'),
-            t('settings.resetPracticeNothingBody'),
-          );
-        }
+        await dialog.alert({
+          title: t('settings.resetPracticeNothingTitle'),
+          message: t('settings.resetPracticeNothingBody'),
+        });
         return;
       }
 
-      if (Platform.OS === 'web') {
-        globalThis.alert(doneMsg);
-      } else {
-        Alert.alert(t('common.success'), t('settings.resetPracticeDone'));
-      }
+      await dialog.alert({
+        title: t('common.success'),
+        message: t('settings.resetPracticeDone'),
+      });
     } catch (e) {
-      const body = mapAppError(e, t);
-      if (Platform.OS === 'web') {
-        globalThis.alert(`${t('errors.title')}\n\n${body}`);
-      } else {
-        Alert.alert(t('errors.title'), body);
-      }
+      await dialog.alert({ title: t('errors.title'), message: mapAppError(e, t) });
     } finally {
       setResetPracticeBusy(false);
     }
-  }, [resetAllPracticeToNewVerseState, t]);
+  }, [dialog, resetAllPracticeToNewVerseState, t]);
 
-  function confirmResetPractice() {
-    const title = t('settings.resetPracticeTitle');
-    const message = t('settings.resetPracticeMessage');
-
-    if (Platform.OS === 'web') {
-      const ok =
-        typeof globalThis.confirm === 'function'
-          ? globalThis.confirm(`${title}\n\n${message}`)
-          : false;
-      if (ok) void runResetPractice();
-      return;
-    }
-
-    Alert.alert(title, message, [
-      { text: t('verses.cancel'), style: 'cancel' },
-      {
-        text: t('settings.resetPracticeConfirm'),
-        style: 'destructive',
-        onPress: () => void runResetPractice(),
-      },
-    ]);
-  }
+  const confirmResetPractice = useCallback(async () => {
+    const ok = await dialog.confirm({
+      title: t('settings.resetPracticeTitle'),
+      message: t('settings.resetPracticeMessage'),
+      confirmText: t('settings.resetPracticeConfirm'),
+      cancelText: t('verses.cancel'),
+      destructive: true,
+    });
+    if (ok) void runResetPractice();
+  }, [dialog, runResetPractice, t]);
 
   async function handleSignOut() {
     setAccountBanner(null);
@@ -247,7 +222,7 @@ export function SettingsScreen() {
               pressed && styles.resetPracticeBtnPressed,
               resetPracticeBusy && styles.resetPracticeBtnDisabled,
             ]}
-            onPress={confirmResetPractice}
+            onPress={() => void confirmResetPractice()}
             disabled={resetPracticeBusy}
             accessibilityRole="button"
             accessibilityLabel={t('settings.resetPracticeA11y')}

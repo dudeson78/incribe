@@ -25,6 +25,15 @@ export const colors = {
   successBorder: '#2E7D32',
   errorBg: '#FFEBEE',
   errorBorder: '#C62828',
+  /** 모달 딤 + 버튼 틴트 (rgba 하드코딩 대신 여기서 관리) */
+  overlayBackdrop: 'rgba(30, 40, 34, 0.52)',
+  forestTint: 'rgba(45, 90, 61, 0.09)',
+  forestTintBorder: 'rgba(45, 90, 61, 0.34)',
+  forestTintActive: 'rgba(45, 90, 61, 0.16)',
+  orangeTint: 'rgba(255, 140, 66, 0.11)',
+  orangeTintBorder: 'rgba(255, 140, 66, 0.48)',
+  /** 파괴적 확인 버튼 — 채움형 */
+  dangerSolid: '#C62828',
   /** 파스텔 블루 — 말씀 본문 영역 / 빈칸 퀴즈 정답 강조 */
   pastelBlueBg: '#E8F0FE',
   pastelBlueBorderSoft: '#BBD9F2',

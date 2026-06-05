@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { AppButton } from '../ui/AppButton';
 import type { ScheduledRow } from '../../hooks/useVerses';
 import {
   shuffleSegments,
@@ -176,9 +177,11 @@ export function QuizOrderMode({
       ) : null}
 
       {feedback !== 'ok' ? (
-        <Pressable style={styles.btnPri} onPress={checkOrder}>
-          <Text style={styles.btnPriTxt}>{t('quiz.orderCheck')}</Text>
-        </Pressable>
+        <AppButton
+          label={t('quiz.orderCheck')}
+          onPress={checkOrder}
+          style={styles.primaryGap}
+        />
       ) : null}
       <Pressable style={styles.btnSec} onPress={reshuffle}>
         <Text style={styles.btnSecTxt}>{t('quiz.orderReshuffle')}</Text>
@@ -346,18 +349,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     color: colors.textPrimary,
   },
-  btnPri: {
-    backgroundColor: colors.forest,
-    borderRadius: radius.lg,
-    paddingVertical: 16,
-    alignItems: 'center',
+  primaryGap: {
     marginTop: 8,
-    minHeight: touchTarget.min,
-  },
-  btnPriTxt: {
-    color: colors.white,
-    fontSize: typography.body,
-    fontWeight: '700',
   },
   btnSec: {
     paddingVertical: 14,

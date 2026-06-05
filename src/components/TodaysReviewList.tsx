@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
-  Platform,
   StyleSheet,
   Text,
   View,
@@ -16,6 +14,7 @@ import { VerseVerifyModalTrigger } from './VerseVerifyModalTrigger';
 import type { ScheduledRow } from '../hooks/useVerses';
 import { computeAfterReview } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
+import { useDialog } from '../context/DialogContext';
 import { colors, typography } from '../theme/colors';
 import { radius } from '../theme/layout';
 import { differenceInCalendarDays, startOfDay } from 'date-fns';
@@ -98,6 +97,7 @@ export function TodaysReviewList({
   completeLongRemediation,
 }: TodaysReviewListProps) {
   const { t } = useTranslation();
+  const dialog = useDialog();
   const [sessionEnd, setSessionEnd] = useState<SessionEndPrompt | null>(null);
   /**
    * RN Modal 등이 과거 렌더의 onPress 클로저를 유지하면 sessionEnd 변수는 null 스냅샷일 수 있음.
@@ -138,12 +138,7 @@ export function TodaysReviewList({
   }
 
   function showMapError(err: unknown) {
-    const body = mapAppError(err, t);
-    if (Platform.OS === 'web') {
-      globalThis.alert(`${t('errors.title')}\n\n${body}`);
-    } else {
-      Alert.alert(t('errors.title'), body);
-    }
+    void dialog.alert({ title: t('errors.title'), message: mapAppError(err, t) });
   }
 
   async function finalizeShortDaily() {
