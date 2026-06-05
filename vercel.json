@@ -4,5 +4,10 @@
   "outputDirectory": "dist",
   "framework": null,
   "cleanUrls": true,
-  "rewrites": [{ "source": "/:path*", "destination": "/" }]
+  "rewrites": [
+    {
+      "source": "/((?!_expo|assets|favicon.ico|metadata.json).*)",
+      "destination": "/"
+    }
+  ]
 }

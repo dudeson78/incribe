@@ -145,7 +145,6 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.9,
-    transform: [{ scale: 0.985 }],
   },
   disabled: {
     opacity: 0.5,

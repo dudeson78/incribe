@@ -62,18 +62,17 @@ export function DialogProvider({ children }: { children: ReactNode }) {
     [],
   );
 
-  const close = useCallback(
-    (value: boolean) => {
-      setDialog((cur) => {
-        if (cur) {
-          if (cur.kind === 'confirm') cur.resolve(value);
-          else cur.resolve();
-        }
-        return null;
-      });
-    },
-    [],
-  );
+  const close = useCallback((value: boolean) => {
+    setDialog((cur) => {
+      if (!cur) return null;
+      const snapshot = cur;
+      setTimeout(() => {
+        if (snapshot.kind === 'confirm') snapshot.resolve(value);
+        else snapshot.resolve();
+      }, 0);
+      return null;
+    });
+  }, []);
 
   const api = useMemo<DialogApi>(() => ({ confirm, alert }), [confirm, alert]);
 
@@ -86,61 +85,61 @@ export function DialogProvider({ children }: { children: ReactNode }) {
   return (
     <DialogContext.Provider value={api}>
       {children}
-      <Modal
-        visible={dialog !== null}
-        transparent
-        animationType="fade"
-        onRequestClose={() => close(false)}
-      >
-        <View style={styles.backdrop}>
-          <Pressable
-            style={StyleSheet.absoluteFill}
-            onPress={() => close(false)}
-            accessibilityElementsHidden
-            importantForAccessibility="no-hide-descendants"
-          />
-          <View style={styles.card}>
-            <View style={styles.body}>
-              {dialog?.opts.title ? (
-                <Text style={styles.title}>{dialog.opts.title}</Text>
-              ) : null}
-              <Text style={styles.message}>{dialog?.opts.message}</Text>
-            </View>
-            <View style={styles.actions}>
-              {isConfirm ? (
-                <View style={styles.btnRow}>
-                  <AppButton
-                    label={
-                      (dialog?.opts as ConfirmOptions).cancelText ??
-                      t('common.cancel')
-                    }
-                    onPress={() => close(false)}
-                    variant="secondary"
-                    size="md"
-                    fullWidth={false}
-                    style={styles.btnHalf}
-                  />
+      {dialog !== null ? (
+        <Modal
+          visible
+          transparent
+          animationType="fade"
+          onRequestClose={() => close(false)}
+        >
+          <View style={styles.backdrop}>
+            <Pressable
+              style={StyleSheet.absoluteFill}
+              onPress={() => close(false)}
+            />
+            <View style={styles.card}>
+              <View style={styles.body}>
+                {dialog.opts.title ? (
+                  <Text style={styles.title}>{dialog.opts.title}</Text>
+                ) : null}
+                <Text style={styles.message}>{dialog.opts.message}</Text>
+              </View>
+              <View style={styles.actions}>
+                {isConfirm ? (
+                  <View style={styles.btnRow}>
+                    <AppButton
+                      label={
+                        (dialog.opts as ConfirmOptions).cancelText ??
+                        t('common.cancel')
+                      }
+                      onPress={() => close(false)}
+                      variant="secondary"
+                      size="md"
+                      fullWidth={false}
+                      style={styles.btnHalf}
+                    />
+                    <AppButton
+                      label={confirmLabel}
+                      onPress={() => close(true)}
+                      variant={destructive ? 'danger' : 'primary'}
+                      size="md"
+                      fullWidth={false}
+                      style={styles.btnHalf}
+                    />
+                  </View>
+                ) : (
                   <AppButton
                     label={confirmLabel}
                     onPress={() => close(true)}
-                    variant={destructive ? 'danger' : 'primary'}
+                    variant="primary"
                     size="md"
-                    fullWidth={false}
-                    style={styles.btnHalf}
                   />
-                </View>
-              ) : (
-                <AppButton
-                  label={confirmLabel}
-                  onPress={() => close(true)}
-                  variant="primary"
-                  size="md"
-                />
-              )}
+                )}
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      ) : null}
     </DialogContext.Provider>
   );
 }
@@ -195,10 +194,10 @@ const styles = StyleSheet.create({
   actions: {
     paddingHorizontal: 20,
     paddingBottom: 20,
-    paddingTop: 4,
+    paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: colors.borderTertiary,
-    backgroundColor: `${colors.backgroundSecondary}88`,
+    backgroundColor: colors.backgroundSecondary,
   },
   btnRow: {
     flexDirection: 'row',
