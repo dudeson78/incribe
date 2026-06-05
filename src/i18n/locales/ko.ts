@@ -55,6 +55,10 @@ export const ko = {
     remaA11y: '{{ref}} 레마(느낀점·의미) 메모 편집',
     remaModalTitle: '레마 관리',
     remaModalHint: '이 말씀이 내게 주는 묵상·깨달음·적용을 기록해요.',
+    metaCoachmarkTitle: '암기 도구 안내',
+    metaCoachmarkBody:
+      '키워드는 빈칸 퀴즈용 핵심 단어, 연상기법은 외우기 쉬운 연상, 레마는 내 묵상·적용 기록이에요. 각 구절 옆 버튼에서 입력할 수 있어요.',
+    metaCoachmarkDismiss: '알겠어요',
     remaPlaceholder: '이 구절을 읽고 느낀 점, 구절의 의미 등을 자유롭게 메모해 보세요',
     remaSave: '저장',
     remaClear: '비우기',
@@ -154,6 +158,9 @@ export const ko = {
     verifyRemaModalTitle: '{{ref}} 레마',
     verifyRemaEmpty:
       '등록된 레마가 없습니다. 「관리」 탭에서 레마를 추가할 수 있습니다.',
+    verifyMoreBtn: '암기 도구 더보기',
+    verifyMoreCloseBtn: '접기',
+    verifyMoreA11y: '키워드·연상기법·레마 버튼을 펼치거나 접습니다',
   },
   rema: {
     label: '레마',

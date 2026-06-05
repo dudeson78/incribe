@@ -1,5 +1,4 @@
 import {
-  ActivityIndicator,
   Modal,
   Pressable,
   StyleSheet,
@@ -8,8 +7,9 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { AppButton } from './ui/AppButton';
 import { colors, typography } from '../theme/colors';
-import { radius, touchTarget } from '../theme/layout';
+import { radius } from '../theme/layout';
 
 export type CelebrationVariant =
   | 'shortDailyComplete'
@@ -80,22 +80,14 @@ export function CelebrationModal({
                   ? subtitleOverride.trim()
                   : t('celebration.subtitle')}
               </Text>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.btnPrimary,
-                  pressed && styles.btnPressed,
-                  busy && styles.btnDisabled,
-                ]}
+              <AppButton
+                label={t('common.ok')}
                 onPress={() => void onConfirmShortDaily?.()}
-                disabled={busy}
+                variant="accent"
+                loading={busy}
+                style={styles.modalBtn}
                 accessibilityLabel={t('common.ok')}
-              >
-                {busy ? (
-                  <ActivityIndicator color={colors.white} />
-                ) : (
-                  <Text style={styles.btnText}>{t('common.ok')}</Text>
-                )}
-              </Pressable>
+              />
             </>
           ) : null}
 
@@ -106,34 +98,22 @@ export function CelebrationModal({
               </Text>
               <Text style={styles.title}>{t('celebration.longTitle')}</Text>
               <Text style={styles.sub}>{t('celebration.longSubtitle')}</Text>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.btnPrimary,
-                  pressed && styles.btnPressed,
-                  busy && styles.btnDisabled,
-                ]}
+              <AppButton
+                label={t('celebration.longPass')}
                 onPress={() => void onConfirmLongPass?.()}
-                disabled={busy}
+                variant="accent"
+                loading={busy}
+                style={styles.modalBtn}
                 accessibilityLabel={t('celebration.longPassA11y')}
-              >
-                {busy ? (
-                  <ActivityIndicator color={colors.white} />
-                ) : (
-                  <Text style={styles.btnText}>{t('celebration.longPass')}</Text>
-                )}
-              </Pressable>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.btnDangerOutline,
-                  pressed && styles.btnPressed,
-                  busy && styles.btnDisabled,
-                ]}
+              />
+              <AppButton
+                label={t('celebration.longFail')}
                 onPress={() => void onConfirmLongFail?.()}
+                variant="danger"
                 disabled={busy}
+                style={styles.modalBtn}
                 accessibilityLabel={t('celebration.longFailA11y')}
-              >
-                <Text style={styles.btnDangerText}>{t('celebration.longFail')}</Text>
-              </Pressable>
+              />
             </>
           ) : null}
 
@@ -142,22 +122,14 @@ export function CelebrationModal({
               <Text style={styles.emoji}>✓</Text>
               <Text style={styles.title}>{t('celebration.remedialTitle')}</Text>
               <Text style={styles.sub}>{t('celebration.remedialSubtitle')}</Text>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.btnPrimary,
-                  pressed && styles.btnPressed,
-                  busy && styles.btnDisabled,
-                ]}
+              <AppButton
+                label={t('celebration.remedialAck')}
                 onPress={() => void onConfirmRemedial?.()}
-                disabled={busy}
+                variant="accent"
+                loading={busy}
+                style={styles.modalBtn}
                 accessibilityLabel={t('celebration.remedialAckA11y')}
-              >
-                {busy ? (
-                  <ActivityIndicator color={colors.white} />
-                ) : (
-                  <Text style={styles.btnText}>{t('celebration.remedialAck')}</Text>
-                )}
-              </Pressable>
+              />
             </>
           ) : null}
 
@@ -225,49 +197,10 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingHorizontal: 4,
   },
-  btnPrimary: {
-    backgroundColor: colors.orange,
-    paddingVertical: 14,
-    paddingHorizontal: 28,
-    borderRadius: radius.lg,
+  modalBtn: {
     minWidth: 200,
-    width: '100%',
     maxWidth: 300,
-    minHeight: touchTarget.min,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  btnDangerOutline: {
-    borderWidth: 2,
-    borderColor: colors.errorBorder,
-    backgroundColor: colors.errorBg,
-    paddingVertical: 14,
-    paddingHorizontal: 28,
-    borderRadius: radius.lg,
-    minWidth: 200,
-    width: '100%',
-    maxWidth: 300,
-    minHeight: touchTarget.min,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 0,
-  },
-  btnPressed: {
-    opacity: 0.9,
-  },
-  btnDisabled: {
-    opacity: 0.55,
-  },
-  btnText: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.white,
-  },
-  btnDangerText: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.errorBorder,
-    textAlign: 'center',
+    alignSelf: 'center',
   },
   linkBtn: {
     marginTop: 4,

@@ -204,9 +204,12 @@ export function QuizBlankMode({
         />
       ) : null}
 
-      <Pressable style={styles.btnSec} onPress={reshuffleBlanks}>
-        <Text style={styles.btnSecTxt}>{t('quiz.blankRegenerate')}</Text>
-      </Pressable>
+      <AppButton
+        label={t('quiz.blankRegenerate')}
+        onPress={reshuffleBlanks}
+        variant="secondary"
+        size="md"
+      />
     </>
   );
 
@@ -340,21 +343,6 @@ const styles = StyleSheet.create({
   },
   primaryGap: {
     marginTop: 4,
-  },
-  btnSec: {
-    paddingVertical: 14,
-    alignItems: 'center',
-    borderRadius: radius.lg,
-    borderWidth: 0.5,
-    borderColor: colors.borderSecondary,
-    backgroundColor: colors.backgroundSecondary,
-    minHeight: touchTarget.min,
-    justifyContent: 'center',
-  },
-  btnSecTxt: {
-    fontSize: typography.min,
-    fontWeight: '600',
-    color: colors.forest,
   },
   btnGhost: {
     padding: 14,

@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { AppButton } from './ui/AppButton';
 import { EmailAuthLanding } from './EmailAuthLanding';
 import { primeAuthSession } from '../lib/primeAuthSession';
 import {
@@ -15,7 +16,7 @@ import {
   supabase,
 } from '../supabase/client';
 import { colors, typography } from '../theme/colors';
-import { radius, touchTarget } from '../theme/layout';
+import { touchTarget } from '../theme/layout';
 
 /**
  * `EXPO_PUBLIC_BYPASS_EMAIL_AUTH_GATE=true` 이면 로그인 화면 없이 바로 메인.
@@ -138,12 +139,14 @@ export function AppAuthGate({ children }: { children: ReactNode }) {
             {t('auth.technicalDetail')} {primeDetail}
           </Text>
         ) : null}
-        <Pressable
-          style={gateStyles.retry}
+        <AppButton
+          label={t('auth.retry')}
           onPress={() => setBootstrapNonce((n) => n + 1)}
-        >
-          <Text style={gateStyles.retryText}>{t('auth.retry')}</Text>
-        </Pressable>
+          variant="accent"
+          size="md"
+          fullWidth={false}
+          style={gateStyles.retry}
+        />
       </View>
     );
   }
@@ -185,17 +188,6 @@ const gateStyles = StyleSheet.create({
   retry: {
     alignSelf: 'center',
     marginTop: 8,
-    minHeight: touchTarget.min,
     minWidth: touchTarget.min * 3,
-    paddingHorizontal: 20,
-    borderRadius: radius.md,
-    backgroundColor: colors.orange,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  retryText: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.white,
   },
 });

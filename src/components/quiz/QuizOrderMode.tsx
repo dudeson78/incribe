@@ -183,9 +183,12 @@ export function QuizOrderMode({
           style={styles.primaryGap}
         />
       ) : null}
-      <Pressable style={styles.btnSec} onPress={reshuffle}>
-        <Text style={styles.btnSecTxt}>{t('quiz.orderReshuffle')}</Text>
-      </Pressable>
+      <AppButton
+        label={t('quiz.orderReshuffle')}
+        onPress={reshuffle}
+        variant="secondary"
+        size="md"
+      />
     </>
   );
 
@@ -351,20 +354,5 @@ const styles = StyleSheet.create({
   },
   primaryGap: {
     marginTop: 8,
-  },
-  btnSec: {
-    paddingVertical: 14,
-    alignItems: 'center',
-    borderRadius: radius.lg,
-    borderWidth: 0.5,
-    borderColor: colors.borderSecondary,
-    backgroundColor: colors.backgroundSecondary,
-    minHeight: touchTarget.min,
-    justifyContent: 'center',
-  },
-  btnSecTxt: {
-    fontSize: typography.min,
-    fontWeight: '600',
-    color: colors.forest,
   },
 });

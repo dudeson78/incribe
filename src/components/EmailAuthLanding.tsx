@@ -15,6 +15,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { AppButton } from './ui/AppButton';
 import { developmentEmailAccepted, getDevEmailLocalPartRestriction } from '../lib/devEmailAllowlist';
 import { isDevelopmentRuntime } from '../lib/isDevelopmentRuntime';
 import { mapAppError } from '../i18n/mapAppError';
@@ -311,23 +312,18 @@ export function EmailAuthLanding({
           >
             <Text style={styles.btnOutlinedText}>{t('account.signIn')}</Text>
           </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t('account.signUp')}
-            style={({ pressed }) => [
-              styles.btnPrimaryWide,
-              pressed && pressedOpacity,
-              busy && btnDisabled,
-            ]}
+          <AppButton
+            label={t('account.signUp')}
             onPress={() => {
               setStep('signUp');
               setPassword('');
               setPrivacyConsent(false);
             }}
+            variant="accent"
+            size="md"
             disabled={busy}
-          >
-            <Text style={styles.btnPrimaryText}>{t('account.signUp')}</Text>
-          </Pressable>
+            accessibilityLabel={t('account.signUp')}
+          />
         </View>
       </View>
     );
@@ -533,25 +529,17 @@ export function EmailAuthLanding({
           </Text>
         ) : null}
 
-        <Pressable
-          style={({ pressed }) => [
-            styles.btnPrimaryWide,
-            styles.btnPrimaryWideFooter,
-            pressed && pressedOpacity,
-            busy && btnDisabled,
-            webPointerStyle,
-          ]}
+        <AppButton
+          label={isSignUp ? t('account.signUp') : t('account.signIn')}
           onPress={submitForm}
+          variant="accent"
+          size="md"
           disabled={busy}
-          accessibilityRole="button"
+          style={[styles.btnPrimaryWideFooter, webPointerStyle]}
           accessibilityLabel={
             isSignUp ? t('account.signUp') : t('account.signIn')
           }
-        >
-          <Text style={styles.btnPrimaryText}>
-            {isSignUp ? t('account.signUp') : t('account.signIn')}
-          </Text>
-        </Pressable>
+        />
 
         {busy ? (
           <View style={styles.workingWrap}>
@@ -709,16 +697,6 @@ const styles = StyleSheet.create({
     minHeight: touchTarget.min * 0.85,
     color: colors.textPrimary,
   },
-  btnPrimaryWide: {
-    marginTop: 14,
-    minHeight: touchTarget.min,
-    borderRadius: radius.md,
-    backgroundColor: colors.orange,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'stretch',
-    paddingHorizontal: 16,
-  },
   btnPrimaryWideFooter: {
     marginTop: 0,
   },
@@ -729,11 +707,6 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: `${colors.forest}22`,
     backgroundColor: colors.background,
-  },
-  btnPrimaryText: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.white,
   },
   workingWrap: {
     marginTop: 4,

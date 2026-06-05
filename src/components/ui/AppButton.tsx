@@ -12,8 +12,13 @@ import {
 import { colors, typography } from '../../theme/colors';
 import { radius, touchTarget } from '../../theme/layout';
 
-export type AppButtonVariant = 'primary' | 'secondary' | 'danger';
-export type AppButtonSize = 'md' | 'lg';
+export type AppButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'danger'
+  | 'accent'
+  | 'ghost';
+export type AppButtonSize = 'sm' | 'md' | 'lg';
 
 type Props = {
   label: string;
@@ -57,7 +62,7 @@ export function AppButton({
       accessibilityLabel={accessibilityLabel ?? label}
       style={({ pressed }) => [
         styles.base,
-        size === 'lg' ? styles.lg : styles.md,
+        size === 'lg' ? styles.lg : size === 'sm' ? styles.sm : styles.md,
         fullWidth && styles.fullWidth,
         v.container,
         v.shadow,
@@ -71,7 +76,15 @@ export function AppButton({
       ) : (
         <View style={styles.content}>
           {leading ? <View style={styles.leading}>{leading}</View> : null}
-          <Text style={[styles.label, size === 'md' && styles.labelMd, v.label]} numberOfLines={1}>
+          <Text
+            style={[
+              styles.label,
+              size === 'md' && styles.labelMd,
+              size === 'sm' && styles.labelSm,
+              v.label,
+            ]}
+            numberOfLines={1}
+          >
             {label}
           </Text>
         </View>
@@ -122,6 +135,29 @@ const VARIANTS: Record<
       elevation: 3,
     },
   },
+  /** 긍정적 1차 CTA — 연간 목표 적용·축하 모달 등 */
+  accent: {
+    container: { backgroundColor: colors.orange },
+    label: { color: colors.white, fontWeight: '700' },
+    spinner: colors.white,
+    shadow: {
+      shadowColor: colors.orange,
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.22,
+      shadowRadius: 6,
+      elevation: 3,
+    },
+  },
+  /** 취소·보조 텍스트 버튼 */
+  ghost: {
+    container: {
+      backgroundColor: colors.backgroundSecondary,
+      borderWidth: 1,
+      borderColor: colors.borderSecondary,
+    },
+    label: { color: colors.forest, fontWeight: '600' },
+    spinner: colors.forest,
+  },
 };
 
 const styles = StyleSheet.create({
@@ -129,6 +165,12 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  sm: {
+    minHeight: touchTarget.min * 0.74,
+    paddingVertical: 7,
+    paddingHorizontal: 14,
+    borderRadius: radius.sm,
   },
   md: {
     minHeight: touchTarget.min,
@@ -165,5 +207,9 @@ const styles = StyleSheet.create({
   },
   labelMd: {
     fontSize: typography.min,
+  },
+  labelSm: {
+    fontSize: typography.min,
+    fontWeight: '700',
   },
 });

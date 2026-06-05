@@ -16,6 +16,8 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 
+import { AppButton } from '../components/ui/AppButton';
+import { VerseMetaCoachmark } from '../components/VerseMetaCoachmark';
 import { VersePracticeHistoryTable } from '../components/VersePracticeHistoryTable';
 import type { ReviewLogRow, VerseWithSchedule } from '../types/verses';
 import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
@@ -84,18 +86,14 @@ export function VerseListScreen({ navigation }: Props) {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable
+        <AppButton
+          label={`+ ${t('verses.addButton')}`}
           onPress={() => navigation.navigate('VerseForm', {})}
-          style={({ pressed }) => [
-            styles.headerBtn,
-            pressed && styles.headerBtnPressed,
-          ]}
-          hitSlop={hitSlopComfortable}
-          accessibilityRole="button"
+          size="sm"
+          fullWidth={false}
+          style={styles.headerBtnWrap}
           accessibilityLabel={t('verses.headerAddA11y')}
-        >
-          <Text style={styles.headerBtnText}>+ {t('verses.addButton')}</Text>
-        </Pressable>
+        />
       ),
     });
   }, [navigation, t]);
@@ -369,6 +367,7 @@ export function VerseListScreen({ navigation }: Props) {
         data={rows}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
+        ListHeaderComponent={<VerseMetaCoachmark />}
         contentContainerStyle={[
           styles.listContent,
           { paddingBottom: tabScrollPadding },
@@ -429,37 +428,30 @@ export function VerseListScreen({ navigation }: Props) {
               autoCorrect={false}
             />
             <View style={styles.keywordModalBtns}>
-              <Pressable
-                style={[styles.keywordModalGhost, keywordSaving && styles.keywordModalDisabled]}
+              <AppButton
+                label={t('verses.keywordCancel')}
                 onPress={closeKeywordModal}
+                variant="ghost"
+                size="md"
+                fullWidth={false}
                 disabled={keywordSaving}
-              >
-                <Text style={styles.keywordModalGhostTxt}>
-                  {t('verses.keywordCancel')}
-                </Text>
-              </Pressable>
-              <Pressable
-                style={[styles.keywordModalGhost, keywordSaving && styles.keywordModalDisabled]}
+              />
+              <AppButton
+                label={t('verses.keywordClear')}
                 onPress={() => setKeywordDraft('')}
+                variant="ghost"
+                size="md"
+                fullWidth={false}
                 disabled={keywordSaving}
-              >
-                <Text style={styles.keywordModalGhostTxt}>
-                  {t('verses.keywordClear')}
-                </Text>
-              </Pressable>
-              <Pressable
-                style={[styles.keywordModalPri, keywordSaving && styles.keywordModalDisabled]}
+              />
+              <AppButton
+                label={t('verses.keywordSave')}
                 onPress={() => void saveKeywords()}
-                disabled={keywordSaving}
-              >
-                {keywordSaving ? (
-                  <ActivityIndicator color={colors.white} size="small" />
-                ) : (
-                  <Text style={styles.keywordModalPriTxt}>
-                    {t('verses.keywordSave')}
-                  </Text>
-                )}
-              </Pressable>
+                loading={keywordSaving}
+                size="md"
+                fullWidth={false}
+                style={styles.modalSaveBtn}
+              />
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -516,46 +508,30 @@ export function VerseListScreen({ navigation }: Props) {
               autoCorrect={false}
             />
             <View style={styles.keywordModalBtns}>
-              <Pressable
-                style={[
-                  styles.keywordModalGhost,
-                  mnemonicsSaving && styles.keywordModalDisabled,
-                ]}
+              <AppButton
+                label={t('verses.mnemonicsCancel')}
                 onPress={closeMnemonicsModal}
+                variant="ghost"
+                size="md"
+                fullWidth={false}
                 disabled={mnemonicsSaving}
-              >
-                <Text style={styles.keywordModalGhostTxt}>
-                  {t('verses.mnemonicsCancel')}
-                </Text>
-              </Pressable>
-              <Pressable
-                style={[
-                  styles.keywordModalGhost,
-                  mnemonicsSaving && styles.keywordModalDisabled,
-                ]}
+              />
+              <AppButton
+                label={t('verses.mnemonicsClear')}
                 onPress={() => setMnemonicsDraft('')}
+                variant="ghost"
+                size="md"
+                fullWidth={false}
                 disabled={mnemonicsSaving}
-              >
-                <Text style={styles.keywordModalGhostTxt}>
-                  {t('verses.mnemonicsClear')}
-                </Text>
-              </Pressable>
-              <Pressable
-                style={[
-                  styles.keywordModalPri,
-                  mnemonicsSaving && styles.keywordModalDisabled,
-                ]}
+              />
+              <AppButton
+                label={t('verses.mnemonicsSave')}
                 onPress={() => void saveMnemonics()}
-                disabled={mnemonicsSaving}
-              >
-                {mnemonicsSaving ? (
-                  <ActivityIndicator color={colors.white} size="small" />
-                ) : (
-                  <Text style={styles.keywordModalPriTxt}>
-                    {t('verses.mnemonicsSave')}
-                  </Text>
-                )}
-              </Pressable>
+                loading={mnemonicsSaving}
+                size="md"
+                fullWidth={false}
+                style={styles.modalSaveBtn}
+              />
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -612,46 +588,30 @@ export function VerseListScreen({ navigation }: Props) {
               autoCorrect={false}
             />
             <View style={styles.keywordModalBtns}>
-              <Pressable
-                style={[
-                  styles.keywordModalGhost,
-                  remaSaving && styles.keywordModalDisabled,
-                ]}
+              <AppButton
+                label={t('verses.remaCancel')}
                 onPress={closeRemaModal}
+                variant="ghost"
+                size="md"
+                fullWidth={false}
                 disabled={remaSaving}
-              >
-                <Text style={styles.keywordModalGhostTxt}>
-                  {t('verses.remaCancel')}
-                </Text>
-              </Pressable>
-              <Pressable
-                style={[
-                  styles.keywordModalGhost,
-                  remaSaving && styles.keywordModalDisabled,
-                ]}
+              />
+              <AppButton
+                label={t('verses.remaClear')}
                 onPress={() => setRemaDraft('')}
+                variant="ghost"
+                size="md"
+                fullWidth={false}
                 disabled={remaSaving}
-              >
-                <Text style={styles.keywordModalGhostTxt}>
-                  {t('verses.remaClear')}
-                </Text>
-              </Pressable>
-              <Pressable
-                style={[
-                  styles.keywordModalPri,
-                  remaSaving && styles.keywordModalDisabled,
-                ]}
+              />
+              <AppButton
+                label={t('verses.remaSave')}
                 onPress={() => void saveRema()}
-                disabled={remaSaving}
-              >
-                {remaSaving ? (
-                  <ActivityIndicator color={colors.white} size="small" />
-                ) : (
-                  <Text style={styles.keywordModalPriTxt}>
-                    {t('verses.remaSave')}
-                  </Text>
-                )}
-              </Pressable>
+                loading={remaSaving}
+                size="md"
+                fullWidth={false}
+                style={styles.modalSaveBtn}
+              />
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -670,23 +630,11 @@ const styles = StyleSheet.create({
     padding: 16,
     flexGrow: 1,
   },
-  headerBtn: {
-    minHeight: touchTarget.min * 0.74,
-    paddingHorizontal: 16,
-    paddingVertical: 7,
+  headerBtnWrap: {
     marginRight: 6,
-    borderRadius: radius.sm,
-    backgroundColor: colors.forest,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  headerBtnPressed: {
-    opacity: 0.85,
-  },
-  headerBtnText: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.white,
+  modalSaveBtn: {
+    minWidth: 100,
   },
   row: {
     flexDirection: 'column',
@@ -861,39 +809,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     justifyContent: 'flex-end',
     alignItems: 'center',
-  },
-  keywordModalGhost: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: radius.md,
-    borderWidth: 0.5,
-    borderColor: colors.borderSecondary,
-    backgroundColor: colors.backgroundSecondary,
-    minHeight: touchTarget.min * 0.75,
-    justifyContent: 'center',
-  },
-  keywordModalGhostTxt: {
-    fontSize: typography.min,
-    fontWeight: '600',
-    color: colors.forest,
-  },
-  keywordModalPri: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: radius.md,
-    backgroundColor: colors.forest,
-    minHeight: touchTarget.min * 0.75,
-    minWidth: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  keywordModalPriTxt: {
-    fontSize: typography.min,
-    fontWeight: '800',
-    color: colors.white,
-  },
-  keywordModalDisabled: {
-    opacity: 0.55,
   },
   snippetBox: {
     backgroundColor: colors.pastelBlueBg,

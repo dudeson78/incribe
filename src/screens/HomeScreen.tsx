@@ -2,7 +2,6 @@ import type { NavigationProp } from '@react-navigation/native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
-  Pressable,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -10,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AppButton } from '../components/ui/AppButton';
 import { AnnualGoalCard } from '../components/AnnualGoalCard';
 import { HomeGroupedReview } from '../components/HomeGroupedReview';
 import { TodayPracticeVerseBadge } from '../components/TodayPracticeVerseBadge';
@@ -189,21 +189,14 @@ export function HomeScreen() {
             <Text style={styles.emptyVersesText}>
               {t('home.emptyVersesHint', { tab: t('tabs.verses') })}
             </Text>
-            <Pressable
-              style={({ pressed }) => [
-                styles.emptyVersesCta,
-                pressed && styles.emptyVersesCtaPressed,
-              ]}
+            <AppButton
+              label={t('home.emptyVersesCta', { tab: t('tabs.verses') })}
               onPress={() => navigation.navigate('VersesTab')}
-              accessibilityRole="button"
+              size="md"
               accessibilityLabel={t('home.emptyVersesCta', {
                 tab: t('tabs.verses'),
               })}
-            >
-              <Text style={styles.emptyVersesCtaText}>
-                {t('home.emptyVersesCta', { tab: t('tabs.verses') })}
-              </Text>
-            </Pressable>
+            />
           </View>
         ) : null}
 
@@ -309,23 +302,5 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     color: colors.textPrimary,
     textAlign: 'center',
-  },
-  emptyVersesCta: {
-    alignSelf: 'stretch',
-    paddingVertical: 12,
-    paddingHorizontal: 18,
-    borderRadius: radius.md,
-    backgroundColor: colors.forest,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 48,
-  },
-  emptyVersesCtaPressed: {
-    opacity: 0.9,
-  },
-  emptyVersesCtaText: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.white,
   },
 });

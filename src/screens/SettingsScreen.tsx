@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -12,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useAuthProfile } from '../hooks/useAuthProfile';
 import { VoiceReadingSettings } from '../components/VoiceReadingSettings';
+import { AppButton } from '../components/ui/AppButton';
 import { useSettings } from '../context/SettingsContext';
 import { useDialog } from '../context/DialogContext';
 import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
@@ -203,9 +203,14 @@ export function SettingsScreen() {
               onChangeText={setGoalInput}
               accessibilityLabel={t('settings.annualGoal')}
             />
-            <Pressable style={styles.applyBtn} onPress={applyGoal}>
-              <Text style={styles.applyText}>{t('settings.apply')}</Text>
-            </Pressable>
+            <AppButton
+              label={t('settings.apply')}
+              onPress={applyGoal}
+              variant="accent"
+              size="md"
+              fullWidth={false}
+              style={styles.applyBtn}
+            />
           </View>
         </View>
 
@@ -216,25 +221,13 @@ export function SettingsScreen() {
             {t('settings.resetPracticeSection')}
           </Text>
           <Text style={styles.hint}>{t('settings.resetPracticeHint')}</Text>
-          <Pressable
-            style={({ pressed }) => [
-              styles.resetPracticeBtn,
-              pressed && styles.resetPracticeBtnPressed,
-              resetPracticeBusy && styles.resetPracticeBtnDisabled,
-            ]}
+          <AppButton
+            label={t('settings.resetPracticeBtn')}
             onPress={() => void confirmResetPractice()}
-            disabled={resetPracticeBusy}
-            accessibilityRole="button"
+            variant="danger"
+            loading={resetPracticeBusy}
             accessibilityLabel={t('settings.resetPracticeA11y')}
-          >
-            {resetPracticeBusy ? (
-              <ActivityIndicator color={colors.forest} size="small" />
-            ) : (
-              <Text style={styles.resetPracticeBtnText}>
-                {t('settings.resetPracticeBtn')}
-              </Text>
-            )}
-          </Pressable>
+          />
         </View>
 
         <View style={styles.settingBlock}>
@@ -339,31 +332,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 0,
   },
-  resetPracticeBtn: {
-    alignSelf: 'stretch',
-    marginBottom: 0,
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: `${colors.orange}88`,
-    backgroundColor: `${colors.orange}14`,
-    minWidth: 160,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 44,
-  },
-  resetPracticeBtnPressed: {
-    opacity: 0.88,
-  },
-  resetPracticeBtnDisabled: {
-    opacity: 0.55,
-  },
-  resetPracticeBtnText: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.forest,
-  },
   accountInner: {
     gap: 10,
   },
@@ -415,19 +383,5 @@ const styles = StyleSheet.create({
   },
   applyBtn: {
     minWidth: touchTarget.min,
-    minHeight: touchTarget.min,
-    paddingHorizontal: 16,
-    borderRadius: radius.md,
-    backgroundColor: colors.orange,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  applyText: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.white,
-  },
-  pressed: {
-    opacity: 0.9,
   },
 });

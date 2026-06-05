@@ -95,6 +95,7 @@ export function VerseVerifyModalTrigger({
   const [mnemonicsVisible, setMnemonicsVisible] = useState(false);
   const [remaVisible, setRemaVisible] = useState(false);
   const [listenStatus, setListenStatus] = useState<'idle' | 'playing'>('idle');
+  const [showAidButtons, setShowAidButtons] = useState(false);
   const listenRunRef = useRef(0);
 
   const refTrimmed = typeof reference === 'string' ? reference.trim() : '';
@@ -112,6 +113,7 @@ export function VerseVerifyModalTrigger({
       setRemaVisible(false);
       cancelVerseCardSpeech();
       setListenStatus('idle');
+      setShowAidButtons(false);
     }
   }, [disabled]);
 
@@ -159,142 +161,149 @@ export function VerseVerifyModalTrigger({
 
   return (
     <>
-      {/* 1차 행위(말씀확인·말씀듣기)는 포레스트 강조, 암기 보조(키워드·연상기법·레마)는 한 단계 가라앉은 중립색으로 위계 구분 */}
-      <View style={styles.triggerRow}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.trigger,
-            styles.triggerThird,
-            styles.triggerPrimary,
-            pressed && styles.triggerPressed,
-            disabled && styles.triggerDisabled,
-          ]}
-          onPress={() => {
-            if (disabled) return;
-            setScriptureVisible(true);
-          }}
-          disabled={disabled}
-          accessibilityRole="button"
-          accessibilityLabel={t('seven.verifyScriptureA11y')}
-        >
-          <Text
-            style={[styles.triggerText, styles.triggerTextPrimary]}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.8}
-          >
-            {t('seven.verifyScriptureBtn')}
-          </Text>
-        </Pressable>
-
-        <Pressable
-          style={({ pressed }) => [
-            styles.trigger,
-            styles.triggerThird,
-            styles.triggerPrimary,
-            listenStatus !== 'idle' && styles.triggerListenActive,
-            pressed && styles.triggerPressed,
-            (disabled || !body) && styles.triggerDisabled,
-          ]}
-          onPress={onListenPress}
-          disabled={disabled || !body}
-          accessibilityRole="button"
-          accessibilityLabel={listenA11y}
-        >
-          {listenStatus === 'playing' ? (
-            <ActivityIndicator size="small" color={colors.orange} />
-          ) : null}
-          <Text
-            style={[
-              styles.triggerText,
-              styles.triggerTextPrimary,
-              listenStatus !== 'idle' && styles.triggerTextActive,
+      <View style={styles.triggerWrap}>
+        <View style={styles.triggerPrimaryRow}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.trigger,
+              styles.triggerHalf,
+              styles.triggerPrimaryLg,
+              pressed && styles.triggerPressed,
+              disabled && styles.triggerDisabled,
             ]}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.8}
+            onPress={() => {
+              if (disabled) return;
+              setScriptureVisible(true);
+            }}
+            disabled={disabled}
+            accessibilityRole="button"
+            accessibilityLabel={t('seven.verifyScriptureA11y')}
           >
-            {listenLabel}
-          </Text>
-        </Pressable>
+            <Text
+              style={[styles.triggerTextLg, styles.triggerTextPrimary]}
+              numberOfLines={1}
+            >
+              {t('seven.verifyScriptureBtn')}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [
+              styles.trigger,
+              styles.triggerHalf,
+              styles.triggerPrimaryLg,
+              listenStatus !== 'idle' && styles.triggerListenActive,
+              pressed && styles.triggerPressed,
+              (disabled || !body) && styles.triggerDisabled,
+            ]}
+            onPress={onListenPress}
+            disabled={disabled || !body}
+            accessibilityRole="button"
+            accessibilityLabel={listenA11y}
+          >
+            {listenStatus === 'playing' ? (
+              <ActivityIndicator size="small" color={colors.orange} />
+            ) : null}
+            <Text
+              style={[
+                styles.triggerTextLg,
+                styles.triggerTextPrimary,
+                listenStatus !== 'idle' && styles.triggerTextActive,
+              ]}
+              numberOfLines={1}
+            >
+              {listenLabel}
+            </Text>
+          </Pressable>
+        </View>
 
         <Pressable
           style={({ pressed }) => [
-            styles.trigger,
-            styles.triggerThird,
-            styles.triggerAid,
+            styles.moreToggle,
             pressed && styles.triggerPressed,
             disabled && styles.triggerDisabled,
           ]}
           onPress={() => {
             if (disabled) return;
-            setKeywordVisible(true);
+            setShowAidButtons((v) => !v);
           }}
           disabled={disabled}
           accessibilityRole="button"
-          accessibilityLabel={t('seven.verifyKeywordA11y')}
+          accessibilityLabel={t('seven.verifyMoreA11y')}
         >
-          <Text
-            style={[styles.triggerText, styles.triggerTextAid]}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.8}
-          >
-            {t('seven.verifyKeywordBtn')}
+          <Text style={styles.moreToggleText}>
+            {showAidButtons
+              ? t('seven.verifyMoreCloseBtn')
+              : t('seven.verifyMoreBtn')}
           </Text>
         </Pressable>
 
-        <Pressable
-          style={({ pressed }) => [
-            styles.trigger,
-            styles.triggerThird,
-            styles.triggerAid,
-            pressed && styles.triggerPressed,
-            disabled && styles.triggerDisabled,
-          ]}
-          onPress={() => {
-            if (disabled) return;
-            setMnemonicsVisible(true);
-          }}
-          disabled={disabled}
-          accessibilityRole="button"
-          accessibilityLabel={t('seven.verifyMnemonicsA11y')}
-        >
-          <Text
-            style={[styles.triggerText, styles.triggerTextAid]}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.8}
-          >
-            {t('seven.verifyMnemonicsBtn')}
-          </Text>
-        </Pressable>
+        {showAidButtons ? (
+          <View style={styles.triggerAidRow}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.trigger,
+                styles.triggerAidThird,
+                styles.triggerAid,
+                pressed && styles.triggerPressed,
+                disabled && styles.triggerDisabled,
+              ]}
+              onPress={() => {
+                if (disabled) return;
+                setKeywordVisible(true);
+              }}
+              disabled={disabled}
+              accessibilityRole="button"
+              accessibilityLabel={t('seven.verifyKeywordA11y')}
+            >
+              <Text style={[styles.triggerText, styles.triggerTextAid]} numberOfLines={1}>
+                {t('seven.verifyKeywordBtn')}
+              </Text>
+            </Pressable>
 
-        <Pressable
-          style={({ pressed }) => [
-            styles.trigger,
-            styles.triggerThird,
-            styles.triggerAid,
-            pressed && styles.triggerPressed,
-            disabled && styles.triggerDisabled,
-          ]}
-          onPress={() => {
-            if (disabled) return;
-            setRemaVisible(true);
-          }}
-          disabled={disabled}
-          accessibilityRole="button"
-          accessibilityLabel={t('seven.verifyRemaA11y')}
-        >
-          <Text
-            style={[styles.triggerText, styles.triggerTextAid]}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.8}
-          >
-            {t('seven.verifyRemaBtn')}
-          </Text>
-        </Pressable>
+            <Pressable
+              style={({ pressed }) => [
+                styles.trigger,
+                styles.triggerAidThird,
+                styles.triggerAid,
+                pressed && styles.triggerPressed,
+                disabled && styles.triggerDisabled,
+              ]}
+              onPress={() => {
+                if (disabled) return;
+                setMnemonicsVisible(true);
+              }}
+              disabled={disabled}
+              accessibilityRole="button"
+              accessibilityLabel={t('seven.verifyMnemonicsA11y')}
+            >
+              <Text style={[styles.triggerText, styles.triggerTextAid]} numberOfLines={1}>
+                {t('seven.verifyMnemonicsBtn')}
+              </Text>
+            </Pressable>
+
+            <Pressable
+              style={({ pressed }) => [
+                styles.trigger,
+                styles.triggerAidThird,
+                styles.triggerAid,
+                pressed && styles.triggerPressed,
+                disabled && styles.triggerDisabled,
+              ]}
+              onPress={() => {
+                if (disabled) return;
+                setRemaVisible(true);
+              }}
+              disabled={disabled}
+              accessibilityRole="button"
+              accessibilityLabel={t('seven.verifyRemaA11y')}
+            >
+              <Text style={[styles.triggerText, styles.triggerTextAid]} numberOfLines={1}>
+                {t('seven.verifyRemaBtn')}
+              </Text>
+            </Pressable>
+          </View>
+        ) : null}
       </View>
 
       <VerifyModal
@@ -363,12 +372,17 @@ export function VerseVerifyModalTrigger({
 }
 
 const styles = StyleSheet.create({
-  triggerRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'stretch',
-    gap: 6,
+  triggerWrap: {
     marginTop: 12,
+    gap: 8,
+  },
+  triggerPrimaryRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  triggerAidRow: {
+    flexDirection: 'row',
+    gap: 6,
   },
   trigger: {
     paddingVertical: 9,
@@ -380,10 +394,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
   },
-  triggerThird: {
-    flexGrow: 1,
-    flexBasis: '30%',
-    minWidth: 72,
+  triggerHalf: {
+    flex: 1,
+    minWidth: 0,
+  },
+  triggerAidThird: {
+    flex: 1,
+    minWidth: 0,
+  },
+  triggerPrimaryLg: {
+    paddingVertical: 12,
+    minHeight: touchTarget.min,
+  },
+  moreToggle: {
+    alignSelf: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: colors.borderSecondary,
+    backgroundColor: colors.backgroundSecondary,
+    minHeight: touchTarget.min * 0.7,
+    justifyContent: 'center',
+  },
+  moreToggleText: {
+    fontSize: typography.caption,
+    fontWeight: '600',
+    color: colors.muted,
   },
   /** 1차 행위: 포레스트 틴트 */
   triggerPrimary: {
@@ -407,8 +444,13 @@ const styles = StyleSheet.create({
     opacity: 0.45,
   },
   triggerText: {
-    fontSize: 12,
+    fontSize: typography.chip,
     lineHeight: 15,
+    textAlign: 'center',
+  },
+  triggerTextLg: {
+    fontSize: typography.caption,
+    lineHeight: 17,
     textAlign: 'center',
   },
   triggerTextPrimary: {
