@@ -14,11 +14,11 @@ import { radius, touchTarget } from '../theme/layout';
 
 type RemaModalTriggerProps = {
   rema: string | null | undefined;
-  /** 세션 종료 확인 Modal 등 진행 표시 중일 때 묵상 모달 닫기·열기 차단 */
+  /** 세션 종료 확인 Modal 등 진행 표시 중일 때 레마 모달 닫기·열기 차단 */
   interactionLocked?: boolean;
 };
 
-/** 묵상은 기본 숨김 — 탭 시 모달로 전체 표시 */
+/** 레마는 기본 숨김 — 탭 시 모달로 전체 표시 */
 export function RemaModalTrigger({
   rema,
   interactionLocked = false,

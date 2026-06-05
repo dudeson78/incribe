@@ -310,6 +310,7 @@ export function TodaysReviewList({
             text={verse.text}
             keywords={verse.keywords}
             mnemonics={verse.mnemonics}
+            rema={verse.rema}
             disabled={locked}
           />
         </View>

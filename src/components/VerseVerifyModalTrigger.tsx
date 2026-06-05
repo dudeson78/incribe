@@ -24,6 +24,7 @@ type VerseVerifyModalTriggerProps = {
   text: string;
   keywords?: string | null;
   mnemonics?: string | null;
+  rema?: string | null;
   disabled?: boolean;
 };
 
@@ -83,6 +84,7 @@ export function VerseVerifyModalTrigger({
   text,
   keywords,
   mnemonics,
+  rema,
   disabled = false,
 }: VerseVerifyModalTriggerProps) {
   const { t } = useTranslation();
@@ -90,6 +92,7 @@ export function VerseVerifyModalTrigger({
   const [scriptureVisible, setScriptureVisible] = useState(false);
   const [keywordVisible, setKeywordVisible] = useState(false);
   const [mnemonicsVisible, setMnemonicsVisible] = useState(false);
+  const [remaVisible, setRemaVisible] = useState(false);
   const [listenStatus, setListenStatus] = useState<'idle' | 'playing'>('idle');
   const listenRunRef = useRef(0);
 
@@ -97,6 +100,7 @@ export function VerseVerifyModalTrigger({
   const body = typeof text === 'string' ? text.trim() : '';
   const mnemonicsText =
     typeof mnemonics === 'string' ? mnemonics.trim() : '';
+  const remaText = typeof rema === 'string' ? rema.trim() : '';
   const keywordList = useMemo(() => splitKeywordCsv(keywords), [keywords]);
 
   useEffect(() => {
@@ -104,6 +108,7 @@ export function VerseVerifyModalTrigger({
       setScriptureVisible(false);
       setKeywordVisible(false);
       setMnemonicsVisible(false);
+      setRemaVisible(false);
       cancelVerseCardSpeech();
       setListenStatus('idle');
     }
@@ -130,7 +135,13 @@ export function VerseVerifyModalTrigger({
 
   function onListenPress() {
     if (disabled || !body) return;
-    if (listenStatus === 'playing') return;
+    if (listenStatus === 'playing') {
+      // 재생 중 다시 누르면 중지하고 최초 상태로. runId를 올려 진행 중 러너의 finally가 상태를 덮어쓰지 않게 한다.
+      listenRunRef.current += 1;
+      cancelVerseCardSpeech();
+      setListenStatus('idle');
+      return;
+    }
     void startVerseListen();
   }
 
@@ -155,8 +166,28 @@ export function VerseVerifyModalTrigger({
           accessibilityRole="button"
           accessibilityLabel={t('seven.verifyScriptureA11y')}
         >
-          <Text style={styles.triggerText} numberOfLines={1}>
+          <Text style={styles.triggerText} numberOfLines={2}>
             {t('seven.verifyScriptureBtn')}
+          </Text>
+        </Pressable>
+
+        <Pressable
+          style={({ pressed }) => [
+            styles.trigger,
+            styles.triggerThird,
+            pressed && styles.triggerPressed,
+            disabled && styles.triggerDisabled,
+          ]}
+          onPress={() => {
+            if (disabled) return;
+            setRemaVisible(true);
+          }}
+          disabled={disabled}
+          accessibilityRole="button"
+          accessibilityLabel={t('seven.verifyRemaA11y')}
+        >
+          <Text style={styles.triggerText} numberOfLines={2}>
+            {t('seven.verifyRemaBtn')}
           </Text>
         </Pressable>
 
@@ -181,7 +212,7 @@ export function VerseVerifyModalTrigger({
               styles.triggerText,
               listenStatus !== 'idle' && styles.triggerTextActive,
             ]}
-            numberOfLines={1}
+            numberOfLines={2}
           >
             {listenLabel}
           </Text>
@@ -202,7 +233,7 @@ export function VerseVerifyModalTrigger({
           accessibilityRole="button"
           accessibilityLabel={t('seven.verifyKeywordA11y')}
         >
-          <Text style={styles.triggerText} numberOfLines={1}>
+          <Text style={styles.triggerText} numberOfLines={2}>
             {t('seven.verifyKeywordBtn')}
           </Text>
         </Pressable>
@@ -222,7 +253,7 @@ export function VerseVerifyModalTrigger({
           accessibilityRole="button"
           accessibilityLabel={t('seven.verifyMnemonicsA11y')}
         >
-          <Text style={styles.triggerText} numberOfLines={1}>
+          <Text style={styles.triggerText} numberOfLines={2}>
             {t('seven.verifyMnemonicsBtn')}
           </Text>
         </Pressable>
@@ -273,6 +304,22 @@ export function VerseVerifyModalTrigger({
           </Text>
         )}
       </VerifyModal>
+
+      <VerifyModal
+        visible={remaVisible}
+        title={t('seven.verifyRemaModalTitle', { ref: refTrimmed })}
+        onClose={() => setRemaVisible(false)}
+      >
+        {remaText.length === 0 ? (
+          <Text style={styles.emptyKeywords}>
+            {t('seven.verifyRemaEmpty')}
+          </Text>
+        ) : (
+          <Text style={styles.body} selectable>
+            {remaText}
+          </Text>
+        )}
+      </VerifyModal>
     </>
   );
 }
@@ -285,13 +332,13 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   trigger: {
-    paddingVertical: 9,
-    paddingHorizontal: 4,
+    paddingVertical: 10,
+    paddingHorizontal: 3,
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: `${colors.forest}44`,
     backgroundColor: `${colors.forest}0d`,
-    minHeight: touchTarget.min * 0.9,
+    minHeight: touchTarget.min * 1.18,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
@@ -311,6 +358,7 @@ const styles = StyleSheet.create({
   },
   triggerText: {
     fontSize: typography.chip,
+    lineHeight: 15,
     fontWeight: '600',
     color: colors.forest,
     textAlign: 'center',

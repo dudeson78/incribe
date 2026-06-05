@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import type { TFunction } from 'i18next';
 import {
@@ -143,6 +143,8 @@ export function EmailAuthLanding({
   const [privacyConsent, setPrivacyConsent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [progressLine, setProgressLine] = useState<string | null>(null);
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
 
   function goWelcome() {
     if (busy) return;
@@ -349,6 +351,17 @@ export function EmailAuthLanding({
 
   const isSignUp = step === 'signUp';
 
+  function submitForm() {
+    if (busy) return;
+    Keyboard.dismiss();
+    if (isSignUp && !privacyConsent) {
+      notifyError(new Error(t('auth.privacyConsentRequired')), t);
+      return;
+    }
+    const p = isSignUp ? onSignUp() : onSignIn();
+    void p.catch((e) => notifyError(e, t));
+  }
+
   return (
     <View style={[styles.shell, { paddingTop: insets.top }]}>
       <ScrollView
@@ -399,10 +412,14 @@ export function EmailAuthLanding({
               autoCorrect={false}
               editable={!busy}
               accessibilityLabel={t('account.fullNameA11y')}
+              returnKeyType="next"
+              onSubmitEditing={() => emailRef.current?.focus()}
+              blurOnSubmit={false}
             />
             <Text style={styles.fieldLabel}>{t('account.email')}</Text>
             <Text style={styles.fieldHint}>{t('account.emailIdHint')}</Text>
             <TextInput
+              ref={emailRef}
               style={styles.input}
               value={email}
               onChangeText={setEmail}
@@ -415,9 +432,12 @@ export function EmailAuthLanding({
               editable={!busy}
               accessibilityLabel={t('account.email')}
               returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current?.focus()}
+              blurOnSubmit={false}
             />
             <Text style={styles.fieldLabel}>{t('account.password')}</Text>
             <TextInput
+              ref={passwordRef}
               style={styles.input}
               value={password}
               onChangeText={setPassword}
@@ -429,7 +449,7 @@ export function EmailAuthLanding({
               editable={!busy}
               accessibilityLabel={t('account.password')}
               returnKeyType="done"
-              onSubmitEditing={Keyboard.dismiss}
+              onSubmitEditing={submitForm}
             />
 
             <View style={styles.privacyNoticeBox}>
@@ -464,6 +484,7 @@ export function EmailAuthLanding({
           <>
             <Text style={styles.fieldLabel}>{t('account.email')}</Text>
             <TextInput
+              ref={emailRef}
               style={styles.input}
               value={email}
               onChangeText={setEmail}
@@ -476,9 +497,12 @@ export function EmailAuthLanding({
               editable={!busy}
               accessibilityLabel={t('account.email')}
               returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current?.focus()}
+              blurOnSubmit={false}
             />
             <Text style={styles.fieldLabel}>{t('account.password')}</Text>
             <TextInput
+              ref={passwordRef}
               style={styles.input}
               value={password}
               onChangeText={setPassword}
@@ -490,7 +514,7 @@ export function EmailAuthLanding({
               editable={!busy}
               accessibilityLabel={t('account.password')}
               returnKeyType="done"
-              onSubmitEditing={Keyboard.dismiss}
+              onSubmitEditing={submitForm}
             />
           </>
         )}
@@ -533,15 +557,7 @@ export function EmailAuthLanding({
             busy && btnDisabled,
             webPointerStyle,
           ]}
-          onPress={() => {
-            Keyboard.dismiss();
-            if (isSignUp && !privacyConsent) {
-              notifyError(new Error(t('auth.privacyConsentRequired')), t);
-              return;
-            }
-            const p = isSignUp ? onSignUp() : onSignIn();
-            void p.catch((e) => notifyError(e, t));
-          }}
+          onPress={submitForm}
           disabled={busy}
           accessibilityRole="button"
           accessibilityLabel={
