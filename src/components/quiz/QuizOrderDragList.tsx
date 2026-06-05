@@ -3,6 +3,7 @@ import {
   PanResponder,
   StyleSheet,
   View,
+  type GestureResponderEvent,
   type LayoutChangeEvent,
   type PanResponderGestureState,
 } from 'react-native';
@@ -37,6 +38,7 @@ function reorderItems<T>(list: T[], from: number, to: number): T[] {
   return next;
 }
 
+/** 손가락 Y(리스트 좌표)가 위치한 슬롯 인덱스 — 각 슬롯의 세로 중앙을 경계로 판정 */
 function indexAtY(layouts: RowLayout[], y: number, count: number): number {
   for (let i = 0; i < count; i++) {
     const row = layouts[i];
@@ -50,9 +52,9 @@ type DraggableRowProps = {
   item: OrderDragItem;
   index: number;
   dragging: boolean;
-  dragDy: number;
+  translateY: number;
   a11yLabel: string;
-  onGrant: (index: number) => void;
+  onGrant: (index: number, e: GestureResponderEvent) => void;
   onMove: (gesture: PanResponderGestureState) => void;
   onEnd: () => void;
   onLayout: (index: number, e: LayoutChangeEvent) => void;
@@ -63,7 +65,7 @@ function DraggableRow({
   item,
   index,
   dragging,
-  dragDy,
+  translateY,
   a11yLabel,
   onGrant,
   onMove,
@@ -74,18 +76,20 @@ function DraggableRow({
   const onGrantRef = useRef(onGrant);
   const onMoveRef = useRef(onMove);
   const onEndRef = useRef(onEnd);
+  const indexRef = useRef(index);
   onGrantRef.current = onGrant;
   onMoveRef.current = onMove;
   onEndRef.current = onEnd;
+  indexRef.current = index;
 
   const pan = useRef(
     PanResponder.create({
-      /** 시작 시점엔 responder를 잡지 않아 카드 안 화살표 버튼 등 자식 탭이 동작하게 한다. 실제 이동(dy/dx>2)이 있을 때만 드래그로 전환. */
+      /** 시작 시점엔 responder를 잡지 않아 카드 안 화살표 버튼 등 자식 탭이 동작하게 한다. 의도적 이동(>4px)이 있을 때만 드래그로 전환. */
       onStartShouldSetPanResponder: () => false,
       onMoveShouldSetPanResponder: (_, gesture) =>
-        Math.abs(gesture.dy) > 2 || Math.abs(gesture.dx) > 2,
+        Math.abs(gesture.dy) > 4 || Math.abs(gesture.dx) > 4,
       onPanResponderTerminationRequest: () => false,
-      onPanResponderGrant: () => onGrantRef.current(index),
+      onPanResponderGrant: (e) => onGrantRef.current(indexRef.current, e),
       onPanResponderMove: (_, gesture) => onMoveRef.current(gesture),
       onPanResponderRelease: () => onEndRef.current(),
       onPanResponderTerminate: () => onEndRef.current(),
@@ -98,7 +102,7 @@ function DraggableRow({
       style={[
         styles.row,
         dragging && styles.rowDragging,
-        dragging && { transform: [{ translateY: dragDy }] },
+        dragging && { transform: [{ translateY }] },
       ]}
       accessibilityRole="adjustable"
       accessibilityLabel={a11yLabel}
@@ -116,12 +120,14 @@ export function QuizOrderDragList({
   dragA11yLabel,
 }: Props) {
   const [draggingId, setDraggingId] = useState<string | null>(null);
-  const [dragDy, setDragDy] = useState(0);
+  const [translateY, setTranslateY] = useState(0);
 
   const layoutsRef = useRef<RowLayout[]>([]);
   const listRef = useRef<View>(null);
   const listPageYRef = useRef(0);
   const dragFromIndexRef = useRef(-1);
+  /** 드래그 시작 시 손가락이 카드 상단에서 떨어진 거리 — 카드를 손가락에 정확히 붙여 둔다. */
+  const grabOffsetRef = useRef(0);
   const itemsRef = useRef(items);
   itemsRef.current = items;
 
@@ -130,7 +136,7 @@ export function QuizOrderDragList({
 
   const resetDrag = useCallback(() => {
     setDraggingId(null);
-    setDragDy(0);
+    setTranslateY(0);
     dragFromIndexRef.current = -1;
   }, []);
 
@@ -140,21 +146,47 @@ export function QuizOrderDragList({
     });
   }, []);
 
-  const onDragMove = useCallback((gesture: PanResponderGestureState) => {
-    const from = dragFromIndexRef.current;
-    if (from < 0) return;
-
-    setDragDy(gesture.dy);
-
-    const fingerY = gesture.moveY - listPageYRef.current;
-    const to = indexAtY(layoutsRef.current, fingerY, itemsRef.current.length);
-    if (to === from) return;
-
-    const next = reorderItems(itemsRef.current, from, to);
-    dragFromIndexRef.current = to;
-    setDragDy(0);
-    onReorderRef.current(next);
+  /** 현재 드래그 슬롯 기준으로 카드의 translateY를 절대 위치로 계산(누적 오차 없음). */
+  const computeTranslateY = useCallback((fingerY: number, slotIndex: number) => {
+    const slot = layoutsRef.current[slotIndex];
+    if (!slot) return 0;
+    return fingerY - grabOffsetRef.current - slot.y;
   }, []);
+
+  const onGrant = useCallback(
+    (index: number, e: GestureResponderEvent) => {
+      measureListY();
+      const fingerY = e.nativeEvent.pageY - listPageYRef.current;
+      const slot = layoutsRef.current[index];
+      grabOffsetRef.current = slot ? fingerY - slot.y : 0;
+      dragFromIndexRef.current = index;
+      setDraggingId(itemsRef.current[index]?.id ?? null);
+      setTranslateY(0);
+    },
+    [measureListY],
+  );
+
+  const onDragMove = useCallback(
+    (gesture: PanResponderGestureState) => {
+      const from = dragFromIndexRef.current;
+      if (from < 0) return;
+
+      const fingerY = gesture.moveY - listPageYRef.current;
+      const count = itemsRef.current.length;
+      const to = indexAtY(layoutsRef.current, fingerY, count);
+
+      if (to !== from && to >= 0 && to < count) {
+        const next = reorderItems(itemsRef.current, from, to);
+        dragFromIndexRef.current = to;
+        onReorderRef.current(next);
+        // 새 슬롯 기준으로 즉시 보정 — 카드가 손가락에 그대로 붙어 있게 한다.
+        setTranslateY(computeTranslateY(fingerY, to));
+      } else {
+        setTranslateY(computeTranslateY(fingerY, from));
+      }
+    },
+    [computeTranslateY],
+  );
 
   function onRowLayout(index: number, e: LayoutChangeEvent) {
     const { y, height } = e.nativeEvent.layout;
@@ -165,13 +197,6 @@ export function QuizOrderDragList({
     measureListY();
   }
 
-  function onGrant(index: number) {
-    measureListY();
-    dragFromIndexRef.current = index;
-    setDraggingId(itemsRef.current[index]?.id ?? null);
-    setDragDy(0);
-  }
-
   return (
     <View ref={listRef} style={styles.list} onLayout={onListLayout}>
       {items.map((item, index) => (
@@ -180,7 +205,7 @@ export function QuizOrderDragList({
           item={item}
           index={index}
           dragging={draggingId === item.id}
-          dragDy={dragDy}
+          translateY={draggingId === item.id ? translateY : 0}
           a11yLabel={dragA11yLabel}
           onGrant={onGrant}
           onMove={onDragMove}
