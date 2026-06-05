@@ -349,13 +349,14 @@ export function VerseVerifyModalTrigger({
 const styles = StyleSheet.create({
   triggerRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'stretch',
-    gap: 4,
+    gap: 6,
     marginTop: 12,
   },
   trigger: {
     paddingVertical: 9,
-    paddingHorizontal: 2,
+    paddingHorizontal: 6,
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: `${colors.forest}44`,
@@ -366,7 +367,9 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   triggerThird: {
-    flex: 1,
+    flexGrow: 1,
+    flexBasis: '30%',
+    minWidth: 72,
   },
   triggerListenActive: {
     borderColor: colors.forest,
@@ -379,8 +382,8 @@ const styles = StyleSheet.create({
     opacity: 0.45,
   },
   triggerText: {
-    fontSize: 10,
-    lineHeight: 13,
+    fontSize: 12,
+    lineHeight: 15,
     fontWeight: '600',
     color: colors.forest,
     textAlign: 'center',

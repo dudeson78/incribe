@@ -137,8 +137,11 @@ function MainTabs() {
           flexShrink: 0,
           /** 네이티브는 고정 높이. 웹은 고정 height를 주면 BottomTabBar 내부 콘텐츠가 잘려 아이콘 아래 라벨 줄이 안 보이므로 minHeight로 콘텐츠에 맞게 늘어나게 한다. */
           ...(Platform.OS === 'web'
-            ? ({ minHeight: 54 } as const)
-            : { height: 56 }),
+            ? ({ minHeight: 76 } as const)
+            : {
+                height:
+                  Platform.OS === 'android' || Platform.OS === 'ios' ? 64 : 68,
+              }),
           /** BottomTabBar가 `paddingBottom: insets.bottom`을 적용하지만 `tabBarStyle`이 마지막이라 여기서 paddingBottom을 주면 그 값으로 덮여 세이프에리어가 깨져 하단에 빈 공간이 보일 수 있음. 네이티브는 라이브러리 패딩만 쓴다. */
           paddingTop: 4,
           ...(Platform.OS === 'web' ? ({ paddingBottom: 8 } as const) : null),

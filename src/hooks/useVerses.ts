@@ -1,6 +1,5 @@
 import {
   addDays,
-  addMinutes,
   format,
   getYear,
   parseISO,
@@ -680,61 +679,6 @@ async function resetAllPracticeToNewVerseState(): Promise<number> {
   return ids.length;
 }
 
-/**
- * 테스트용: 해당 구절의 복습 로그를 비우고 단기 7회 성공을 재현한 뒤 장기 트랙(다음 복습=오늘)으로 둡니다.
- */
-async function simulateShortCompleteMoveToLong(verseId: string): Promise<void> {
-  const user = await requireUser();
-  const today = ymd(new Date());
-
-  const { data: verse, error: vErr } = await supabase
-    .from('verses')
-    .select('id, user_id, created_at')
-    .eq('id', verseId)
-    .eq('user_id', user.id)
-    .single();
-
-  if (vErr || !verse) throw new Error('Verse not found');
-
-  const { error: delErr } = await supabase
-    .from('review_logs')
-    .delete()
-    .eq('verse_id', verseId);
-  if (delErr) throw delErr;
-
-  const anchor = parseISO(verse.created_at as string);
-  const logRows = Array.from({ length: 7 }, (_, i) => ({
-    verse_id: verseId,
-    success: true,
-    count_in_session: (i + 1) as number,
-    reviewed_at: addMinutes(anchor, i + 1).toISOString(),
-  }));
-
-  const { error: insErr } = await supabase
-    .from('review_logs')
-    .insert(logRows);
-  if (insErr) throw insErr;
-
-  const { error: schedErr } = await supabase
-    .from('review_schedule')
-    .update({
-      next_review_date: today,
-      current_interval_days: 7,
-      consecutive_failures: 0,
-      review_phase: 'long',
-      short_success_count: 7,
-      long_success_count: 0,
-    })
-    .eq('verse_id', verseId);
-  if (schedErr) throw schedErr;
-
-  const { error: verseGrpErr } = await supabase
-    .from('verses')
-    .update({ verse_group: 'long' })
-    .eq('id', verseId)
-    .eq('user_id', user.id);
-  if (verseGrpErr) throw verseGrpErr;
-}
 
 async function updateSchedule(
   verseId: string,
@@ -776,7 +720,6 @@ export function useVerses() {
       getDashboardSummary,
       updateSchedule,
       resetAllPracticeToNewVerseState,
-      simulateShortCompleteMoveToLong,
       completeLongRemediation,
     }),
     []
@@ -795,7 +738,6 @@ export {
   logReview,
   normalizeSchedule,
   resetAllPracticeToNewVerseState,
-  simulateShortCompleteMoveToLong,
   updateSchedule,
   updateVerse,
   ymd,

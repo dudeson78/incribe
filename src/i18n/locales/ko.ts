@@ -34,13 +34,6 @@ export const ko = {
     historyLong: '장기',
     historyDateCompleted: '(완료)',
     historyDateScheduled: '(예정)',
-    jumpToLong: '장기',
-    jumpToLongA11y: '{{ref}} 단기 완료를 가상으로 채우고 장기 연습으로 전환합니다',
-    jumpToLongTitle: '장기 트랙으로 전환',
-    jumpToLongMessage:
-      '이 구절의 기존 복습 로그가 모두 삭제되며, 단기 7회를 완료한 것과 같은 가상 기록으로 채워집니다. 복습 일정은 오늘 장기 시작(간격 7일) 상태로 설정됩니다.',
-    jumpToLongConfirm: '진행하기',
-    jumpToLongSuccess: '장기 트랙으로 전환했습니다.',
     keyword: '키워드',
     keywordA11y: '{{ref}} 빈칸 퀴즈용 키워드 편집',
     keywordModalTitle: '키워드 관리',
@@ -322,8 +315,8 @@ export const ko = {
   memorize: {
     badgeRecite: '암송 — 참조만 표시 · 본문은 떠올리기',
     badgeReciteSession: '암송 — 참조만 표시 · 본문은 떠올리기',
-    trainingCardTitle: '오늘 훈련 {{n}}번째 카드',
-    trainingCardTitleA11y: '오늘 훈련 {{n}}번째 카드',
+    trainingCardTitle: '오늘 훈련: {{n}}번째 카드',
+    trainingCardTitleA11y: '오늘 훈련: {{n}}번째 카드',
     noMoreVersesToday: '오늘은 더 이상 훈련할 구절이 없습니다',
     allSessionsDoneForToday:
       '축하합니다. 오늘 훈련을 마쳤습니다.',
@@ -371,8 +364,6 @@ export const ko = {
     speechVoicesLoading: '음성 목록 불러오는 중…',
     speechVoiceSystem: '시스템 기본',
     speechVoiceSystemHint: '브라우저·OS 기본 한국어 음성',
-    speechVoiceCategoryNote:
-      '남성·여성·아이 구분은 기기·브라우저가 제공하는 음성 이름으로 추정합니다. 한국어 음성이 적으면 선택지가 제한될 수 있습니다.',
     speechVoiceCategory: {
       all: '전체',
       female: '여성',
@@ -380,7 +371,6 @@ export const ko = {
       child: '아이',
       unknown: '미분류',
     },
-    speechNoVoicesInCategory: '이 유형에 해당하는 음성이 없습니다. 「전체」를 확인해 보세요.',
     speechNoVoices: '표시할 음성이 없습니다. 새로고침을 눌러 보세요.',
     speechSelectedVoice: '선택: {{name}} ({{lang}})',
     speechRate: '말하기 속도',
