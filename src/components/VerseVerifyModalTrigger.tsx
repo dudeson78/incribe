@@ -22,7 +22,7 @@ import { colors, typography } from '../theme/colors';
 import { radius, touchTarget } from '../theme/layout';
 import { modalTheme } from '../theme/modal';
 
-const VERIFY_BTN_ICON_SIZE = typography.body;
+const VERIFY_BTN_ICON_SIZE = typography.body + 3;
 
 function verifyStrokeProps(color: string) {
   return {
