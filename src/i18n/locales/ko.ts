@@ -74,17 +74,20 @@ export const ko = {
   verseForm: {
     titleAdd: '구절 추가',
     titleEdit: '구절 편집',
-    reference: '참조',
+    reference: '성경구절',
     body: '본문',
     phReference: '예: 롬 8:28 또는 롬 8:28~29',
     phBody: '암송할 구절을 입력하세요',
+    phBodyLocked: '성경구절을 먼저 올바르게 입력해 주세요',
     hintShortTrack:
       '신규 저장하면 단기기억 그룹에 편성되어 1주일 동안 매일 반복 훈련 합니다. 1주일 후부터는 장기기억 그룹에 편성되어 점점 긴 주기로 복습하게 되어 완전히 암송하게 됩니다.',
     save: '저장하기',
     saveEdit: '수정 저장',
     saving: '저장 중…',
-    requiredFields: '참조와 본문은 필수입니다.',
-    accessibilityRef: '성경 참조',
+    requiredFields: '성경구절과 본문은 필수입니다.',
+    invalidReference:
+      '성경구절을 확인해 주세요. 권 이름(약칭·풀이름)과 장·절을 맞게 입력했는지 검토해 주세요.',
+    accessibilityRef: '성경구절',
     bodyA11y: '본문',
     saveA11y: '구절 저장',
     saveEditA11y: '수정 저장',

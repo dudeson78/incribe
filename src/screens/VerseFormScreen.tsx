@@ -1,5 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -9,6 +9,7 @@ import {
   Text,
   TextInput,
   View,
+  type TextInput as TextInputType,
 } from 'react-native';
 
 import { AppButton } from '../components/ui/AppButton';
@@ -17,7 +18,7 @@ import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
 import { useDialog } from '../context/DialogContext';
 import { useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
-import { canonicalizeReference } from '../lib/bibleReference';
+import { canonicalizeReference, isValidReference } from '../lib/bibleReference';
 import type { VersesStackParamList } from '../navigation/types';
 import { colors, labelTypography, typography } from '../theme/colors';
 import { radius } from '../theme/layout';
@@ -34,14 +35,20 @@ export function VerseFormScreen({ navigation, route }: Props) {
 
   const [reference, setReference] = useState('');
   const [text, setText] = useState('');
+  const [referenceValid, setReferenceValid] = useState(false);
+  const [referenceError, setReferenceError] = useState<string | null>(null);
   const [loading, setLoading] = useState(!!verseId);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const referenceInputRef = useRef<TextInputType>(null);
+  const bodyInputRef = useRef<TextInputType>(null);
 
   const loadVerse = useCallback(async () => {
     if (!verseId) {
       setReference('');
       setText('');
+      setReferenceValid(false);
+      setReferenceError(null);
       setLoading(false);
       return;
     }
@@ -56,6 +63,8 @@ export function VerseFormScreen({ navigation, route }: Props) {
       }
       setReference(found.reference);
       setText(found.text);
+      setReferenceValid(isValidReference(found.reference));
+      setReferenceError(null);
     } catch (e) {
       setError(mapAppError(e, t));
     } finally {
@@ -67,24 +76,59 @@ export function VerseFormScreen({ navigation, route }: Props) {
     void loadVerse();
   }, [loadVerse]);
 
+  function handleReferenceValidityChange(valid: boolean) {
+    setReferenceValid(valid);
+    if (valid) {
+      setReferenceError(null);
+      return;
+    }
+    if (reference.trim()) {
+      setReferenceError(t('verseForm.invalidReference'));
+    }
+  }
+
+  function handleReferenceChange(next: string) {
+    setReference(next);
+    const trimmed = next.trim();
+    const valid = isValidReference(trimmed);
+    setReferenceValid(valid);
+    if (valid || !trimmed) {
+      setReferenceError(null);
+    }
+    if (error) {
+      setError(null);
+    }
+  }
+
+  function focusReferenceField() {
+    referenceInputRef.current?.focus();
+  }
+
   async function onSave() {
-    const refTrim = canonicalizeReference(reference);
+    const refTrim = reference.trim();
     const textTrim = text.trim();
     if (!refTrim || !textTrim) {
       setError(t('verseForm.requiredFields'));
       return;
     }
+    if (!isValidReference(refTrim)) {
+      setReferenceError(t('verseForm.invalidReference'));
+      setReferenceValid(false);
+      focusReferenceField();
+      return;
+    }
+    const refCanonical = canonicalizeReference(refTrim);
     setSaving(true);
     setError(null);
     try {
       if (verseId) {
         await updateVerse(verseId, {
-          reference: refTrim,
+          reference: refCanonical,
           text: textTrim,
         });
       } else {
         await addVerse({
-          reference: refTrim,
+          reference: refCanonical,
           text: textTrim,
           verse_group: 'short',
         });
@@ -128,18 +172,44 @@ export function VerseFormScreen({ navigation, route }: Props) {
           </View>
         ) : null}
 
-        <ReferenceSuggestInput value={reference} onChangeText={setReference} />
+        <ReferenceSuggestInput
+          value={reference}
+          onChangeText={handleReferenceChange}
+          error={referenceError}
+          onValidityChange={handleReferenceValidityChange}
+          inputRef={referenceInputRef}
+        />
 
         <View style={styles.field}>
-          <Text style={styles.label}>{t('verseForm.body')}</Text>
+          <Text style={[styles.label, !referenceValid && styles.labelDisabled]}>
+            {t('verseForm.body')}
+          </Text>
           <TextInput
-            style={styles.area}
+            ref={bodyInputRef}
+            style={[styles.area, !referenceValid && styles.areaDisabled]}
             value={text}
             onChangeText={setText}
-            placeholder={t('verseForm.phBody')}
+            placeholder={
+              referenceValid
+                ? t('verseForm.phBody')
+                : t('verseForm.phBodyLocked')
+            }
             placeholderTextColor={`${colors.muted}99`}
             multiline
             textAlignVertical="top"
+            editable={referenceValid}
+            onPressIn={() => {
+              if (!referenceValid) {
+                focusReferenceField();
+              }
+            }}
+            onFocus={() => {
+              if (!referenceValid) {
+                setReferenceError(t('verseForm.invalidReference'));
+                bodyInputRef.current?.blur();
+                focusReferenceField();
+              }
+            }}
             accessibilityLabel={t('verseForm.bodyA11y')}
           />
         </View>
@@ -193,6 +263,9 @@ const styles = StyleSheet.create({
     ...labelTypography,
     marginBottom: 8,
   },
+  labelDisabled: {
+    opacity: 0.45,
+  },
   area: {
     borderWidth: 0.5,
     borderColor: colors.borderSecondary,
@@ -204,6 +277,10 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     backgroundColor: colors.card,
     minHeight: 120,
+  },
+  areaDisabled: {
+    opacity: 0.45,
+    backgroundColor: `${colors.card}cc`,
   },
   hint: {
     fontSize: typography.min,

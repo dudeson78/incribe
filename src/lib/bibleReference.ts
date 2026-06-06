@@ -220,6 +220,13 @@ export function parseReference(input: string): ParsedReference | null {
   return { abbr: book.abbr, locator };
 }
 
+/** 인식 가능한 성경 권·장절 형식인지 검사 */
+export function isValidReference(input: string): boolean {
+  const trimmed = typeof input === 'string' ? input.trim() : '';
+  if (!trimmed) return false;
+  return parseReference(trimmed) !== null;
+}
+
 /** 표준 표시 형식으로 변환. 예) `히브리서 3장15~16절` → `히 3:15~16` */
 export function canonicalizeReference(input: string): string {
   const trimmed = typeof input === 'string' ? input.trim() : '';

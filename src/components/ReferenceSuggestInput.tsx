@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import {
   FlatList,
   Pressable,
@@ -6,10 +6,11 @@ import {
   Text,
   TextInput,
   View,
+  type TextInput as TextInputType,
 } from 'react-native';
 
 import { filterReferenceSuggestions } from '../constants/referenceSuggestions';
-import { canonicalizeReference } from '../lib/bibleReference';
+import { canonicalizeReference, isValidReference } from '../lib/bibleReference';
 import { colors, labelTypography, typography } from '../theme/colors';
 import { radius } from '../theme/layout';
 import { useTranslation } from 'react-i18next';
@@ -18,12 +19,18 @@ type ReferenceSuggestInputProps = {
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
+  error?: string | null;
+  onValidityChange?: (valid: boolean) => void;
+  inputRef?: RefObject<TextInputType | null>;
 };
 
 export function ReferenceSuggestInput({
   value,
   onChangeText,
   placeholder,
+  error,
+  onValidityChange,
+  inputRef,
 }: ReferenceSuggestInputProps) {
   const { t } = useTranslation();
   const ph = placeholder ?? t('verseForm.phReference');
@@ -51,13 +58,21 @@ export function ReferenceSuggestInput({
 
   const showList = focused && suggestions.length > 0 && value.trim().length > 0;
 
+  function handleChangeText(text: string) {
+    onChangeText(text);
+    if (text.trim().length === 0) {
+      onValidityChange?.(false);
+    }
+  }
+
   return (
     <View style={styles.wrap}>
-      <Text style={styles.label}>{t('reference.label')}</Text>
+      <Text style={styles.label}>{t('verseForm.reference')}</Text>
       <TextInput
-        style={styles.input}
+        ref={inputRef}
+        style={[styles.input, error ? styles.inputError : null]}
         value={value}
-        onChangeText={onChangeText}
+        onChangeText={handleChangeText}
         placeholder={ph}
         placeholderTextColor={`${colors.muted}99`}
         onFocus={() => {
@@ -66,15 +81,25 @@ export function ReferenceSuggestInput({
         }}
         onBlur={() => {
           blurTimer.current = setTimeout(() => setFocused(false), 200);
-          const normalized = canonicalizeReference(value);
-          if (normalized && normalized !== value) {
-            onChangeText(normalized);
+          const trimmed = value.trim();
+          if (!trimmed) {
+            onValidityChange?.(false);
+            return;
+          }
+          const valid = isValidReference(trimmed);
+          onValidityChange?.(valid);
+          if (valid) {
+            const normalized = canonicalizeReference(trimmed);
+            if (normalized !== value) {
+              onChangeText(normalized);
+            }
           }
         }}
         autoCorrect={false}
         autoCapitalize="none"
         accessibilityLabel={t('verseForm.accessibilityRef')}
       />
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
       {showList ? (
         <View style={styles.dropdown}>
           <FlatList
@@ -110,6 +135,15 @@ const styles = StyleSheet.create({
   label: {
     ...labelTypography,
     marginBottom: 8,
+  },
+  inputError: {
+    borderColor: colors.orange,
+  },
+  errorText: {
+    marginTop: 6,
+    fontSize: typography.min,
+    lineHeight: 20,
+    color: colors.orange,
   },
   input: {
     borderWidth: 1,
