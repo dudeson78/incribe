@@ -6,8 +6,8 @@ import {
   orderTodayScheduledRows,
   type ScheduledRow,
 } from '../hooks/useVerses';
-import { colors, typography } from '../theme/colors';
-import { cardRadius, radius } from '../theme/layout';
+import { fontFamilies } from '../theme/fonts';
+import { shadowSm, tokens } from '../theme/tokens';
 
 type HomeGroupedReviewProps = {
   items: ScheduledRow[];
@@ -16,18 +16,15 @@ type HomeGroupedReviewProps = {
 
 type ListedRow = {
   row: ScheduledRow;
-  /** 일반 단기는 단기 줄, 재연습·장기는 장기 줄 */
   lineKind: 'short' | 'long';
 };
 
-/** 스케줄 `yyyy-MM-dd` → `5.23` (월·일, 앞자리 0 없음) */
 function formatMdDotsFromYmd(ymd: string): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ymd.trim());
   if (!m) return ymd.trim();
   return `${Number(m[2])}.${Number(m[3])}`;
 }
 
-/** ISO 시각 → 현지 달력 기준 `5.23` */
 function formatMdDotsFromIso(iso: string): string | null {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return null;
@@ -45,67 +42,23 @@ function listedRowLineKind(row: ScheduledRow): 'short' | 'long' {
   return 'long';
 }
 
-function sessionChipLabel(
+function remarkLine(
   row: ScheduledRow,
-  lineKind: 'short' | 'long',
-  recordedToday: boolean,
+  recorded: boolean,
   t: TFunction,
 ): string {
-  const { schedule } = row;
-  if (lineKind === 'short') {
-    const s = schedule.short_success_count;
-    const n = recordedToday
-      ? Math.min(Math.max(s, 1), 7)
-      : Math.min(s + 1, 7);
-    return t('home.reviewListSessionPractice', { n });
+  if (recorded) {
+    return t('home.reviewListRemarkNext', {
+      date: formatMdDotsFromYmd(row.schedule.next_review_date),
+    });
   }
-  /** 재연습(단기이지만 교정 간격) · 장기 회차 */
-  if (
-    schedule.review_phase === 'short' &&
-    schedule.current_interval_days > 1
-  ) {
-    const s = schedule.short_success_count;
-    const n = recordedToday
-      ? Math.min(Math.max(s, 1), 7)
-      : Math.min(s + 1, 7);
-    return t('home.reviewListSessionPractice', { n });
+  const prevDots = row.lastPracticedAtIso
+    ? formatMdDotsFromIso(row.lastPracticedAtIso)
+    : null;
+  if (prevDots) {
+    return t('home.reviewListRemarkPrev', { date: prevDots });
   }
-  const lc = schedule.long_success_count ?? 0;
-  const n = recordedToday ? Math.max(1, lc) : Math.max(1, lc + 1);
-  return t('home.reviewListSessionPractice', { n });
-}
-
-/** 상태 칩만 */
-function SessionStatusColumn({
-  recorded,
-  statusLabel,
-}: {
-  recorded: boolean;
-  statusLabel: string;
-}) {
-  return (
-    <View style={styles.statusColInner}>
-      <View
-        pointerEvents="none"
-        accessibilityElementsHidden
-        importantForAccessibility="no-hide-descendants"
-        style={[
-          styles.statusBadgeBase,
-          recorded ? styles.statusBadgeDone : styles.statusBadgePending,
-        ]}
-      >
-        <Text
-          style={[
-            styles.statusBadgeText,
-            recorded ? styles.statusBadgeTextDone : styles.statusBadgeTextPending,
-          ]}
-          numberOfLines={1}
-        >
-          {statusLabel}
-        </Text>
-      </View>
-    </View>
-  );
+  return t('home.reviewListRemarkFirstPractice');
 }
 
 export function HomeGroupedReview({
@@ -125,288 +78,161 @@ export function HomeGroupedReview({
 
   return (
     <View style={styles.wrap}>
-      <View style={styles.card}>
-        <View style={styles.tableHeader}>
-          <View style={styles.headRow}>
-            <View style={[styles.col, styles.headCell, styles.colHeadCentered]}>
-              <Text style={[styles.headLabel, styles.cellTextCentered]}>
-                {t('home.reviewListColKind')}
-              </Text>
-            </View>
-            <View style={[styles.col, styles.headCell, styles.colHeadVerse]}>
-              <Text style={[styles.headLabel, styles.cellTextVerse]}>
-                {t('home.reviewListColVerse')}
-              </Text>
-            </View>
-            <View style={[styles.col, styles.headCell, styles.colHeadCentered]}>
-              <Text style={[styles.headLabel, styles.cellTextCentered]}>
-                {t('home.reviewListColSession')}
-              </Text>
-            </View>
-            <View style={[styles.col, styles.headCell, styles.colHeadCentered]}>
-              <Text style={[styles.headLabel, styles.cellTextCentered]}>
-                {t('home.reviewListColStatus')}
-              </Text>
-            </View>
-            <View
-              style={[
-                styles.col,
-                styles.headCell,
-                styles.headCellLast,
-                styles.colHeadRemark,
-              ]}
-            >
-              <Text style={[styles.headLabel, styles.cellTextCentered]}>
-                {t('home.reviewListColRemark')}
-              </Text>
-            </View>
-          </View>
-        </View>
+      {entries.map(({ row, lineKind }, index) => {
+        const { verse } = row;
+        const recorded = row.todaySessionRecordedSuccess ?? false;
+        const phaseText =
+          lineKind === 'short'
+            ? t('home.sectionShort')
+            : t('home.sectionLong');
+        const statusLabel = recorded
+          ? t('home.reviewListTrainingDoneStatus')
+          : t('home.reviewListTrainingPendingStatus');
+        const remark = remarkLine(row, recorded, t);
+        const a11y = t('home.reviewListRowA11y', {
+          phase: phaseText,
+          ref: verse.reference,
+          session: '',
+          status: statusLabel,
+          remark,
+        });
 
-        {entries.map(({ row, lineKind }) => {
-          const { verse } = row;
-          const recorded = row.todaySessionRecordedSuccess ?? false;
-          const phaseText =
-            lineKind === 'short'
-              ? t('home.sectionShort')
-              : t('home.sectionLong');
-          const sessionText = sessionChipLabel(row, lineKind, recorded, t);
-          const statusLabel = recorded
-            ? t('home.reviewListTrainingDoneStatus')
-            : t('home.reviewListTrainingPendingStatus');
-          const remarkLine = (() => {
-            if (recorded) {
-              return t('home.reviewListRemarkNext', {
-                date: formatMdDotsFromYmd(row.schedule.next_review_date),
-              });
-            }
-            const prevDots = row.lastPracticedAtIso
-              ? formatMdDotsFromIso(row.lastPracticedAtIso)
-              : null;
-            if (prevDots) {
-              return t('home.reviewListRemarkPrev', { date: prevDots });
-            }
-            return t('home.reviewListRemarkFirstPractice');
-          })();
-          const a11y = t('home.reviewListRowA11y', {
-            phase: phaseText,
-            ref: verse.reference,
-            session: sessionText,
-            status: statusLabel,
-            remark: remarkLine,
-          });
-          return (
+        return (
+          <View key={verse.id}>
             <Pressable
-              key={verse.id}
               disabled={recorded}
               onPress={() => onSelectVerse(verse.id)}
               style={({ pressed }) => [
-                styles.row,
-                recorded && styles.rowDone,
-                pressed && !recorded && styles.rowPressed,
+                styles.rowCard,
+                recorded && styles.rowCardDone,
+                pressed && !recorded && styles.rowCardPressed,
               ]}
               accessibilityRole="button"
               accessibilityLabel={a11y}
               accessibilityState={{ disabled: recorded }}
             >
-              <View style={[styles.col, styles.colCentered]}>
-                <Text style={[styles.colPhase, styles.cellTextCentered]} numberOfLines={2}>
+              <View style={styles.kindBadge}>
+                <Text style={styles.kindBadgeText} numberOfLines={1}>
                   {phaseText}
                 </Text>
               </View>
-              <View style={[styles.col, styles.colVerse]}>
+              <Text
+                style={styles.refText}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {verse.reference}
+              </Text>
+              <View
+                style={[
+                  styles.statusChip,
+                  recorded ? styles.statusChipDone : styles.statusChipPending,
+                ]}
+              >
                 <Text
-                  style={[styles.colRef, styles.cellTextVerse]}
+                  style={[
+                    styles.statusChipText,
+                    recorded
+                      ? styles.statusChipTextDone
+                      : styles.statusChipTextPending,
+                  ]}
                   numberOfLines={1}
-                  ellipsizeMode="tail"
                 >
-                  {verse.reference}
+                  {statusLabel}
                 </Text>
               </View>
-              <View style={[styles.col, styles.colCentered]}>
-                <Text
-                  style={[styles.colSession, styles.cellTextCentered]}
-                  numberOfLines={2}
-                  ellipsizeMode="tail"
-                >
-                  {sessionText}
-                </Text>
-              </View>
-              <View style={[styles.col, styles.colCentered, styles.statusCol]}>
-                <SessionStatusColumn
-                  recorded={recorded}
-                  statusLabel={statusLabel}
-                />
-              </View>
-              <View style={[styles.col, styles.colCentered, styles.remarkCol]}>
-                <Text
-                  style={[styles.remarkText, styles.cellTextCentered]}
-                  numberOfLines={2}
-                >
-                  {remarkLine}
-                </Text>
-              </View>
+              <Text
+                style={styles.remarkText}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {remark}
+              </Text>
             </Pressable>
-          );
-        })}
-      </View>
+            {index < entries.length - 1 ? (
+              <View style={styles.divider} />
+            ) : null}
+          </View>
+        );
+      })}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   wrap: {
-    marginBottom: 8,
+    marginBottom: 12,
+    gap: 0,
   },
-  card: {
-    backgroundColor: colors.backgroundPrimary,
-    borderRadius: cardRadius,
-    borderWidth: 0.5,
-    borderColor: colors.borderTertiary,
+  rowCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 52,
     paddingHorizontal: 12,
-    paddingVertical: 4,
+    gap: 8,
+    backgroundColor: tokens.color.surface,
+    borderRadius: tokens.radius.md,
+    ...shadowSm,
   },
-  /** 헤더 + 하단 구분선 하나 */
-  tableHeader: {
-    paddingTop: 8,
-    paddingBottom: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.borderTertiary,
+  rowCardPressed: {
+    opacity: 0.9,
   },
-  headRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
+  rowCardDone: {
+    opacity: 0.78,
   },
-  headCell: {
-    paddingVertical: 0,
-    paddingHorizontal: 1,
-    minWidth: 0,
-    flexGrow: 1,
-    flexBasis: 0,
-  },
-  colHeadCentered: {
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  colHeadVerse: {
-    alignItems: 'flex-start',
-    justifyContent: 'flex-end',
-  },
-  colHeadRemark: {
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  headCellLast: {},
-  headLabel: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.textPrimary,
-    lineHeight: 17,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    paddingVertical: 12,
-  },
-  rowPressed: {
-    opacity: 0.88,
-  },
-  rowDone: {
-    opacity: 0.72,
-  },
-  /** 균등 5열 — 구분·연습회차·암송상태·훈련정보는 가운데 · 구절만 왼쪽 */
-  col: {
-    flex: 1,
-    flexBasis: 0,
-    minWidth: 0,
-    justifyContent: 'flex-start',
-    paddingHorizontal: 1,
-    paddingVertical: 1,
-  },
-  colCentered: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  colVerse: {
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-  },
-  cellTextCentered: {
-    textAlign: 'center',
-    width: '100%',
-  },
-  cellTextVerse: {
-    textAlign: 'left',
-    width: '100%',
-  },
-  colPhase: {
-    fontSize: typography.caption,
-    fontWeight: '400',
-    color: colors.textPrimary,
-    lineHeight: 17,
-  },
-  colRef: {
-    fontSize: typography.caption,
-    fontWeight: '400',
-    color: colors.textPrimary,
-    lineHeight: 17,
-  },
-  colSession: {
-    fontSize: typography.caption,
-    fontWeight: '400',
-    color: colors.textPrimary,
-    lineHeight: 17,
-  },
-  statusCol: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 1,
-    paddingVertical: 0,
-  },
-  statusColInner: {
-    alignItems: 'center',
-    maxWidth: '100%',
-  },
-  remarkCol: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 1,
-  },
-  remarkText: {
-    fontSize: typography.caption,
-    /** 두 줄(이전·다음 훈련 라벨 + 날짜)일 때 줄 간격을 조금 붙임 */
-    lineHeight: 14,
-    color: colors.textPrimary,
-    width: '100%',
-  },
-  statusBadgeBase: {
-    borderRadius: radius.pill,
-    borderWidth: StyleSheet.hairlineWidth,
+  kindBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderRadius: tokens.radius.full,
+    backgroundColor: tokens.color.bgSecondary,
+    flexShrink: 0,
   },
-  statusBadgePending: {
-    backgroundColor: colors.badgeShortBg,
-    borderColor: `${colors.orange}aa`,
-    elevation: 0,
-    shadowOpacity: 0,
+  kindBadgeText: {
+    fontSize: tokens.fontSize.xs,
+    fontWeight: '600',
+    color: tokens.color.textSecondary,
   },
-  statusBadgeDone: {
-    backgroundColor: colors.successBg,
-    borderColor: `${colors.successBorder}aa`,
+  refText: {
+    flex: 1,
+    minWidth: 0,
+    fontFamily: fontFamilies.verse,
+    fontSize: tokens.fontSize.sm,
+    fontWeight: '600',
+    color: tokens.color.textPrimary,
   },
-  statusBadgeText: {
-    fontSize: typography.caption,
-    fontWeight: '400',
-    letterSpacing: 0,
-    lineHeight: 17,
+  statusChip: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: tokens.radius.full,
+    flexShrink: 0,
   },
-  statusBadgeTextPending: {
-    color: colors.textPrimary,
+  statusChipDone: {
+    backgroundColor: tokens.color.successBg,
   },
-  statusBadgeTextDone: {
-    color: colors.textPrimary,
+  statusChipPending: {
+    backgroundColor: tokens.color.warningBg,
+  },
+  statusChipText: {
+    fontSize: tokens.fontSize.xs,
+    fontWeight: '600',
+  },
+  statusChipTextDone: {
+    color: tokens.color.success,
+  },
+  statusChipTextPending: {
+    color: tokens.color.warning,
+  },
+  remarkText: {
+    maxWidth: 88,
+    flexShrink: 0,
+    fontSize: tokens.fontSize.xs,
+    color: tokens.color.textMuted,
+    textAlign: 'right',
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: tokens.color.border,
+    marginVertical: 6,
+    marginHorizontal: 4,
   },
 });

@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useSettings } from '../context/SettingsContext';
@@ -13,7 +20,7 @@ import { AppButton } from './ui/AppButton';
 import { FadeModal } from './ui/FadeModal';
 import { colors, typography } from '../theme/colors';
 import { modalTheme } from '../theme/modal';
-import { radius, touchTarget } from '../theme/layout';
+import { tokens } from '../theme/tokens';
 
 type VerseVerifyModalTriggerProps = {
   reference: string;
@@ -84,6 +91,7 @@ export function VerseVerifyModalTrigger({
   const [mnemonicsVisible, setMnemonicsVisible] = useState(false);
   const [remaVisible, setRemaVisible] = useState(false);
   const [listenStatus, setListenStatus] = useState<'idle' | 'playing'>('idle');
+  const [listenHovered, setListenHovered] = useState(false);
   const listenRunRef = useRef(0);
 
   const refTrimmed = typeof reference === 'string' ? reference.trim() : '';
@@ -149,38 +157,50 @@ export function VerseVerifyModalTrigger({
   return (
     <>
       <View style={styles.triggerWrap}>
-        <View style={styles.triggerPrimaryRow}>
-          <AppButton
-            label={t('seven.verifyScriptureBtn')}
-            onPress={() => {
-              if (disabled) return;
-              setScriptureVisible(true);
-            }}
-            variant="secondary"
-            size="lg"
-            fullWidth={false}
-            disabled={disabled}
-            style={styles.primaryBtn}
-            accessibilityLabel={t('seven.verifyScriptureA11y')}
-          />
-          <AppButton
-            label={listenLabel}
-            onPress={onListenPress}
-            variant={isListening ? 'accent' : 'primary'}
-            size="lg"
-            fullWidth={false}
-            disabled={disabled || !body}
-            style={styles.primaryBtn}
-            accessibilityLabel={listenA11y}
-          />
-        </View>
+        <Pressable
+          onPress={onListenPress}
+          disabled={disabled || !body}
+          onHoverIn={() => setListenHovered(true)}
+          onHoverOut={() => setListenHovered(false)}
+          style={({ pressed }) => [
+            styles.listenBtn,
+            (pressed || (Platform.OS === 'web' && listenHovered)) &&
+              styles.listenBtnActive,
+            (disabled || !body) && styles.btnDisabled,
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel={listenA11y}
+        >
+          <Text style={styles.listenBtnText}>{listenLabel}</Text>
+        </Pressable>
 
-        <View style={styles.triggerAidRow}>
+        <Pressable
+          onPress={() => {
+            if (disabled) return;
+            setScriptureVisible(true);
+          }}
+          disabled={disabled}
+          style={({ pressed }) => [
+            styles.verifyBtn,
+            pressed && styles.verifyBtnPressed,
+            disabled && styles.btnDisabled,
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel={t('seven.verifyScriptureA11y')}
+        >
+          <Text style={styles.verifyBtnText}>
+            {t('seven.verifyScriptureBtn')}
+          </Text>
+        </Pressable>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.triggerAidRow}
+        >
             <Pressable
               style={({ pressed }) => [
-                styles.trigger,
-                styles.triggerAidThird,
-                styles.triggerAid,
+                styles.aidBtn,
                 pressed && styles.triggerPressed,
                 disabled && styles.triggerDisabled,
               ]}
@@ -192,16 +212,14 @@ export function VerseVerifyModalTrigger({
               accessibilityRole="button"
               accessibilityLabel={t('seven.verifyKeywordA11y')}
             >
-              <Text style={[styles.triggerText, styles.triggerTextAid]} numberOfLines={1}>
+              <Text style={styles.triggerText} numberOfLines={1}>
                 {t('seven.verifyKeywordBtn')}
               </Text>
             </Pressable>
 
             <Pressable
               style={({ pressed }) => [
-                styles.trigger,
-                styles.triggerAidThird,
-                styles.triggerAid,
+                styles.aidBtn,
                 pressed && styles.triggerPressed,
                 disabled && styles.triggerDisabled,
               ]}
@@ -213,16 +231,14 @@ export function VerseVerifyModalTrigger({
               accessibilityRole="button"
               accessibilityLabel={t('seven.verifyMnemonicsA11y')}
             >
-              <Text style={[styles.triggerText, styles.triggerTextAid]} numberOfLines={1}>
+              <Text style={styles.triggerText} numberOfLines={1}>
                 {t('seven.verifyMnemonicsBtn')}
               </Text>
             </Pressable>
 
             <Pressable
               style={({ pressed }) => [
-                styles.trigger,
-                styles.triggerAidThird,
-                styles.triggerAid,
+                styles.aidBtn,
                 pressed && styles.triggerPressed,
                 disabled && styles.triggerDisabled,
               ]}
@@ -234,11 +250,11 @@ export function VerseVerifyModalTrigger({
               accessibilityRole="button"
               accessibilityLabel={t('seven.verifyRemaA11y')}
             >
-              <Text style={[styles.triggerText, styles.triggerTextAid]} numberOfLines={1}>
+              <Text style={styles.triggerText} numberOfLines={1}>
                 {t('seven.verifyRemaBtn')}
               </Text>
             </Pressable>
-        </View>
+        </ScrollView>
       </View>
 
       <VerifyModal
@@ -308,38 +324,58 @@ export function VerseVerifyModalTrigger({
 
 const styles = StyleSheet.create({
   triggerWrap: {
-    marginTop: 12,
-    gap: 8,
-  },
-  triggerPrimaryRow: {
-    flexDirection: 'row',
+    marginTop: 4,
     gap: 10,
+    alignSelf: 'stretch',
   },
-  primaryBtn: {
-    flex: 1,
-    minWidth: 0,
+  listenBtn: {
+    height: 52,
+    borderRadius: tokens.radius.xl,
+    backgroundColor: tokens.color.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'stretch',
+  },
+  listenBtnActive: {
+    transform: [{ scale: 1.01 }],
+    opacity: 0.95,
+  },
+  listenBtnText: {
+    fontSize: tokens.fontSize.md,
+    fontWeight: '600',
+    color: tokens.color.textOnDark,
+  },
+  verifyBtn: {
+    height: 52,
+    borderRadius: tokens.radius.xl,
+    backgroundColor: tokens.color.bgSecondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'stretch',
+  },
+  verifyBtnPressed: {
+    opacity: 0.9,
+  },
+  verifyBtnText: {
+    fontSize: tokens.fontSize.md,
+    fontWeight: '600',
+    color: tokens.color.textPrimary,
+  },
+  btnDisabled: {
+    opacity: 0.45,
   },
   triggerAidRow: {
     flexDirection: 'row',
-    gap: 6,
+    gap: tokens.space[2],
+    paddingRight: 4,
   },
-  trigger: {
-    paddingVertical: 6,
-    paddingHorizontal: 4,
-    borderRadius: radius.sm,
-    borderWidth: 1,
-    minHeight: touchTarget.min * 0.72,
+  aidBtn: {
+    paddingHorizontal: 14,
+    height: 36,
+    borderRadius: tokens.radius.full,
+    backgroundColor: tokens.color.accentMuted,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  triggerAidThird: {
-    flex: 1,
-    minWidth: 0,
-  },
-  /** 암기 보조 — 말씀확인·말씀듣기 아래 작은 3버튼 */
-  triggerAid: {
-    borderColor: colors.borderSecondary,
-    backgroundColor: colors.backgroundSecondary,
   },
   triggerPressed: {
     opacity: 0.88,
@@ -348,13 +384,10 @@ const styles = StyleSheet.create({
     opacity: 0.45,
   },
   triggerText: {
-    fontSize: typography.chip,
-    lineHeight: 15,
+    fontSize: tokens.fontSize.sm,
+    fontWeight: '500',
+    color: tokens.color.accent,
     textAlign: 'center',
-  },
-  triggerTextAid: {
-    fontWeight: '600',
-    color: colors.textPrimary,
   },
   body: {
     ...modalTheme.body,
@@ -372,10 +405,9 @@ const styles = StyleSheet.create({
   keywordChip: {
     paddingVertical: 10,
     paddingHorizontal: 14,
-    borderRadius: radius.md,
-    backgroundColor: `${colors.orange}12`,
-    borderWidth: 1,
-    borderColor: `${colors.orange}44`,
+    borderRadius: tokens.radius.md,
+    backgroundColor: tokens.color.accentMuted,
+    borderWidth: 0,
   },
   keywordText: {
     fontSize: typography.min,

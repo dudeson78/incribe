@@ -16,8 +16,9 @@ import type { ScheduledRow } from '../hooks/useVerses';
 import { computeAfterReview } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import { useDialog } from '../context/DialogContext';
-import { colors, typography } from '../theme/colors';
-import { cardPadding, cardRadius, radius } from '../theme/layout';
+import { colors } from '../theme/colors';
+import { fontFamilies } from '../theme/fonts';
+import { shadowMd, tokens } from '../theme/tokens';
 import { differenceInCalendarDays, startOfDay } from 'date-fns';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -356,10 +357,10 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   progressHeader: {
-    fontSize: typography.min,
+    fontSize: tokens.fontSize.xl,
     fontWeight: '700',
-    color: colors.textPrimary,
-    letterSpacing: 0.2,
+    color: tokens.color.textPrimary,
+    letterSpacing: 0.1,
   },
   loader: {
     marginTop: 14,
@@ -377,30 +378,27 @@ const styles = StyleSheet.create({
   },
   versePaper: {
     alignSelf: 'stretch',
-    backgroundColor: colors.parchment,
-    borderRadius: cardRadius,
-    borderWidth: 1,
-    borderColor: colors.creamBorder,
-    padding: cardPadding,
+    backgroundColor: tokens.color.surface,
+    borderRadius: tokens.radius.lg,
+    padding: 16,
     alignItems: 'stretch',
-    gap: 10,
+    gap: 16,
+    ...shadowMd,
   },
   refHeroBox: {
-    backgroundColor: colors.sky,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.pastelBlueBorderSoft,
-    minHeight: 100,
-    padding: cardPadding,
+    backgroundColor: tokens.color.primary,
+    borderRadius: tokens.radius.lg,
+    padding: 24,
     alignItems: 'center',
     justifyContent: 'center',
   },
   refHeroText: {
     width: '100%',
-    fontSize: typography.goalNumber,
-    fontWeight: '800',
-    color: colors.textPrimary,
+    fontFamily: fontFamilies.verseMedium,
+    fontSize: tokens.fontSize.xxxl,
+    fontWeight: '700',
+    color: tokens.color.textOnDark,
     textAlign: 'center',
-    lineHeight: 44,
+    lineHeight: Math.round(tokens.fontSize.xxxl * 1.25),
   },
 });

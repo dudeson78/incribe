@@ -1,8 +1,9 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { colors, typography } from '../theme/colors';
-import { cardPadding, cardRadius, radius } from '../theme/layout';
+import { fontFamilies } from '../theme/fonts';
+import { tokens } from '../theme/tokens';
 
 type AnnualGoalCardProps = {
   goalTarget: number;
@@ -19,45 +20,42 @@ export function AnnualGoalCard({
   const pct = Math.round(progress * 100);
 
   return (
-    <View style={styles.card} accessibilityRole="summary">
+    <LinearGradient
+      colors={[tokens.color.primary, tokens.color.primaryLight]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.card}
+      accessibilityRole="summary"
+    >
       <View style={styles.topRow}>
-        <View style={styles.metricBlock}>
-          <Text style={styles.goalNumbers}>
-            <Text style={styles.goalLarge}>{versesThisYear}</Text>
-            <Text style={styles.goalSlash}>
-              {' '}
-              / {goalTarget}
-              {t('home.goalVersesSuffix')}
-            </Text>
+        <Text style={styles.goalNumbers}>
+          <Text style={styles.goalLarge}>{versesThisYear}</Text>
+          <Text style={styles.goalSlash}>
+            {' '}
+            / {goalTarget}
+            {t('home.goalVersesSuffix')}
           </Text>
-        </View>
-        <View style={styles.rightGoal}>
-          <Text style={styles.rightCaption}>{t('home.yearlyGoalCaption')}</Text>
-          <Text style={styles.pct}>{t('home.goalPct', { pct })}</Text>
-        </View>
+        </Text>
+        <Text style={styles.caption}>
+          {t('home.yearlyGoalCaption')} {t('home.goalPct', { pct })}
+        </Text>
       </View>
       <View style={styles.track}>
         <View style={[styles.fill, { width: `${progress * 100}%` }]} />
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.forest,
-    borderRadius: cardRadius,
-    padding: cardPadding,
-    marginBottom: 10,
+    borderRadius: tokens.radius.lg,
+    padding: 16,
+    marginBottom: 12,
+    gap: 12,
   },
   topRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    marginBottom: 12,
-  },
-  metricBlock: {
-    flexShrink: 1,
+    gap: 4,
   },
   goalNumbers: {
     flexDirection: 'row',
@@ -65,38 +63,32 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
   },
   goalLarge: {
-    fontSize: typography.goalNumber,
+    fontFamily: fontFamilies.verseMedium,
+    fontSize: tokens.fontSize.xxl,
     fontWeight: '700',
-    color: colors.textOnDark,
+    color: tokens.color.textOnDark,
   },
   goalSlash: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.textOnDark,
-  },
-  rightGoal: {
-    alignItems: 'flex-end',
-  },
-  rightCaption: {
-    fontSize: typography.caption,
-    fontWeight: '600',
-    color: colors.textOnDark,
-  },
-  pct: {
-    marginTop: 2,
-    fontSize: 16,
+    fontFamily: fontFamilies.verseMedium,
+    fontSize: tokens.fontSize.xxl,
     fontWeight: '700',
-    color: colors.textOnDark,
+    color: tokens.color.textOnDark,
+  },
+  caption: {
+    fontSize: tokens.fontSize.sm,
+    fontWeight: '500',
+    color: tokens.color.textOnDark,
+    opacity: 0.8,
   },
   track: {
-    height: 6,
-    borderRadius: radius.xs,
-    backgroundColor: 'rgba(255,255,255,0.25)',
+    height: 4,
+    borderRadius: tokens.radius.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
     overflow: 'hidden',
   },
   fill: {
     height: '100%',
-    backgroundColor: colors.white,
-    borderRadius: radius.xs,
+    backgroundColor: tokens.color.textOnDark,
+    borderRadius: tokens.radius.full,
   },
 });

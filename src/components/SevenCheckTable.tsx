@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { SevenLeafRing } from './SevenLeafRing';
-import { colors, typography } from '../theme/colors';
+import { tokens } from '../theme/tokens';
 
 const SESSION_SIZE = 7;
 
@@ -72,10 +72,8 @@ const styles = StyleSheet.create({
   wrap: {
     marginTop: 4,
     gap: 10,
-    backgroundColor: colors.backgroundPrimary,
-    borderRadius: 16,
-    borderWidth: 0.5,
-    borderColor: colors.borderTertiary,
+    backgroundColor: tokens.color.surface,
+    borderRadius: tokens.radius.lg,
     paddingHorizontal: 12,
     paddingVertical: 14,
     marginBottom: 4,
@@ -90,18 +88,18 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   sectionLabel: {
-    fontSize: typography.caption,
+    fontSize: tokens.fontSize.xs,
     fontWeight: '700',
-    color: colors.textPrimary,
+    color: tokens.color.textSecondary,
     textTransform: 'uppercase',
     letterSpacing: 0.6,
     alignSelf: 'stretch',
     textAlign: 'center',
   },
   caption: {
-    fontSize: typography.min,
+    fontSize: tokens.fontSize.sm,
     fontWeight: '500',
-    color: colors.textPrimary,
+    color: tokens.color.textSecondary,
     textAlign: 'center',
     alignSelf: 'stretch',
   },
