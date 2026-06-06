@@ -10,13 +10,10 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { AppButton } from '../ui/AppButton';
+import { QuizPrimaryButton, quizStyles } from './QuizUi';
 import type { ScheduledRow } from '../../hooks/useVerses';
 import { referencesMatch } from '../../lib/referenceMatch';
-import { colors, typography } from '../../theme/colors';
-import { verseTypography } from '../../theme/fonts';
-import { cardPadding, radius } from '../../theme/layout';
-import { parchmentCard } from '../../theme/surfaces';
+import { tokens } from '../../theme/tokens';
 
 type Phase = 'input' | 'feedback';
 
@@ -24,7 +21,6 @@ type Props = {
   row: ScheduledRow;
   onBack?: () => void;
   embedded?: boolean;
-  /** 참조 정답일 때 — 상위에서 구절 칩 완료 색 표시 */
   onReferenceSolved?: (verseId: string) => void;
 };
 
@@ -38,6 +34,7 @@ export function QuizReferenceMode({
   const [answer, setAnswer] = useState('');
   const [phase, setPhase] = useState<Phase>('input');
   const [lastCorrect, setLastCorrect] = useState<boolean | null>(null);
+  const [inputFocused, setInputFocused] = useState(false);
 
   const text = row.verse.text ?? '';
   const reference = row.verse.reference ?? '';
@@ -66,27 +63,29 @@ export function QuizReferenceMode({
 
   const body = (
     <>
-      <View style={styles.instructionBox}>
-        <Text style={styles.instructionBoxText}>
+      <View style={quizStyles.verseCard}>
+        <Text style={quizStyles.prompt}>
           {t('quiz.refInstructionBanner')}
         </Text>
-      </View>
-
-      <View style={styles.verseCard}>
-        <Text style={styles.quizVerse} selectable>
+        <Text style={quizStyles.verseText} selectable>
           “{text}”
         </Text>
       </View>
 
       <TextInput
-        style={styles.answerInput}
+        style={[
+          quizStyles.answerInput,
+          inputFocused && quizStyles.answerInputFocused,
+        ]}
         value={answer}
         onChangeText={setAnswer}
         placeholder={t('quiz.phRef')}
-        placeholderTextColor={`${colors.muted}99`}
+        placeholderTextColor={tokens.color.textMuted}
         editable={phase === 'input'}
         autoCorrect={false}
         autoCapitalize="none"
+        onFocus={() => setInputFocused(true)}
+        onBlur={() => setInputFocused(false)}
         accessibilityLabel={t('quiz.a11yRefInput')}
       />
 
@@ -117,13 +116,12 @@ export function QuizReferenceMode({
         </View>
       ) : null}
 
-      <AppButton
+      <QuizPrimaryButton
         label={phase === 'input' ? t('quiz.check') : t('quiz.next')}
         onPress={onNext}
         accessibilityLabel={
           phase === 'input' ? t('quiz.a11yVerify') : t('quiz.a11yNextQ')
         }
-        style={styles.primaryGap}
       />
     </>
   );
@@ -152,83 +150,39 @@ export function QuizReferenceMode({
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   scroll: {
-    padding: 16,
+    paddingTop: 4,
     paddingBottom: 40,
-  },
-  instructionBox: {
-    width: '100%',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    marginBottom: 14,
-    backgroundColor: colors.backgroundSecondary,
-    borderRadius: radius.md,
-    borderWidth: 0.5,
-    borderColor: colors.borderSecondary,
-    alignItems: 'center',
-  },
-  instructionBoxText: {
-    fontSize: typography.min,
-    lineHeight: 22,
-    fontWeight: '600',
-    color: colors.textPrimary,
-    textAlign: 'center',
-    width: '100%',
-  },
-  verseCard: {
-    ...parchmentCard,
-    marginBottom: 16,
-    alignItems: 'center',
-    padding: cardPadding,
-  },
-  quizVerse: {
-    ...verseTypography.bodyLarge,
-    textAlign: 'center',
-  },
-  answerInput: {
-    width: '100%',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    fontSize: 18,
-    fontWeight: '500',
-    color: colors.textPrimary,
-    backgroundColor: colors.backgroundPrimary,
-    borderRadius: radius.lg,
-    borderWidth: 2,
-    borderColor: colors.forest,
-    marginBottom: 12,
-    textAlign: 'center',
   },
   feedback: {
     padding: 16,
-    borderRadius: radius.md,
-    marginBottom: 16,
+    borderRadius: tokens.radius.md,
+    marginBottom: 12,
     borderWidth: 1,
   },
   feedbackOk: {
-    backgroundColor: colors.successBg,
-    borderColor: colors.successBorder,
+    backgroundColor: tokens.color.successBg,
+    borderColor: tokens.color.success,
   },
   feedbackBad: {
-    backgroundColor: colors.errorBg,
-    borderColor: colors.errorBorder,
+    backgroundColor: tokens.color.dangerBg,
+    borderColor: tokens.color.dangerBorder,
   },
   feedbackTitle: {
-    fontSize: typography.title,
+    fontSize: tokens.fontSize.lg,
     fontWeight: '700',
+    textAlign: 'center',
   },
   feedbackTitleOk: {
-    color: colors.textPrimary,
+    color: tokens.color.success,
   },
   feedbackTitleBad: {
-    color: colors.textPrimary,
+    color: tokens.color.danger,
   },
   feedbackSub: {
     marginTop: 8,
-    fontSize: typography.min,
-    color: colors.textPrimary,
-  },
-  primaryGap: {
-    marginBottom: 8,
+    fontSize: tokens.fontSize.sm,
+    color: tokens.color.textSecondary,
+    textAlign: 'center',
   },
   embeddedSection: {
     paddingBottom: 8,

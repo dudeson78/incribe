@@ -9,13 +9,8 @@ import { AppButton } from '../ui/AppButton';
 import { EmptyStatePanel } from '../EmptyStatePanel';
 import { colors, typography } from '../../theme/colors';
 import { verseTypography } from '../../theme/fonts';
-import {
-  cardPadding,
-  cardRadius,
-  radius,
-  screenPadding,
-  touchTarget,
-} from '../../theme/layout';
+import { screenPadding } from '../../theme/layout';
+import { tokens } from '../../theme/tokens';
 
 type Props = {
   rows: ScheduledRow[];
@@ -129,7 +124,11 @@ export function QuizTodayVerseList({
             }
           >
             <Text
-              style={styles.chipRefText}
+              style={[
+                styles.chipRefText,
+                selected && styles.chipRefTextSelected,
+                solved && !selected && styles.chipRefTextSolved,
+              ]}
               numberOfLines={1}
               ellipsizeMode="tail"
             >
@@ -172,9 +171,8 @@ export function QuizTodayVerseList({
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   embeddedWrap: {
-    paddingHorizontal: 16,
     paddingTop: 2,
-    paddingBottom: 4,
+    paddingBottom: 8,
     gap: 6,
   },
   embeddedRows: {
@@ -188,33 +186,38 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   chip: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    height: 40,
+    paddingHorizontal: 16,
     justifyContent: 'center',
-    minHeight: touchTarget.min,
-    backgroundColor: colors.backgroundPrimary,
-    borderRadius: radius.md,
-    borderWidth: 0.5,
-    borderColor: colors.borderTertiary,
+    backgroundColor: tokens.color.bgSecondary,
+    borderRadius: tokens.radius.md,
+    borderWidth: 1,
+    borderColor: tokens.color.border,
   },
   chipRefText: {
-    fontSize: typography.min,
-    fontWeight: '600',
-    color: colors.textPrimary,
+    fontSize: tokens.fontSize.sm,
+    fontWeight: '500',
+    color: tokens.color.textPrimary,
     flexShrink: 1,
   },
+  chipRefTextSelected: {
+    fontWeight: '600',
+    color: tokens.color.textOnDark,
+  },
+  chipRefTextSolved: {
+    color: tokens.color.success,
+    fontWeight: '600',
+  },
   chipSolved: {
-    borderColor: colors.successBorder,
-    backgroundColor: colors.successBg,
+    borderColor: tokens.color.success,
+    backgroundColor: tokens.color.successBg,
   },
   chipSelected: {
-    borderWidth: 2,
-    borderColor: colors.forest,
-    backgroundColor: colors.forestTint,
+    borderColor: tokens.color.primary,
+    backgroundColor: tokens.color.primary,
   },
   chipPressed: {
     opacity: 0.9,
-    backgroundColor: colors.backgroundSecondary,
   },
   emptyWrap: {
     paddingVertical: 16,
@@ -237,28 +240,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: colors.parchment,
-    borderRadius: cardRadius,
+    backgroundColor: tokens.color.surface,
+    borderRadius: tokens.radius.lg,
     borderWidth: 1,
-    borderColor: colors.creamBorder,
-    padding: cardPadding,
-    minHeight: touchTarget.min + 4,
+    borderColor: tokens.color.border,
+    padding: 12,
+    minHeight: 48,
     marginBottom: 4,
     gap: 10,
   },
   rowCardEmbedded: {
-    minHeight: touchTarget.min,
+    minHeight: 44,
     paddingVertical: 11,
     marginBottom: 0,
   },
   rowCardSelected: {
     borderWidth: 2,
-    borderColor: colors.orange,
-    backgroundColor: `${colors.orange}10`,
+    borderColor: tokens.color.primary,
+    backgroundColor: tokens.color.primaryTint08,
   },
   rowCardPressed: {
     opacity: 0.92,
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor: tokens.color.bgSecondary,
   },
   refText: {
     flex: 1,

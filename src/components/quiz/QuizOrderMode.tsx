@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { AppButton } from '../ui/AppButton';
+import { QuizPrimaryButton, quizStyles } from './QuizUi';
 import type { ScheduledRow } from '../../hooks/useVerses';
 import {
   shuffleSegments,
@@ -10,8 +10,8 @@ import {
 } from '../../lib/quizTextUtils';
 import { colors, typography } from '../../theme/colors';
 import { verseTypography } from '../../theme/fonts';
-import { cardPadding, radius, touchTarget } from '../../theme/layout';
-import { parchmentCard } from '../../theme/surfaces';
+import { radius, touchTarget } from '../../theme/layout';
+import { shadowMd, tokens } from '../../theme/tokens';
 
 type OrderItem = {
   id: string;
@@ -117,7 +117,9 @@ export function QuizOrderMode({
         </View>
       ) : null}
 
-      <Text style={styles.dragHint}>{t('quiz.orderDragHint')}</Text>
+      <View style={styles.promptCard}>
+        <Text style={quizStyles.prompt}>{t('quiz.orderDragHint')}</Text>
+      </View>
 
       <View style={styles.list}>
         {items.map((item, index) => (
@@ -179,18 +181,21 @@ export function QuizOrderMode({
       ) : null}
 
       {feedback !== 'ok' ? (
-        <AppButton
-          label={t('quiz.orderCheck')}
-          onPress={checkOrder}
-          style={styles.primaryGap}
-        />
+        <QuizPrimaryButton label={t('quiz.check')} onPress={checkOrder} />
       ) : null}
-      <AppButton
-        label={t('quiz.orderReshuffle')}
+      <Pressable
+        style={({ pressed }) => [
+          styles.secondaryAction,
+          pressed && styles.secondaryActionPressed,
+        ]}
         onPress={reshuffle}
-        variant="secondary"
-        size="md"
-      />
+        accessibilityRole="button"
+        accessibilityLabel={t('quiz.orderReshuffle')}
+      >
+        <Text style={styles.secondaryActionText}>
+          {t('quiz.orderReshuffle')}
+        </Text>
+      </Pressable>
     </>
   );
 
@@ -252,11 +257,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.textPrimary,
   },
-  dragHint: {
-    fontSize: typography.min,
-    color: colors.textPrimary,
-    lineHeight: 20,
-    marginBottom: 2,
+  promptCard: {
+    backgroundColor: tokens.color.surface,
+    borderRadius: tokens.radius.lg,
+    padding: 16,
+    marginBottom: 12,
+    alignSelf: 'stretch',
+    ...shadowMd,
   },
   list: {
     gap: 8,
@@ -265,21 +272,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 10,
-    ...parchmentCard,
-    padding: cardPadding - 4,
+    backgroundColor: tokens.color.surface,
+    borderRadius: tokens.radius.lg,
+    borderWidth: 1,
+    borderColor: tokens.color.border,
+    padding: 12,
     minHeight: touchTarget.min + 10,
+    ...shadowMd,
   },
   segmentCardOk: {
-    borderColor: colors.successBorder,
+    borderColor: tokens.color.success,
     borderWidth: 2,
-    backgroundColor: colors.sage,
-    paddingVertical: cardPadding,
+    backgroundColor: tokens.color.successBg,
   },
   segIx: {
-    fontSize: typography.min,
+    fontSize: tokens.fontSize.sm,
     fontWeight: '800',
-    color: colors.textOnDark,
-    backgroundColor: colors.forest,
+    color: tokens.color.textOnDark,
+    backgroundColor: tokens.color.primary,
     minWidth: 26,
     textAlign: 'center',
     lineHeight: 22,
@@ -304,14 +314,14 @@ const styles = StyleSheet.create({
     height: 26,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: radius.sm,
-    borderWidth: 0.5,
-    borderColor: colors.borderTertiary,
-    backgroundColor: colors.backgroundSecondary,
+    borderRadius: tokens.radius.sm,
+    borderWidth: 1,
+    borderColor: tokens.color.border,
+    backgroundColor: tokens.color.bgSecondary,
   },
   arrowBtnPressed: {
     opacity: 0.85,
-    backgroundColor: `${colors.forest}14`,
+    backgroundColor: tokens.color.primaryTint08,
   },
   arrowBtnDisabled: {
     opacity: 0.3,
@@ -328,8 +338,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   fbOk: {
-    backgroundColor: colors.successBg,
-    borderColor: colors.successBorder,
+    backgroundColor: tokens.color.successBg,
+    borderColor: tokens.color.success,
   },
   fbOkTxt: {
     fontSize: typography.min,
@@ -352,7 +362,17 @@ const styles = StyleSheet.create({
     fontSize: typography.min,
     lineHeight: 22,
   },
-  primaryGap: {
-    marginTop: 8,
+  secondaryAction: {
+    paddingVertical: 14,
+    alignItems: 'center',
+    alignSelf: 'stretch',
+  },
+  secondaryActionPressed: {
+    opacity: 0.85,
+  },
+  secondaryActionText: {
+    fontSize: tokens.fontSize.sm,
+    fontWeight: '600',
+    color: tokens.color.textSecondary,
   },
 });

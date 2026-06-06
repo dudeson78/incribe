@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { AppButton } from '../ui/AppButton';
+import { QuizPrimaryButton, quizStyles } from './QuizUi';
 import type { ScheduledRow } from '../../hooks/useVerses';
 import {
   buildBlankChallengePreferKeywords,
@@ -20,8 +20,8 @@ import {
 } from '../../lib/quizTextUtils';
 import { colors, typography } from '../../theme/colors';
 import { verseTypography } from '../../theme/fonts';
-import { cardPadding, radius, touchTarget } from '../../theme/layout';
-import { parchmentCard } from '../../theme/surfaces';
+import { radius, touchTarget } from '../../theme/layout';
+import { tokens } from '../../theme/tokens';
 
 type Props = {
   row: ScheduledRow;
@@ -128,6 +128,11 @@ export function QuizBlankMode({
   }
 
   const blankChip = feedback === 'bad';
+  const hasKeywords = (row.verse.keywords ?? '').trim().length > 0;
+  const keywordOnly = roundKey === 0 && hasKeywords;
+  const blankPrompt = keywordOnly
+    ? t('quiz.blankHintKeywords')
+    : t('quiz.blankHint');
 
   const blankInner = (
     <>
@@ -147,10 +152,12 @@ export function QuizBlankMode({
 
       <View
         style={[
-          styles.versePaper,
-          blankChip && styles.versePaperBad,
+          quizStyles.verseCard,
+          styles.verseCardTight,
+          blankChip && styles.verseCardBad,
         ]}
       >
+        <Text style={quizStyles.prompt}>{blankPrompt}</Text>
         <View style={styles.tokenFlow}>
           {C.tokens.map((tok, ti) => {
             if (!blankSet.has(ti)) {
@@ -172,7 +179,7 @@ export function QuizBlankMode({
                 value={guesses[si] ?? ''}
                 onChangeText={(v) => setGuess(si, v)}
                 placeholder="···"
-                placeholderTextColor={`${colors.muted}88`}
+                placeholderTextColor={tokens.color.textMuted}
                 autoCorrect={false}
                 autoCapitalize="none"
                 accessibilityLabel={t('quiz.blankInputA11y', {
@@ -199,19 +206,25 @@ export function QuizBlankMode({
       ) : null}
 
       {feedback !== 'ok' ? (
-        <AppButton
-          label={t('quiz.blankCheck')}
+        <QuizPrimaryButton
+          label={t('quiz.check')}
           onPress={verify}
-          style={styles.primaryGap}
         />
       ) : null}
 
-      <AppButton
-        label={t('quiz.blankRegenerate')}
+      <Pressable
+        style={({ pressed }) => [
+          styles.secondaryAction,
+          pressed && styles.secondaryActionPressed,
+        ]}
         onPress={reshuffleBlanks}
-        variant="secondary"
-        size="md"
-      />
+        accessibilityRole="button"
+        accessibilityLabel={t('quiz.blankRegenerate')}
+      >
+        <Text style={styles.secondaryActionText}>
+          {t('quiz.blankRegenerate')}
+        </Text>
+      </Pressable>
     </>
   );
 
@@ -268,12 +281,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.textPrimary,
   },
-  versePaper: {
-    ...parchmentCard,
-    padding: cardPadding,
+  verseCardTight: {
+    marginBottom: 12,
+    alignItems: 'flex-start',
   },
-  versePaperBad: {
-    borderColor: colors.errorBorder,
+  verseCardBad: {
+    borderWidth: 1,
+    borderColor: tokens.color.dangerBorder,
   },
   tokenFlow: {
     flexDirection: 'row',
@@ -283,30 +297,33 @@ const styles = StyleSheet.create({
     rowGap: 12,
   },
   tokenWord: {
-    ...verseTypography.body,
+    ...quizStyles.verseText,
+    fontSize: tokens.fontSize.md,
+    lineHeight: Math.round(tokens.fontSize.md * 1.9),
+    textAlign: 'left',
     marginRight: 2,
   },
   blankInput: {
-    minWidth: 80,
-    maxWidth: 160,
-    borderBottomWidth: 2,
-    borderBottomColor: colors.forest,
-    paddingHorizontal: 4,
-    paddingVertical: 4,
-    fontSize: typography.body,
+    minWidth: 72,
+    maxWidth: 140,
+    height: 40,
+    paddingHorizontal: 8,
+    fontSize: tokens.fontSize.sm,
     fontWeight: '600',
-    color: colors.textPrimary,
+    color: tokens.color.textPrimary,
     textAlign: 'center',
-    backgroundColor: `${colors.white}aa`,
-    borderRadius: radius.sm,
+    backgroundColor: tokens.color.surface,
+    borderRadius: tokens.radius.md,
+    borderWidth: 1.5,
+    borderColor: tokens.color.border,
   },
   blankInputOk: {
-    borderBottomColor: colors.pastelBlueBorder,
-    backgroundColor: colors.pastelBlueBg,
+    borderColor: tokens.color.success,
+    backgroundColor: tokens.color.successBg,
   },
   blankInputBad: {
-    borderBottomColor: colors.errorBorder,
-    backgroundColor: colors.errorBg,
+    borderColor: tokens.color.dangerBorder,
+    backgroundColor: tokens.color.dangerBg,
   },
   fb: {
     padding: 14,
@@ -338,8 +355,18 @@ const styles = StyleSheet.create({
     fontSize: typography.min,
     lineHeight: 22,
   },
-  primaryGap: {
-    marginTop: 4,
+  secondaryAction: {
+    paddingVertical: 14,
+    alignItems: 'center',
+    alignSelf: 'stretch',
+  },
+  secondaryActionPressed: {
+    opacity: 0.85,
+  },
+  secondaryActionText: {
+    fontSize: tokens.fontSize.sm,
+    fontWeight: '600',
+    color: tokens.color.textSecondary,
   },
   btnGhost: {
     padding: 14,
