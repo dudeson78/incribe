@@ -17,7 +17,7 @@ import { verseTypography } from '../theme/fonts';
 import { radius, touchTarget } from '../theme/layout';
 import { SPLASH_FADE_MS, SPLASH_HOLD_MS } from '../theme/motion';
 
-const BRAND_MARK = 'INSCRIBE';
+const BRAND_MARK = 'INCRIBE';
 
 type Props = {
   style?: StyleProp<ViewStyle>;
@@ -31,7 +31,7 @@ type Props = {
 };
 
 /**
- * 앱 첫 화면 — 하늘색 배경, 중앙 INSCRIBE.
+ * 앱 첫 화면 — 진한 하늘색 배경, 중앙 INCRIBE.
  * 로그인 상태면 잠깐 보여준 뒤 페이드아웃, 미로그인이면 버튼을 함께 표시.
  */
 export function AppIntroSplash({
@@ -115,7 +115,7 @@ export function AppIntroSplash({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.sky,
+    backgroundColor: colors.skyDeep,
   },
   center: {
     flex: 1,

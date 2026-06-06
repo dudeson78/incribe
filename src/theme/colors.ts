@@ -66,6 +66,8 @@ export const colors = {
 
   /** 말씀 하이라이트 — sky (구 pastel blue) */
   sky: '#D6E8F5',
+  /** 첫 화면·스플래시 — 진한 하늘색 */
+  skyDeep: '#95C4E3',
   pastelBlueBg: '#D6E8F5',
   pastelBlueBorderSoft: '#B8D4E8',
   pastelBlueBorder: '#7AADC8',
