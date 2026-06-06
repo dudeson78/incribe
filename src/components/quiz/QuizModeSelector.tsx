@@ -15,69 +15,38 @@ type Props = {
   };
 };
 
-const MODE_CHIP: Record<
-  QuizSurfaceMode,
-  { bg: string; border: string; activeBg: string; activeBorder: string }
-> = {
-  blank: {
-    bg: colors.sky,
-    border: colors.pastelBlueBorderSoft,
-    activeBg: colors.pastelBlueBorder,
-    activeBorder: colors.pastelBlueText,
-  },
-  order: {
-    bg: colors.sage,
-    border: colors.successBorder,
-    activeBg: colors.forest,
-    activeBorder: colors.forest,
-  },
-  reference: {
-    bg: colors.orangeTint,
-    border: colors.orangeTintBorder,
-    activeBg: colors.orange,
-    activeBorder: colors.badgeShortText,
-  },
-};
+const MODES: QuizSurfaceMode[] = ['reference', 'blank', 'order'];
 
 export function QuizModeSelector({ active, onChange, labels }: Props) {
-  const items: { mode: QuizSurfaceMode; title: string }[] = [
-    { mode: 'reference', title: labels.reference },
-    { mode: 'blank', title: labels.blank },
-    { mode: 'order', title: labels.order },
-  ];
+  const labelByMode: Record<QuizSurfaceMode, string> = {
+    reference: labels.reference,
+    blank: labels.blank,
+    order: labels.order,
+  };
 
   return (
-    <View style={styles.row}>
-      {items.map(({ mode, title }) => {
+    <View style={styles.track} accessibilityRole="tablist">
+      {MODES.map((mode) => {
         const on = active === mode;
-        const chip = MODE_CHIP[mode];
+        const title = labelByMode[mode];
         return (
           <Pressable
             key={mode}
             onPress={() => onChange(mode)}
-            hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
             style={({ pressed }) => [
-              styles.chip,
-              {
-                backgroundColor: on ? chip.activeBg : chip.bg,
-                borderColor: on ? chip.activeBorder : chip.border,
-              },
-              pressed && styles.chipPressed,
+              styles.segment,
+              on && styles.segmentActive,
+              pressed && !on && styles.segmentPressed,
             ]}
-            accessibilityRole="button"
+            accessibilityRole="tab"
             accessibilityState={{ selected: on }}
             accessibilityLabel={title}
           >
             <Text
-              style={[
-                styles.label,
-                on ? styles.labelOn : styles.labelOff,
-                on && {
-                  color:
-                    mode === 'order' ? colors.textOnDark : colors.textPrimary,
-                },
-              ]}
+              style={[styles.label, on ? styles.labelActive : styles.labelIdle]}
               numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.85}
             >
               {title}
             </Text>
@@ -89,38 +58,53 @@ export function QuizModeSelector({ active, onChange, labels }: Props) {
 }
 
 const styles = StyleSheet.create({
-  row: {
+  track: {
     flexDirection: 'row',
-    paddingHorizontal: 4,
-    paddingVertical: 6,
-    gap: 8,
     alignItems: 'center',
+    marginTop: 4,
+    marginBottom: 10,
+    padding: 3,
+    borderRadius: radius.pill,
+    backgroundColor: colors.backgroundSecondary,
+    borderWidth: 1,
+    borderColor: colors.borderTertiary,
+    gap: 2,
   },
-  chip: {
+  segment: {
     flex: 1,
     minWidth: 0,
-    minHeight: 44,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    minHeight: 40,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
     borderRadius: radius.pill,
-    borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  chipPressed: {
-    opacity: 0.9,
+  segmentActive: {
+    backgroundColor: colors.backgroundPrimary,
+    borderWidth: 1,
+    borderColor: colors.creamBorder,
+    shadowColor: colors.textPrimary,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  segmentPressed: {
+    opacity: 0.88,
   },
   label: {
     fontSize: typography.versePreview,
-    fontWeight: '700',
     textAlign: 'center',
     letterSpacing: 0.1,
   },
-  labelOn: {
+  labelActive: {
     fontWeight: '800',
-  },
-  labelOff: {
     color: colors.textPrimary,
+  },
+  labelIdle: {
     fontWeight: '600',
+    color: colors.textPrimary,
+    opacity: 0.72,
   },
 });

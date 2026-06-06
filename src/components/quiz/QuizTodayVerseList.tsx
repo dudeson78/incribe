@@ -1,7 +1,11 @@
+import type { NavigationProp } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import type { ScheduledRow } from '../../hooks/useVerses';
+import type { RootTabParamList } from '../../navigation/tabParams';
+import { AppButton } from '../ui/AppButton';
 import { EmptyStatePanel } from '../EmptyStatePanel';
 import { colors, typography } from '../../theme/colors';
 import { verseTypography } from '../../theme/fonts';
@@ -40,6 +44,7 @@ export function QuizTodayVerseList({
   compactChipRow = false,
 }: Props) {
   const { t } = useTranslation();
+  const navigation = useNavigation<NavigationProp<RootTabParamList>>();
 
   if (loading) {
     return (
@@ -51,11 +56,22 @@ export function QuizTodayVerseList({
 
   if (rows.length === 0) {
     return (
-      <EmptyStatePanel
-        variant="leaves"
-        title={t('quiz.noTrainingToday')}
-        body={t('quiz.noTrainingTodayHint')}
-      />
+      <View style={styles.emptyWrap}>
+        <EmptyStatePanel
+          variant="quiz"
+          compact
+          plain
+          title={t('quiz.noTrainingToday')}
+          body={t('quiz.noTrainingTodayHint')}
+        >
+          <AppButton
+            label={t('quiz.goToVersesCta')}
+            onPress={() => navigation.navigate('VersesTab')}
+            size="lg"
+            accessibilityLabel={t('quiz.goToVersesCtaA11y')}
+          />
+        </EmptyStatePanel>
+      </View>
     );
   }
 
@@ -193,12 +209,16 @@ const styles = StyleSheet.create({
   },
   chipSelected: {
     borderWidth: 2,
-    borderColor: colors.orange,
-    backgroundColor: `${colors.orange}12`,
+    borderColor: colors.forest,
+    backgroundColor: colors.forestTint,
   },
   chipPressed: {
     opacity: 0.9,
     backgroundColor: colors.backgroundSecondary,
+  },
+  emptyWrap: {
+    paddingVertical: 16,
+    alignItems: 'center',
   },
   pad: {
     padding: 24,

@@ -209,8 +209,11 @@ export const ko = {
       '오늘 훈련한 말씀을 고른 뒤, 일부 단어가 가려진 본문의 빈칸을 채웁니다.',
     modeDescOrder:
       '오늘 훈련한 말씀을 고른 뒤, 섞여 있는 문장 조각들을 원래 순서로 맞춥니다.',
-    noTrainingToday: '오늘 훈련한 말씀이 없습니다',
-    noTrainingTodayHint: '오늘 훈련한 말씀이 없으면 이 목록이 비게 됩니다.',
+    noTrainingToday: '퀴즈를 낼 구절이 없습니다',
+    noTrainingTodayHint:
+      '말씀 관리에서 구절을 추가한 뒤, 홈에서 오늘 훈련을 완료하면 여기에 표시됩니다.',
+    goToVersesCta: '말씀 관리 탭으로 이동하여 구절 추가하기',
+    goToVersesCtaA11y: '말씀 관리 탭으로 이동',
     pickVerseA11y: '{{ref}} 퀴즈 시작',
     verseChipSolvedA11y: '{{ref}} 정답 맞춤',
     blankHint:
