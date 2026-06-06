@@ -1,5 +1,4 @@
-import type { NavigationProp } from '@react-navigation/native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   RefreshControl,
@@ -11,7 +10,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppScreenTitle } from '../components/navigation/AppScreenTitle';
 import { EmptyStatePanel } from '../components/EmptyStatePanel';
-import { AppButton } from '../components/ui/AppButton';
 import { AnnualGoalCard } from '../components/AnnualGoalCard';
 import { HomeGroupedReview } from '../components/HomeGroupedReview';
 import { TodayPracticeVerseBadge } from '../components/TodayPracticeVerseBadge';
@@ -24,7 +22,6 @@ import {
 } from '../hooks/useVerses';
 import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
 import { mapAppError } from '../i18n/mapAppError';
-import type { RootTabParamList } from '../navigation/tabParams';
 import { useSettings } from '../context/SettingsContext';
 import type { VerseWithSchedule } from '../types/verses';
 import { colors, typography } from '../theme/colors';
@@ -34,7 +31,6 @@ import { useTranslation } from 'react-i18next';
 export function HomeScreen() {
   const tabScrollPadding = useBottomTabScrollPadding(20);
   const { t } = useTranslation();
-  const navigation = useNavigation<NavigationProp<RootTabParamList>>();
   const { annualGoal, loaded: settingsLoaded } = useSettings();
   const goalTarget = settingsLoaded ? annualGoal : 52;
 
@@ -190,16 +186,7 @@ export function HomeScreen() {
             <EmptyStatePanel
               variant="seedling"
               body={t('home.emptyVersesHint', { tab: t('tabs.verses') })}
-            >
-              <AppButton
-                label={t('home.emptyVersesCta', { tab: t('tabs.verses') })}
-                onPress={() => navigation.navigate('VersesTab')}
-                size="md"
-                accessibilityLabel={t('home.emptyVersesCta', {
-                  tab: t('tabs.verses'),
-                })}
-              />
-            </EmptyStatePanel>
+            />
           </View>
         ) : null}
 

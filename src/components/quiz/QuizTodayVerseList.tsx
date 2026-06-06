@@ -1,5 +1,3 @@
-import type { NavigationProp } from '@react-navigation/native';
-import { useNavigation } from '@react-navigation/native';
 import { useMemo, useState } from 'react';
 import {
   Pressable,
@@ -12,8 +10,6 @@ import {
 import { useTranslation } from 'react-i18next';
 
 import type { ScheduledRow } from '../../hooks/useVerses';
-import type { RootTabParamList } from '../../navigation/tabParams';
-import { AppButton } from '../ui/AppButton';
 import { EmptyStatePanel } from '../EmptyStatePanel';
 import { colors, typography } from '../../theme/colors';
 import { verseTypography } from '../../theme/fonts';
@@ -51,7 +47,6 @@ export function QuizTodayVerseList({
   compactChipRow = false,
 }: Props) {
   const { t } = useTranslation();
-  const navigation = useNavigation<NavigationProp<RootTabParamList>>();
   const { width: windowWidth } = useWindowDimensions();
   const [chipWrapWidth, setChipWrapWidth] = useState(0);
 
@@ -80,14 +75,7 @@ export function QuizTodayVerseList({
           plain
           title={t('quiz.noTrainingToday')}
           body={t('quiz.noTrainingTodayHint')}
-        >
-          <AppButton
-            label={t('quiz.goToVersesCta')}
-            onPress={() => navigation.navigate('VersesTab')}
-            size="lg"
-            accessibilityLabel={t('quiz.goToVersesCtaA11y')}
-          />
-        </EmptyStatePanel>
+        />
       </View>
     );
   }

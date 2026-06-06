@@ -215,7 +215,7 @@ export const ko = {
       '오늘 훈련 대상 말씀을 고른 뒤, 섞여 있는 문장 조각들을 원래 순서로 맞춥니다.',
     noTrainingToday: '퀴즈를 낼 구절이 없습니다',
     noTrainingTodayHint:
-      '말씀 관리에서 구절을 추가하면 오늘 훈련 대상으로 여기에 바로 표시됩니다.',
+      '하단 관리 탭으로 이동하여 암송할 말씀을 입력해 주세요.',
     goToVersesCta: '말씀 관리 탭으로 이동하여 구절 추가하기',
     goToVersesCtaA11y: '말씀 관리 탭으로 이동',
     pickVerseA11y: '{{ref}} 퀴즈 시작',
