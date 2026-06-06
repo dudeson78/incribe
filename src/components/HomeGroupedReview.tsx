@@ -22,7 +22,7 @@ type ListedRow = {
 /** 미완료(3글자) 기준 상태 칩 최소 너비 — 완료도 동일 박스 */
 const STATUS_CHIP_MIN_WIDTH = 54;
 /** 열 사이 균일 간격 */
-const COL_GAP = 4;
+const COL_GAP = 6;
 
 function formatMdDotsFromYmd(ymd: string): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ymd.trim());
@@ -114,28 +114,53 @@ export function HomeGroupedReview({
     <View style={styles.wrap}>
       <View style={styles.table}>
         <View style={styles.headerRow}>
-          <View style={[styles.col, styles.colKind]}>
-            <Text style={styles.headLabel} numberOfLines={1}>
+          <View style={styles.col}>
+            <Text
+              style={styles.headLabel}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.82}
+            >
               {t('home.reviewListColKind')}
             </Text>
           </View>
-          <View style={[styles.col, styles.colVerse]}>
-            <Text style={[styles.headLabel, styles.headLabelLeft]} numberOfLines={1}>
+          <View style={styles.col}>
+            <Text
+              style={styles.headLabel}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.82}
+            >
               {t('home.reviewListColVerse')}
             </Text>
           </View>
-          <View style={[styles.col, styles.colSession]}>
-            <Text style={styles.headLabel} numberOfLines={1}>
+          <View style={styles.col}>
+            <Text
+              style={styles.headLabel}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.82}
+            >
               {t('home.reviewListColSession')}
             </Text>
           </View>
-          <View style={[styles.col, styles.colStatus]}>
-            <Text style={styles.headLabel} numberOfLines={1}>
+          <View style={styles.col}>
+            <Text
+              style={styles.headLabel}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.82}
+            >
               {t('home.reviewListColStatus')}
             </Text>
           </View>
-          <View style={[styles.col, styles.colRemark]}>
-            <Text style={styles.headLabel} numberOfLines={1}>
+          <View style={styles.col}>
+            <Text
+              style={styles.headLabel}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.82}
+            >
               {t('home.reviewListColRemark')}
             </Text>
           </View>
@@ -175,14 +200,14 @@ export function HomeGroupedReview({
                 accessibilityLabel={a11y}
                 accessibilityState={{ disabled: recorded }}
               >
-                <View style={[styles.col, styles.colKind]}>
+                <View style={styles.col}>
                   <View style={styles.kindBadge}>
                     <Text style={styles.kindBadgeText} numberOfLines={1}>
                       {phaseText}
                     </Text>
                   </View>
                 </View>
-                <View style={[styles.col, styles.colVerse]}>
+                <View style={styles.col}>
                   <Text
                     style={styles.refText}
                     numberOfLines={1}
@@ -191,12 +216,12 @@ export function HomeGroupedReview({
                     {verse.reference}
                   </Text>
                 </View>
-                <View style={[styles.col, styles.colSession]}>
+                <View style={styles.col}>
                   <Text style={styles.sessionText} numberOfLines={1}>
                     {sessionText}
                   </Text>
                 </View>
-                <View style={[styles.col, styles.colStatus]}>
+                <View style={styles.col}>
                   <View
                     style={[
                       styles.statusChip,
@@ -216,7 +241,7 @@ export function HomeGroupedReview({
                     </Text>
                   </View>
                 </View>
-                <View style={[styles.col, styles.colRemark]}>
+                <View style={styles.col}>
                   <Text
                     style={styles.remarkText}
                     numberOfLines={2}
@@ -249,9 +274,9 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     gap: COL_GAP,
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     paddingTop: 10,
     paddingBottom: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -261,7 +286,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: COL_GAP,
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     paddingVertical: 10,
     minHeight: 48,
   },
@@ -272,36 +297,11 @@ const styles = StyleSheet.create({
     opacity: 0.78,
   },
   col: {
+    flex: 1,
+    flexBasis: 0,
     minWidth: 0,
+    alignItems: 'center',
     justifyContent: 'center',
-  },
-  colKind: {
-    width: 26,
-    flexShrink: 0,
-    alignItems: 'center',
-  },
-  colVerse: {
-    flex: 1,
-    flexShrink: 1,
-    minWidth: 48,
-    maxWidth: 118,
-    alignItems: 'flex-start',
-  },
-  colSession: {
-    width: 32,
-    flexShrink: 0,
-    alignItems: 'center',
-  },
-  colStatus: {
-    width: STATUS_CHIP_MIN_WIDTH,
-    flexShrink: 0,
-    alignItems: 'center',
-  },
-  colRemark: {
-    flex: 1,
-    flexShrink: 1,
-    minWidth: 52,
-    alignItems: 'center',
   },
   headLabel: {
     width: '100%',
@@ -310,9 +310,6 @@ const styles = StyleSheet.create({
     color: tokens.color.textMuted,
     textAlign: 'center',
     lineHeight: 14,
-  },
-  headLabelLeft: {
-    textAlign: 'left',
   },
   kindBadge: {
     paddingHorizontal: 6,
@@ -332,7 +329,7 @@ const styles = StyleSheet.create({
     fontSize: tokens.fontSize.sm,
     fontWeight: '600',
     color: tokens.color.textPrimary,
-    textAlign: 'left',
+    textAlign: 'center',
   },
   sessionText: {
     width: '100%',
@@ -377,6 +374,6 @@ const styles = StyleSheet.create({
   divider: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: tokens.color.border,
-    marginHorizontal: 8,
+    marginHorizontal: 10,
   },
 });
