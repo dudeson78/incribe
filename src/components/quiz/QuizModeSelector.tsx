@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     height: 44,
     padding: TRACK_PADDING,
     borderRadius: tokens.radius.xl,
-    backgroundColor: tokens.color.bgSecondary,
+    backgroundColor: tokens.color.primary,
     marginTop: 4,
     marginBottom: 12,
     position: 'relative',
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.1,
   },
   labelIdle: {
-    color: tokens.color.textMuted,
+    color: 'rgba(255, 255, 255, 0.72)',
     fontWeight: '400',
   },
 });

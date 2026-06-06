@@ -119,8 +119,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundPrimary,
   },
   leafDone: {
-    backgroundColor: tokens.color.successBg,
-    borderColor: tokens.color.primary,
+    backgroundColor: colors.textPrimary,
+    borderColor: colors.textPrimary,
   },
   leafNext: {
     borderColor: tokens.color.primary,

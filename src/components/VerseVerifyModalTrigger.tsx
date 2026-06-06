@@ -162,7 +162,7 @@ export function VerseVerifyModalTrigger({
               if (disabled) return;
               setScriptureVisible(true);
             }}
-            variant="secondary"
+            variant="pastelGreen"
             size="lg"
             fullWidth={false}
             disabled={disabled}
@@ -172,7 +172,7 @@ export function VerseVerifyModalTrigger({
           <AppButton
             label={listenLabel}
             onPress={onListenPress}
-            variant={isListening ? 'accent' : 'primary'}
+            variant="pastelGreen"
             size="lg"
             fullWidth={false}
             disabled={disabled || !body}

@@ -17,7 +17,8 @@ export type AppButtonVariant =
   | 'secondary'
   | 'danger'
   | 'accent'
-  | 'ghost';
+  | 'ghost'
+  | 'pastelGreen';
 export type AppButtonSize = 'sm' | 'md' | 'lg';
 
 type Props = {
@@ -134,6 +135,16 @@ const VARIANTS: Record<
     },
     label: { color: colors.textPrimary, fontWeight: '600' },
     spinner: colors.textPrimary,
+  },
+  /** 파스텔 연두 — 말씀확인·말씀듣기 등 */
+  pastelGreen: {
+    container: {
+      backgroundColor: colors.pastelGreenBg,
+      borderWidth: 1,
+      borderColor: colors.pastelGreenBorderSoft,
+    },
+    label: { color: colors.pastelGreenText, fontWeight: '700' },
+    spinner: colors.pastelGreenText,
   },
 };
 
