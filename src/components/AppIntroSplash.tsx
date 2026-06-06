@@ -137,14 +137,14 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
     letterSpacing: 0.4,
-    color: colors.textPrimary,
+    color: colors.accent,
     textAlign: 'center',
   },
   brand: {
     fontSize: typography.goalNumber,
     fontWeight: '800',
     letterSpacing: 6,
-    color: colors.textPrimary,
+    color: colors.textOnDark,
     textAlign: 'center',
   },
   verse: {
@@ -153,6 +153,8 @@ const styles = StyleSheet.create({
     lineHeight: Math.round(typography.min * 1.65),
     textAlign: 'center',
     maxWidth: 320,
+    color: colors.textOnDark,
+    opacity: 0.9,
   },
   authRow: {
     flexDirection: 'row',
@@ -168,8 +170,8 @@ const styles = StyleSheet.create({
     minHeight: touchTarget.min,
     borderRadius: radius.md,
     borderWidth: 2,
-    borderColor: colors.forest,
-    backgroundColor: colors.card,
+    borderColor: colors.textOnDark,
+    backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 12,
@@ -177,7 +179,7 @@ const styles = StyleSheet.create({
   btnOutlinedText: {
     fontSize: typography.min,
     fontWeight: '700',
-    color: colors.textPrimary,
+    color: colors.textOnDark,
   },
   pressed: {
     opacity: 0.92,

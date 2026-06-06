@@ -1,0 +1,61 @@
+/**
+ * INCRIBE — global design tokens (web CSS custom properties)
+ *
+ * React Native 컴포넌트는 아직 src/theme/colors.ts 등을 사용합니다.
+ * 웹(incribe.vercel.app) 및 향후 CSS 기반 UI의 단일 토큰 소스입니다.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ── Color ── */
+  --color-primary: #2D5016;
+  --color-primary-light: #3D6B20;
+  --color-primary-dark: #1A3A0A;
+  --color-accent: #C8A96E;
+  --color-accent-light: #DEC08A;
+  --color-accent-muted: #F5EDD8;
+  --color-bg: #FAFAF7;
+  --color-bg-secondary: #F3F3EE;
+  --color-surface: #FFFFFF;
+  --color-text-primary: #1C1C1E;
+  --color-text-secondary: #4B5563;
+  --color-text-muted: #9CA3AF;
+  --color-border: #E8E8E2;
+  --color-success: #4A7C59;
+  --color-success-bg: #EDF5F0;
+  --color-warning: #C8A96E;
+  --color-warning-bg: #FDF6E8;
+  --color-danger: #DC2626;
+  --color-danger-bg: #FEF2F2;
+
+  /* ── Typography ── */
+  --font-display: 'Noto Serif KR', serif;
+  --font-body: 'Noto Sans KR', sans-serif;
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-md: 15px;
+  --font-size-lg: 18px;
+  --font-size-xl: 22px;
+  --font-size-2xl: 28px;
+  --font-size-3xl: 36px;
+
+  /* ── Spacing & radius ── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* ── Shadow ── */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.06);
+}

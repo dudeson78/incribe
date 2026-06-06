@@ -6,7 +6,7 @@ import {
   type EmptyIllustrationVariant,
 } from './illustrations/EmptyStateIllustration';
 import { FadeIn } from './ui/FadeIn';
-import { colors, typography } from '../theme/colors';
+import { cardShadow, colors, typography } from '../theme/colors';
 import { cardPadding, cardRadius } from '../theme/layout';
 
 type Props = {
@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
     borderRadius: cardRadius,
     borderWidth: 1,
     borderColor: colors.creamBorder,
+    ...cardShadow,
   },
   wrapCompact: {
     gap: 4,

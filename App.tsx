@@ -1,4 +1,5 @@
 import './src/i18n';
+import './src/theme/loadGlobalsCss';
 import { useEffect } from 'react';
 import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';

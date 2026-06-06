@@ -30,7 +30,12 @@ import {
   type SpeechVoiceOption,
 } from '../types/speechSettings';
 import { AppButton } from './ui/AppButton';
-import { colors, settingsSectionTitle, typography } from '../theme/colors';
+import {
+  cardShadow,
+  colors,
+  settingsSectionTitle,
+  typography,
+} from '../theme/colors';
 import { cardPadding, cardRadius, radius, touchTarget } from '../theme/layout';
 
 function formatSliderValue(n: number): string {
@@ -384,7 +389,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderRadius: cardRadius,
     borderWidth: 1,
-    borderColor: `${colors.forest}18`,
+    borderColor: colors.creamBorder,
+    ...cardShadow,
   },
   blockTitle: settingsSectionTitle,
   hint: {

@@ -19,6 +19,7 @@ import { useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import { supabase } from '../supabase/client';
 import {
+  cardShadow,
   colors,
   screenTitleTypography,
   settingsSectionTitle,
@@ -343,7 +344,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderRadius: cardRadius,
     borderWidth: 1,
-    borderColor: colors.forestTint,
+    borderColor: colors.creamBorder,
+    ...cardShadow,
   },
   blockTitle: settingsSectionTitle,
   hint: {
