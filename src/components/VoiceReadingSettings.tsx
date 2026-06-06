@@ -12,6 +12,10 @@ import {
 import Slider from '@react-native-community/slider';
 import { useTranslation } from 'react-i18next';
 
+import {
+  SettingsSecondaryButton,
+  settingsStyles,
+} from './settings/SettingsUi';
 import { useSettings } from '../context/SettingsContext';
 import {
   isSpeechSpeaking,
@@ -29,14 +33,9 @@ import {
   SPEECH_RATE_MIN,
   type SpeechVoiceOption,
 } from '../types/speechSettings';
-import { AppButton } from './ui/AppButton';
-import {
-  cardShadow,
-  colors,
-  settingsSectionTitle,
-  typography,
-} from '../theme/colors';
+import { colors } from '../theme/colors';
 import { cardPadding, cardRadius, radius, touchTarget } from '../theme/layout';
+import { shadowSm, tokens } from '../theme/tokens';
 
 function formatSliderValue(n: number): string {
   return n.toFixed(2).replace(/\.?0+$/, '');
@@ -109,8 +108,14 @@ export function VoiceReadingSettings() {
     ? selectedVoice.name
     : t('settings.speechVoiceSystem');
 
-  function applyDraft() {
-    patchSpeechSettings({ rate: draftRate, pitch: draftPitch });
+  function commitRate(value: number) {
+    setDraftRate(value);
+    patchSpeechSettings({ rate: value });
+  }
+
+  function commitPitch(value: number) {
+    setDraftPitch(value);
+    patchSpeechSettings({ pitch: value });
   }
 
   function handleReset() {
@@ -142,115 +147,117 @@ export function VoiceReadingSettings() {
   }
 
   return (
-    <View style={styles.block}>
-      <Text style={styles.blockTitle}>{t('settings.speechSection')}</Text>
+    <View style={settingsStyles.card}>
+      <Text style={settingsStyles.sectionTitle}>
+        {t('settings.speechSection')}
+      </Text>
+      <Text style={styles.speechSubtitle}>{t('settings.speechHint')}</Text>
 
-      <View style={styles.controlGroup}>
-        <Text style={styles.controlLabel}>{t('settings.speechVoice')}</Text>
-        <Pressable
-          style={({ pressed }) => [
-            styles.voiceSelectBtn,
-            pressed && styles.voiceRowPressed,
-          ]}
-          onPress={() => setVoicePickerVisible(true)}
-          accessibilityRole="button"
-          accessibilityLabel={t('settings.speechVoicePickA11y')}
-        >
-          <Text style={styles.voiceSelectBtnText} numberOfLines={1}>
-            {currentVoiceLabel}
+      <Text style={styles.voiceFieldLabel}>{t('settings.speechVoice')}</Text>
+      <Pressable
+        style={({ pressed }) => [
+          settingsStyles.voiceSelect,
+          pressed && styles.voiceSelectPressed,
+        ]}
+        onPress={() => setVoicePickerVisible(true)}
+        accessibilityRole="button"
+        accessibilityLabel={t('settings.speechVoicePickA11y')}
+      >
+        <Text style={settingsStyles.voiceSelectText} numberOfLines={1}>
+          {currentVoiceLabel}
+        </Text>
+        <Text style={settingsStyles.voiceSelectChevron}>▾</Text>
+      </Pressable>
+
+      <View style={settingsStyles.controlGroup}>
+        <View style={settingsStyles.sliderLabelRow}>
+          <Text style={settingsStyles.controlLabel}>
+            {t('settings.speechRate')}
           </Text>
-          <Text style={styles.voiceSelectChevron}>▾</Text>
-        </Pressable>
-      </View>
-
-      <View style={styles.controlGroup}>
-        <Text style={styles.controlLabel}>
-          {t('settings.speechRate')}
-          <Text style={styles.sliderValueInline}>
-            {' '}
+          <Text style={settingsStyles.sliderValue}>
             {formatSliderValue(draftRate)}
           </Text>
-        </Text>
+        </View>
         <Slider
-          style={styles.slider}
+          style={settingsStyles.slider}
           minimumValue={SPEECH_RATE_MIN}
           maximumValue={SPEECH_RATE_MAX}
           step={0.05}
           value={draftRate}
           onValueChange={setDraftRate}
-          minimumTrackTintColor={colors.forest}
-          maximumTrackTintColor={colors.borderSecondary}
-          thumbTintColor={colors.forest}
+          onSlidingComplete={commitRate}
+          minimumTrackTintColor={tokens.color.primary}
+          maximumTrackTintColor={tokens.color.border}
+          thumbTintColor={tokens.color.primary}
           accessibilityLabel={t('settings.speechRateA11y')}
         />
-        <View style={styles.sliderEnds}>
-          <Text style={styles.sliderEndText}>{t('settings.speechRateSlow')}</Text>
-          <Text style={styles.sliderEndText}>{t('settings.speechRateFast')}</Text>
+        <View style={settingsStyles.sliderEnds}>
+          <Text style={settingsStyles.sliderEndText}>
+            {t('settings.speechRateSlow')}
+          </Text>
+          <Text style={settingsStyles.sliderEndText}>
+            {t('settings.speechRateFast')}
+          </Text>
         </View>
       </View>
 
-      <View style={styles.controlGroup}>
-        <Text style={styles.controlLabel}>
-          {t('settings.speechPitch')}
-          <Text style={styles.sliderValueInline}>
-            {' '}
+      <View style={settingsStyles.controlGroup}>
+        <View style={settingsStyles.sliderLabelRow}>
+          <Text style={settingsStyles.controlLabel}>
+            {t('settings.speechPitch')}
+          </Text>
+          <Text style={settingsStyles.sliderValue}>
             {formatSliderValue(draftPitch)}
           </Text>
-        </Text>
+        </View>
         <Slider
-          style={styles.slider}
+          style={settingsStyles.slider}
           minimumValue={SPEECH_PITCH_MIN}
           maximumValue={SPEECH_PITCH_MAX}
           step={0.05}
           value={draftPitch}
           onValueChange={setDraftPitch}
-          minimumTrackTintColor={colors.forest}
-          maximumTrackTintColor={colors.borderSecondary}
-          thumbTintColor={colors.forest}
+          onSlidingComplete={commitPitch}
+          minimumTrackTintColor={tokens.color.primary}
+          maximumTrackTintColor={tokens.color.border}
+          thumbTintColor={tokens.color.primary}
           accessibilityLabel={t('settings.speechPitchA11y')}
         />
-        <View style={styles.sliderEnds}>
-          <Text style={styles.sliderEndText}>{t('settings.speechPitchLow')}</Text>
-          <Text style={styles.sliderEndText}>{t('settings.speechPitchHigh')}</Text>
+        <View style={settingsStyles.sliderEnds}>
+          <Text style={settingsStyles.sliderEndText}>
+            {t('settings.speechPitchLow')}
+          </Text>
+          <Text style={settingsStyles.sliderEndText}>
+            {t('settings.speechPitchHigh')}
+          </Text>
         </View>
       </View>
 
-      <Pressable
-        onPress={() => (previewing ? stopPreview() : void previewSpeech())}
-        style={({ pressed }) => [
-          styles.previewLink,
-          pressed && styles.previewLinkPressed,
-        ]}
-        accessibilityRole="button"
-        accessibilityLabel={
-          previewing
-            ? t('settings.speechPreviewStopA11y')
-            : t('settings.speechPreviewA11y')
-        }
-      >
-        {previewing ? (
-          <ActivityIndicator color={colors.forest} size="small" />
-        ) : (
-          <Text style={styles.previewLinkText}>{t('settings.speechPreview')}</Text>
-        )}
-      </Pressable>
-
-      <View style={styles.footerActions}>
-        <AppButton
-          label={t('settings.apply')}
-          onPress={applyDraft}
-          variant="primary"
-          size="sm"
-          fullWidth={false}
-          style={styles.miniBtn}
-        />
-        <AppButton
+      <View style={settingsStyles.voiceActionStack}>
+        <Pressable
+          onPress={() => (previewing ? stopPreview() : void previewSpeech())}
+          style={({ pressed }) => [
+            settingsStyles.primaryBtn,
+            pressed && settingsStyles.btnPressed,
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel={
+            previewing
+              ? t('settings.speechPreviewStopA11y')
+              : t('settings.speechPreviewA11y')
+          }
+        >
+          {previewing ? (
+            <ActivityIndicator color={tokens.color.textOnDark} size="small" />
+          ) : (
+            <Text style={settingsStyles.primaryBtnText}>
+              {t('settings.speechPreview')}
+            </Text>
+          )}
+        </Pressable>
+        <SettingsSecondaryButton
           label={t('settings.speechReset')}
           onPress={handleReset}
-          variant="secondary"
-          size="sm"
-          fullWidth={false}
-          style={styles.miniBtn}
           accessibilityLabel={t('settings.speechResetA11y')}
         />
       </View>
@@ -290,13 +297,13 @@ export function VoiceReadingSettings() {
               value={voiceQuery}
               onChangeText={setVoiceQuery}
               placeholder={t('settings.speechVoiceSearchPh')}
-              placeholderTextColor={`${colors.muted}99`}
+              placeholderTextColor={tokens.color.textMuted}
               accessibilityLabel={t('settings.speechVoiceSearchA11y')}
             />
 
             {voicesLoading ? (
               <View style={styles.voiceLoading}>
-                <ActivityIndicator color={colors.forest} />
+                <ActivityIndicator color={tokens.color.primary} />
                 <Text style={styles.voiceLoadingText}>
                   {t('settings.speechVoicesLoading')}
                 </Text>
@@ -365,7 +372,7 @@ export function VoiceReadingSettings() {
               onPress={() => setVoicePickerVisible(false)}
               style={({ pressed }) => [
                 styles.modalDoneBtn,
-                pressed && styles.previewLinkPressed,
+                pressed && styles.voiceRowPressed,
               ]}
               accessibilityRole="button"
               accessibilityLabel={t('settings.speechVoiceModalDone')}
@@ -382,58 +389,39 @@ export function VoiceReadingSettings() {
 }
 
 const styles = StyleSheet.create({
-  block: {
-    gap: 8,
-    padding: cardPadding,
-    marginBottom: 10,
-    backgroundColor: colors.card,
-    borderRadius: cardRadius,
-    borderWidth: 1,
-    borderColor: colors.creamBorder,
-    ...cardShadow,
+  speechSubtitle: {
+    fontSize: tokens.fontSize.sm,
+    color: tokens.color.textMuted,
+    lineHeight: 20,
+    marginBottom: 16,
+    marginTop: -4,
   },
-  blockTitle: settingsSectionTitle,
-  hint: {
-    fontSize: typography.min,
-    color: colors.textPrimary,
-    lineHeight: 22,
+  voiceFieldLabel: {
+    fontSize: tokens.fontSize.sm,
+    fontWeight: '600',
+    color: tokens.color.textPrimary,
+    marginBottom: 8,
   },
-  platformNote: {
-    fontSize: typography.chip,
-    color: colors.textPrimary,
-    lineHeight: 18,
-  },
-  controlGroup: {
-    gap: 2,
-    marginBottom: 4,
-  },
-  controlHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 8,
-  },
-  controlLabel: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.textPrimary,
+  voiceSelectPressed: {
+    borderColor: tokens.color.primary,
+    backgroundColor: tokens.color.primaryTint08,
   },
   linkAction: {
-    fontSize: typography.chip,
-    fontWeight: '700',
-    color: colors.textPrimary,
+    fontSize: tokens.fontSize.xs,
+    fontWeight: '600',
+    color: tokens.color.primary,
     textDecorationLine: 'underline',
   },
   searchInput: {
-    borderWidth: 1,
-    borderColor: `${colors.forest}33`,
-    borderRadius: radius.md,
-    paddingHorizontal: 12,
+    borderWidth: 1.5,
+    borderColor: tokens.color.border,
+    borderRadius: tokens.radius.md,
+    paddingHorizontal: 14,
     paddingVertical: 10,
-    fontSize: typography.min,
-    color: colors.textPrimary,
-    backgroundColor: colors.backgroundPrimary,
-    minHeight: touchTarget.min * 0.85,
+    fontSize: tokens.fontSize.sm,
+    color: tokens.color.textPrimary,
+    backgroundColor: tokens.color.surface,
+    minHeight: 44,
   },
   voiceLoading: {
     minHeight: 120,
@@ -442,32 +430,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   voiceLoadingText: {
-    fontSize: typography.chip,
-    color: colors.textPrimary,
-  },
-  voiceSelectBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    minHeight: touchTarget.min,
-    borderWidth: 1,
-    borderColor: `${colors.forest}33`,
-    borderRadius: radius.md,
-    backgroundColor: colors.backgroundPrimary,
-  },
-  voiceSelectBtnText: {
-    flex: 1,
-    fontSize: typography.min,
-    fontWeight: '600',
-    color: colors.textPrimary,
-  },
-  voiceSelectChevron: {
-    fontSize: typography.min,
-    color: colors.textPrimary,
-    fontWeight: '700',
+    fontSize: tokens.fontSize.sm,
+    color: tokens.color.textMuted,
   },
   modalWrap: {
     flex: 1,
@@ -478,7 +442,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.overlayBackdrop,
   },
   modalCard: {
-    backgroundColor: colors.parchment,
+    backgroundColor: tokens.color.surface,
     borderTopLeftRadius: cardRadius,
     borderTopRightRadius: cardRadius,
     paddingHorizontal: cardPadding,
@@ -486,6 +450,7 @@ const styles = StyleSheet.create({
     paddingBottom: cardPadding,
     gap: 8,
     maxHeight: '82%',
+    ...shadowSm,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -494,118 +459,60 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   modalTitle: {
-    fontSize: typography.refLarge,
+    fontSize: tokens.fontSize.lg,
     fontWeight: '700',
-    color: colors.textPrimary,
+    color: tokens.color.textPrimary,
   },
   voiceListModal: {
     maxHeight: 340,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.borderTertiary,
-    borderRadius: radius.md,
-    backgroundColor: colors.backgroundPrimary,
+    borderWidth: 1,
+    borderColor: tokens.color.border,
+    borderRadius: tokens.radius.md,
+    backgroundColor: tokens.color.bgSecondary,
   },
   modalDoneBtn: {
-    minHeight: touchTarget.min,
-    borderRadius: radius.lg,
-    backgroundColor: colors.forest,
+    minHeight: 44,
+    borderRadius: tokens.radius.md,
+    backgroundColor: tokens.color.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   modalDoneText: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.textOnDark,
-  },
-  voiceList: {
-    maxHeight: 220,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.borderTertiary,
-    borderRadius: radius.md,
-    backgroundColor: colors.backgroundPrimary,
+    fontSize: tokens.fontSize.sm,
+    fontWeight: '600',
+    color: tokens.color.textOnDark,
   },
   voiceRow: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.borderTertiary,
+    borderBottomColor: tokens.color.border,
     gap: 2,
     minHeight: touchTarget.min * 0.8,
     justifyContent: 'center',
   },
   voiceRowSelected: {
-    backgroundColor: colors.forestTint,
+    backgroundColor: tokens.color.primaryTint08,
     borderLeftWidth: 3,
-    borderLeftColor: colors.forest,
+    borderLeftColor: tokens.color.primary,
   },
   voiceRowPressed: {
     opacity: 0.9,
   },
   voiceName: {
-    fontSize: typography.min,
+    fontSize: tokens.fontSize.sm,
     fontWeight: '600',
-    color: colors.textPrimary,
+    color: tokens.color.textPrimary,
     lineHeight: 20,
   },
   voiceMeta: {
-    fontSize: typography.chip,
-    color: colors.textPrimary,
+    fontSize: tokens.fontSize.xs,
+    color: tokens.color.textMuted,
   },
   emptyVoices: {
     padding: 16,
-    fontSize: typography.chip,
-    color: colors.textPrimary,
+    fontSize: tokens.fontSize.sm,
+    color: tokens.color.textMuted,
     textAlign: 'center',
-  },
-  selectedVoiceCaption: {
-    fontSize: typography.chip,
-    color: colors.textPrimary,
-    lineHeight: 18,
-  },
-  sliderValueInline: {
-    fontSize: typography.caption,
-    fontWeight: '600',
-    color: colors.textPrimary,
-    opacity: 0.72,
-  },
-  slider: {
-    width: '100%',
-    height: 28,
-    marginVertical: -2,
-  },
-  sliderEnds: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: -2,
-  },
-  sliderEndText: {
-    fontSize: typography.chip,
-    color: colors.textPrimary,
-    opacity: 0.65,
-  },
-  previewLink: {
-    alignSelf: 'flex-start',
-    minHeight: touchTarget.min * 0.65,
-    justifyContent: 'center',
-    paddingVertical: 2,
-  },
-  previewLinkPressed: {
-    opacity: 0.75,
-  },
-  previewLinkText: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.forest,
-    textDecorationLine: 'underline',
-  },
-  footerActions: {
-    flexDirection: 'row',
-    gap: 8,
-    justifyContent: 'flex-end',
-    marginTop: 2,
-  },
-  miniBtn: {
-    borderRadius: radius.pill,
-    minWidth: 72,
   },
 });

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -11,6 +12,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useAuthProfile } from '../hooks/useAuthProfile';
 import { VoiceReadingSettings } from '../components/VoiceReadingSettings';
+import {
+  SettingsApplyButton,
+  settingsStyles,
+} from '../components/settings/SettingsUi';
 import { AppButton } from '../components/ui/AppButton';
 import { useSettings } from '../context/SettingsContext';
 import { useDialog } from '../context/DialogContext';
@@ -18,20 +23,7 @@ import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
 import { useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import { supabase } from '../supabase/client';
-import {
-  cardShadow,
-  colors,
-  screenTitleTypography,
-  settingsSectionTitle,
-  typography,
-} from '../theme/colors';
-import {
-  cardPadding,
-  cardRadius,
-  radius,
-  screenPadding,
-  touchTarget,
-} from '../theme/layout';
+import { tokens } from '../theme/tokens';
 
 const DEFAULT_GOAL = 52;
 
@@ -58,6 +50,7 @@ export function SettingsScreen() {
     isAnonymous: true,
   });
   const [authBusy, setAuthBusy] = useState(false);
+  const [signOutPressed, setSignOutPressed] = useState(false);
   const [resetPracticeBusy, setResetPracticeBusy] = useState(false);
   const [accountBanner, setAccountBanner] = useState<{
     kind: 'ok' | 'error';
@@ -167,17 +160,15 @@ export function SettingsScreen() {
     authProfile.displayName.trim().length > 0;
 
   return (
-    <SafeAreaView style={styles.shell} edges={['top']}>
-      <View style={styles.pageHeader}>
-        <Text style={styles.screenTitle} accessibilityRole="header">
-          {t('settings.screenTitle')}
-        </Text>
+    <SafeAreaView style={settingsStyles.screenShell} edges={['top']}>
+      <View style={settingsStyles.pageHeader}>
         {showMyAccountBar ? (
-          <View style={styles.myProfileBar}>
+          <View style={settingsStyles.headerRow}>
             <Text
-              style={styles.myProfileName}
-              numberOfLines={1}
+              style={settingsStyles.headerName}
+              numberOfLines={2}
               ellipsizeMode="tail"
+              accessibilityRole="header"
               accessibilityLabel={t('account.headerSignedInAsA11y', {
                 name: authProfile.displayName,
               })}
@@ -186,58 +177,69 @@ export function SettingsScreen() {
             </Text>
             <Pressable
               onPress={() => void handleSignOut()}
+              onPressIn={() => setSignOutPressed(true)}
+              onPressOut={() => setSignOutPressed(false)}
               hitSlop={10}
               style={({ pressed }) => [
-                styles.myProfileSignOut,
-                pressed && { opacity: 0.82 },
-                authBusy && styles.authBtnGhost,
+                settingsStyles.signOutLink,
+                (pressed || signOutPressed) && settingsStyles.signOutLinkPressed,
+                authBusy && styles.authBusy,
               ]}
               disabled={authBusy}
               accessibilityRole="button"
               accessibilityLabel={t('account.signOut')}
             >
-              <Text style={styles.myProfileSignOutText}>
+              <Text
+                style={[
+                  settingsStyles.signOutLinkText,
+                  (signOutPressed) && settingsStyles.signOutLinkTextPressed,
+                ]}
+              >
                 {t('account.signOut')}
               </Text>
             </Pressable>
           </View>
-        ) : null}
+        ) : (
+          <Text style={settingsStyles.screenTitleFallback} accessibilityRole="header">
+            {t('settings.screenTitle')}
+          </Text>
+        )}
       </View>
       <ScrollView
         contentContainerStyle={[
-          styles.scroll,
+          settingsStyles.scroll,
           { paddingBottom: tabScrollPadding },
         ]}
       >
-        <View style={styles.settingBlock}>
-          <Text style={styles.blockTitle}>{t('settings.annualGoal')}</Text>
-          <Text style={styles.hint}>{t('settings.annualGoalHint')}</Text>
-          <View style={styles.row}>
+        <View style={settingsStyles.card}>
+          <Text style={settingsStyles.sectionTitle}>{t('settings.annualGoal')}</Text>
+          <Text style={settingsStyles.sectionSubtitle}>
+            {t('settings.annualGoalHint')}
+          </Text>
+          <View style={settingsStyles.goalRow}>
             <TextInput
-              style={styles.goalInput}
+              style={settingsStyles.goalInput}
               keyboardType="number-pad"
               value={goalInput}
               onChangeText={setGoalInput}
               accessibilityLabel={t('settings.annualGoal')}
             />
-            <AppButton
+            <SettingsApplyButton
               label={t('settings.apply')}
               onPress={applyGoal}
-              variant="primary"
-              size="sm"
-              fullWidth={false}
-              style={styles.applyBtn}
             />
           </View>
         </View>
 
         <VoiceReadingSettings />
 
-        <View style={styles.settingBlock}>
-          <Text style={styles.blockTitle}>
+        <View style={settingsStyles.card}>
+          <Text style={settingsStyles.sectionTitle}>
             {t('settings.resetPracticeSection')}
           </Text>
-          <Text style={styles.hint}>{t('settings.resetPracticeHint')}</Text>
+          <Text style={styles.resetSubtitle}>
+            {t('settings.resetPracticeHint')}
+          </Text>
           <AppButton
             label={t('settings.resetPracticeBtn')}
             onPress={() => void confirmResetPractice()}
@@ -247,8 +249,8 @@ export function SettingsScreen() {
           />
         </View>
 
-        <View style={styles.settingBlock}>
-          <Text style={styles.blockTitle}>{t('account.section')}</Text>
+        <View style={settingsStyles.card}>
+          <Text style={settingsStyles.sectionTitle}>{t('account.section')}</Text>
           <View style={styles.accountInner}>
             {sessionOk ? (
               authSlice.isAnonymous ? (
@@ -291,129 +293,47 @@ export function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  shell: {
-    flex: 1,
-    backgroundColor: colors.background,
+  authBusy: {
+    opacity: 0.45,
   },
-  pageHeader: {
-    paddingHorizontal: screenPadding,
-    paddingTop: 8,
-    paddingBottom: 10,
-    gap: 8,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.borderTertiary,
-    backgroundColor: colors.background,
-  },
-  screenTitle: {
-    ...screenTitleTypography,
-  },
-  myProfileBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-    paddingTop: 2,
-  },
-  myProfileName: {
-    flex: 1,
-    minWidth: 0,
-    fontSize: typography.caption,
-    fontWeight: '600',
-    color: colors.textPrimary,
-  },
-  myProfileSignOut: {
-    flexShrink: 0,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-  },
-  myProfileSignOutText: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.textPrimary,
-    textDecorationLine: 'underline',
-  },
-  scroll: {
-    paddingHorizontal: screenPadding,
-    paddingTop: 14,
-    flexGrow: 1,
-  },
-  settingBlock: {
-    gap: 8,
-    padding: cardPadding,
-    marginBottom: 10,
-    backgroundColor: colors.card,
-    borderRadius: cardRadius,
-    borderWidth: 1,
-    borderColor: colors.creamBorder,
-    ...cardShadow,
-  },
-  blockTitle: settingsSectionTitle,
-  hint: {
-    fontSize: typography.min,
-    color: colors.textPrimary,
-    marginBottom: 8,
-    lineHeight: 24,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: 8,
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    marginBottom: 0,
+  resetSubtitle: {
+    fontSize: tokens.fontSize.sm,
+    color: tokens.color.textMuted,
+    lineHeight: 20,
+    marginBottom: 16,
   },
   accountInner: {
     gap: 10,
   },
   accountStatus: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.textPrimary,
-    lineHeight: 24,
+    fontSize: tokens.fontSize.md,
+    fontWeight: '600',
+    color: tokens.color.textPrimary,
+    lineHeight: 22,
   },
   accountMutedInline: {
-    fontSize: typography.min,
-    lineHeight: 22,
-    color: colors.textPrimary,
-  },
-  authBtnGhost: {
-    opacity: 0.45,
+    fontSize: tokens.fontSize.sm,
+    lineHeight: 20,
+    color: tokens.color.textSecondary,
   },
   accountWorking: {
-    fontSize: typography.caption,
-    color: colors.textPrimary,
+    fontSize: tokens.fontSize.sm,
+    color: tokens.color.textMuted,
     fontWeight: '600',
     marginTop: 2,
   },
   accountMsgOk: {
-    fontSize: typography.min,
-    lineHeight: 22,
-    color: colors.textPrimary,
+    fontSize: tokens.fontSize.sm,
+    lineHeight: 20,
+    color: tokens.color.success,
     marginTop: 4,
     fontWeight: '600',
   },
   accountMsgErr: {
-    fontSize: typography.min,
-    lineHeight: 22,
-    color: colors.textPrimary,
+    fontSize: tokens.fontSize.sm,
+    lineHeight: 20,
+    color: tokens.color.danger,
     marginTop: 4,
     fontWeight: '600',
-  },
-  goalInput: {
-    width: 96,
-    borderWidth: 1,
-    borderColor: `${colors.forest}44`,
-    borderRadius: radius.md,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    fontSize: typography.min,
-    fontWeight: '600',
-    color: colors.textPrimary,
-    backgroundColor: colors.card,
-    minHeight: touchTarget.min * 0.74,
-    textAlign: 'center',
-  },
-  applyBtn: {
-    minWidth: 72,
-    borderRadius: radius.pill,
   },
 });
