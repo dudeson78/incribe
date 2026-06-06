@@ -24,6 +24,11 @@ import { tokens } from '../theme/tokens';
 const BRAND_MARK = 'INCRIBE';
 const IS_WEB = Platform.OS === 'web';
 
+/** react-native-web className — TS 기본 ViewProps에는 없음 */
+function webClass(name: string | undefined): Record<string, string> {
+  return IS_WEB && name ? { className: name } : {};
+}
+
 const SPLASH_GRADIENT = ['#1A3A0A', '#2D5016', '#1C2E0A'] as const;
 
 /** CSS grain pseudo-element와 동일한 SVG 노이즈 패턴 (네이티브) */
@@ -109,15 +114,15 @@ export function AppIntroSplash({
   const heroBlock = (
     <>
       <Text
+        {...webClass('app-intro-splash__tagline')}
         style={IS_WEB ? undefined : styles.tagline}
-        className={IS_WEB ? 'app-intro-splash__tagline' : undefined}
         accessibilityRole="text"
       >
         {t('splash.tagline')}
       </Text>
       <Text
+        {...webClass('app-intro-splash__brand')}
         style={IS_WEB ? undefined : styles.brand}
-        className={IS_WEB ? 'app-intro-splash__brand' : undefined}
         accessibilityRole="header"
       >
         {BRAND_MARK}
@@ -128,15 +133,15 @@ export function AppIntroSplash({
   const verseBlock = (
     <>
       <Text
+        {...webClass('app-intro-splash__verse-body')}
         style={IS_WEB ? undefined : styles.verseBody}
-        className={IS_WEB ? 'app-intro-splash__verse-body' : undefined}
         accessibilityRole="text"
       >
         {t('splash.verseBody')}
       </Text>
       <Text
+        {...webClass('app-intro-splash__verse-ref')}
         style={IS_WEB ? undefined : styles.verseRef}
-        className={IS_WEB ? 'app-intro-splash__verse-ref' : undefined}
         accessibilityRole="text"
       >
         {t('splash.verseRef')}
@@ -146,12 +151,12 @@ export function AppIntroSplash({
 
   return (
     <Animated.View
+      {...webClass('app-intro-splash')}
       style={[
         !IS_WEB && styles.rootNative,
         style,
         { opacity: autoFadeOut ? screenOpacity : 1 },
       ]}
-      className={IS_WEB ? 'app-intro-splash' : undefined}
       pointerEvents={showAuthButtons ? 'auto' : 'box-none'}
     >
       {!IS_WEB ? (
@@ -173,11 +178,11 @@ export function AppIntroSplash({
       ) : null}
 
       <View
+        {...webClass('app-intro-splash__center')}
         style={!IS_WEB ? styles.centerNative : undefined}
-        className={IS_WEB ? 'app-intro-splash__center' : undefined}
       >
         {IS_WEB ? (
-          <View className="app-intro-splash__hero">{heroBlock}</View>
+          <View {...webClass('app-intro-splash__hero')}>{heroBlock}</View>
         ) : (
           <Animated.View
             style={{
@@ -191,7 +196,7 @@ export function AppIntroSplash({
         )}
 
         {IS_WEB ? (
-          <View className="app-intro-splash__verse-wrap">{verseBlock}</View>
+          <View {...webClass('app-intro-splash__verse-wrap')}>{verseBlock}</View>
         ) : (
           <Animated.View
             style={[styles.verseWrapNative, { opacity: verseOpacity }]}
@@ -203,6 +208,7 @@ export function AppIntroSplash({
 
       {showAuthButtons ? (
         <View
+          {...webClass('app-intro-splash__auth')}
           style={[
             !IS_WEB && styles.authRowNative,
             {
@@ -210,7 +216,6 @@ export function AppIntroSplash({
               paddingHorizontal: 24,
             },
           ]}
-          className={IS_WEB ? 'app-intro-splash__auth' : undefined}
         >
           <Pressable
             accessibilityRole="button"
