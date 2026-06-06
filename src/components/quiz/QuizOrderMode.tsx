@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import Svg, { Path } from 'react-native-svg';
 
 import { QuizPrimaryButton, quizStyles } from './QuizUi';
 import type { ScheduledRow } from '../../hooks/useVerses';
@@ -17,6 +18,29 @@ type OrderItem = {
   id: string;
   text: string;
 };
+
+function OrderChevronIcon({
+  direction,
+  color,
+}: {
+  direction: 'up' | 'down';
+  color: string;
+}) {
+  const d =
+    direction === 'up' ? 'M3 10 L8 5 L13 10' : 'M3 5 L8 10 L13 5';
+  return (
+    <Svg width={16} height={12} viewBox="0 0 16 12" accessibilityElementsHidden>
+      <Path
+        d={d}
+        stroke={color}
+        strokeWidth={2}
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
 
 type Props = {
   row: ScheduledRow;
@@ -112,7 +136,7 @@ export function QuizOrderMode({
             accessibilityRole="button"
             accessibilityLabel={t('quiz.backToList')}
           >
-            <Text style={styles.backChipTxt}>{'? '} {t('quiz.back')}</Text>
+            <Text style={styles.backChipTxt}>{'\u2039 '} {t('quiz.back')}</Text>
           </Pressable>
         </View>
       ) : null}
@@ -145,7 +169,14 @@ export function QuizOrderMode({
                 accessibilityRole="button"
                 accessibilityLabel={t('quiz.orderMoveUpA11y')}
               >
-                <Text style={styles.arrowTxt}>?</Text>
+                <OrderChevronIcon
+                  direction="up"
+                  color={
+                    index === 0
+                      ? tokens.color.textMuted
+                      : tokens.color.textPrimary
+                  }
+                />
               </Pressable>
               <Pressable
                 style={({ pressed }) => [
@@ -159,7 +190,14 @@ export function QuizOrderMode({
                 accessibilityRole="button"
                 accessibilityLabel={t('quiz.orderMoveDownA11y')}
               >
-                <Text style={styles.arrowTxt}>?</Text>
+                <OrderChevronIcon
+                  direction="down"
+                  color={
+                    index === items.length - 1
+                      ? tokens.color.textMuted
+                      : tokens.color.textPrimary
+                  }
+                />
               </Pressable>
             </View>
           </View>
@@ -324,12 +362,7 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.color.primaryTint08,
   },
   arrowBtnDisabled: {
-    opacity: 0.3,
-  },
-  arrowTxt: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.textPrimary,
+    opacity: 0.35,
   },
   fb: {
     padding: 14,

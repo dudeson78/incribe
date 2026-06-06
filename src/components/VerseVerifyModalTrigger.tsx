@@ -193,11 +193,7 @@ export function VerseVerifyModalTrigger({
           </Text>
         </Pressable>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.triggerAidRow}
-        >
+        <View style={styles.triggerAidRow}>
             <Pressable
               style={({ pressed }) => [
                 styles.aidBtn,
@@ -254,7 +250,7 @@ export function VerseVerifyModalTrigger({
                 {t('seven.verifyRemaBtn')}
               </Text>
             </Pressable>
-        </ScrollView>
+        </View>
       </View>
 
       <VerifyModal
@@ -366,8 +362,11 @@ const styles = StyleSheet.create({
   },
   triggerAidRow: {
     flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    flexWrap: 'wrap',
     gap: tokens.space[2],
-    paddingRight: 4,
   },
   aidBtn: {
     paddingHorizontal: 14,

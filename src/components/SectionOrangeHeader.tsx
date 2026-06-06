@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, typography } from '../theme/colors';
-import { radius } from '../theme/layout';
+import { tokens } from '../theme/tokens';
 
 type SectionOrangeHeaderProps = {
   title: string;
@@ -9,7 +8,7 @@ type SectionOrangeHeaderProps = {
   accessibilityLiveRegion?: 'none' | 'polite' | 'assertive';
 };
 
-/** 「오늘 훈련구절」 배지와 동일한 포맷의 오렌지 강조 머리줄 */
+/** 섹션 머리줄 — 연간 목표 카드와 훈련 목록 사이 라벨 */
 export function SectionOrangeHeader({
   title,
   accessibilityLabel,
@@ -32,17 +31,21 @@ export function SectionOrangeHeader({
 const styles = StyleSheet.create({
   badge: {
     alignSelf: 'stretch',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: radius.md,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: tokens.radius.lg,
     marginBottom: 8,
-    backgroundColor: colors.orange,
+    backgroundColor: tokens.color.successBg,
+    borderWidth: 1,
+    borderColor: tokens.color.border,
+    borderLeftWidth: 3,
+    borderLeftColor: tokens.color.primary,
   },
   text: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.textPrimary,
+    fontSize: tokens.fontSize.sm,
+    fontWeight: '600',
+    color: tokens.color.primary,
     textAlign: 'left',
-    lineHeight: 22,
+    lineHeight: 20,
   },
 });
