@@ -192,8 +192,8 @@ export const ko = {
     wrong: '아쉬워요',
     answerLabel: '정답',
     answerLine: '{{label}}: {{ref}}',
-    emptyTitle: '오늘 훈련한 말씀이 없습니다',
-    emptyBody: '오늘 훈련한 말씀이 없으면 이 목록이 비게 됩니다.',
+    emptyTitle: '오늘 퀴즈할 말씀이 없습니다',
+    emptyBody: '오늘 훈련 대상 구절이 없으면 이 목록이 비게 됩니다.',
     hintBtn: '힌트',
     check: '확인',
     next: '다음',
@@ -208,14 +208,14 @@ export const ko = {
     modeBlank: '빈칸넣기',
     modeOrder: '순서 맞추기',
     modeDescReference:
-      '오늘 훈련한 말씀을 고른 뒤, 본문만 보고 성경 참조를 입력합니다.',
+      '오늘 훈련 대상 말씀을 고른 뒤, 본문만 보고 성경 참조를 입력합니다.',
     modeDescBlank:
-      '오늘 훈련한 말씀을 고른 뒤, 일부 단어가 가려진 본문의 빈칸을 채웁니다.',
+      '오늘 훈련 대상 말씀을 고른 뒤, 일부 단어가 가려진 본문의 빈칸을 채웁니다.',
     modeDescOrder:
-      '오늘 훈련한 말씀을 고른 뒤, 섞여 있는 문장 조각들을 원래 순서로 맞춥니다.',
+      '오늘 훈련 대상 말씀을 고른 뒤, 섞여 있는 문장 조각들을 원래 순서로 맞춥니다.',
     noTrainingToday: '퀴즈를 낼 구절이 없습니다',
     noTrainingTodayHint:
-      '말씀 관리에서 구절을 추가한 뒤, 홈에서 오늘 훈련을 완료하면 여기에 표시됩니다.',
+      '말씀 관리에서 구절을 추가하면 오늘 훈련 대상으로 여기에 바로 표시됩니다.',
     goToVersesCta: '말씀 관리 탭으로 이동하여 구절 추가하기',
     goToVersesCtaA11y: '말씀 관리 탭으로 이동',
     pickVerseA11y: '{{ref}} 퀴즈 시작',

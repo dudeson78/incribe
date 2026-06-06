@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -38,11 +39,8 @@ export function QuizScreen() {
   const [blankSolvedIds, setBlankSolvedIds] = useState(() => new Set<string>());
   const [orderSolvedIds, setOrderSolvedIds] = useState(() => new Set<string>());
 
-  /** 세 모드 공통 — 홈에서 오늘 훈련 완료한 구절만 */
-  const quizVerseRows = useMemo(
-    () => todayRows.filter((r) => r.todaySessionRecordedSuccess ?? false),
-    [todayRows],
-  );
+  /** 세 모드 공통 — 오늘 훈련 대상 구절(신규 추가·미완료·완료 모두) */
+  const quizVerseRows = todayRows;
 
   const solvedVerseSet = useMemo(() => {
     if (mode === 'reference') return referenceSolvedIds;
@@ -56,12 +54,9 @@ export function QuizScreen() {
     try {
       const rows = await getScheduledToday();
       setTodayRows(rows);
-      const trainedRows = rows.filter(
-        (r) => r.todaySessionRecordedSuccess ?? false,
-      );
       setPlayRow((prev) => {
-        if (trainedRows.length === 0) return null;
-        if (prev && trainedRows.some((r) => r.verse.id === prev.verse.id)) {
+        if (rows.length === 0) return null;
+        if (prev && rows.some((r) => r.verse.id === prev.verse.id)) {
           return prev;
         }
         return null;
@@ -74,9 +69,11 @@ export function QuizScreen() {
     }
   }, [getScheduledToday]);
 
-  useEffect(() => {
-    void loadToday();
-  }, [loadToday]);
+  useFocusEffect(
+    useCallback(() => {
+      void loadToday();
+    }, [loadToday]),
+  );
 
   function onModeChange(next: QuizSurfaceMode) {
     setMode(next);
