@@ -170,18 +170,18 @@ const gateStyles = StyleSheet.create({
   title: {
     fontSize: typography.title,
     fontWeight: '800',
-    color: colors.forest,
+    color: colors.textPrimary,
     textAlign: 'center',
   },
   body: {
     fontSize: typography.min,
     lineHeight: 22,
-    color: colors.muted,
+    color: colors.textPrimary,
     textAlign: 'center',
   },
   detail: {
     fontSize: typography.min,
-    color: `${colors.forest}99`,
+    color: `${colors.textPrimary}99`,
     textAlign: 'center',
     marginTop: 4,
   },

@@ -666,7 +666,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   circleText: {
-    color: colors.forest,
+    color: colors.textPrimary,
     fontSize: 13,
     fontWeight: '500',
   },
@@ -709,7 +709,7 @@ const styles = StyleSheet.create({
   editBtnText: {
     fontSize: typography.caption,
     fontWeight: '700',
-    color: colors.forest,
+    color: colors.textPrimary,
   },
   deleteBtn: {
     borderColor: `${colors.errorBorder}80`,
@@ -718,7 +718,7 @@ const styles = StyleSheet.create({
   deleteBtnText: {
     fontSize: typography.caption,
     fontWeight: '700',
-    color: colors.errorBorder,
+    color: colors.textPrimary,
   },
   keywordBtn: {
     paddingHorizontal: 8,
@@ -742,10 +742,10 @@ const styles = StyleSheet.create({
   keywordBtnText: {
     fontSize: typography.caption,
     fontWeight: '700',
-    color: colors.orange,
+    color: colors.textPrimary,
   },
   keywordBtnTextDisabled: {
-    color: `${colors.orange}99`,
+    color: `${colors.textPrimary}99`,
   },
   keywordModalBackdrop: {
     ...modalTheme.shellTop,
@@ -783,7 +783,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: typography.body,
     lineHeight: 26,
-    color: colors.forest,
+    color: colors.textPrimary,
     backgroundColor: colors.backgroundPrimary,
     textAlignVertical: 'top',
   },

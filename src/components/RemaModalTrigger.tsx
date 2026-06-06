@@ -106,6 +106,6 @@ const styles = StyleSheet.create({
   triggerText: {
     fontSize: typography.caption,
     fontWeight: '600',
-    color: colors.forest,
+    color: colors.textPrimary,
   },
 });

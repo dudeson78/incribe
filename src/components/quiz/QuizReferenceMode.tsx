@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
   loaderTxt: {
     fontSize: typography.min,
-    color: colors.textSecondary,
+    color: colors.textPrimary,
   },
   emptyWrap: {
     padding: 8,
@@ -272,15 +272,15 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   feedbackTitleOk: {
-    color: colors.successBorder,
+    color: colors.textPrimary,
   },
   feedbackTitleBad: {
-    color: colors.errorBorder,
+    color: colors.textPrimary,
   },
   feedbackSub: {
     marginTop: 8,
     fontSize: typography.min,
-    color: colors.muted,
+    color: colors.textPrimary,
   },
   primaryGap: {
     marginBottom: 8,

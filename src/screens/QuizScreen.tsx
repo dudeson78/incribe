@@ -198,6 +198,6 @@ const styles = StyleSheet.create({
   },
   loaderTxt: {
     fontSize: typography.min,
-    color: colors.textSecondary,
+    color: colors.textPrimary,
   },
 });

@@ -170,14 +170,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.headline,
     fontWeight: '800',
-    color: colors.forest,
+    color: colors.textPrimary,
     textAlign: 'center',
     marginBottom: 2,
   },
   sub: {
     fontSize: typography.min,
     lineHeight: 24,
-    color: colors.muted,
+    color: colors.textPrimary,
     textAlign: 'center',
     marginBottom: 8,
     paddingHorizontal: 4,
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   },
   linkText: {
     fontSize: typography.min,
-    color: colors.muted,
+    color: colors.textPrimary,
     textDecorationLine: 'underline',
   },
 });

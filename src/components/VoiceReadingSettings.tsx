@@ -361,12 +361,12 @@ const styles = StyleSheet.create({
   blockTitle: settingsSectionTitle,
   hint: {
     fontSize: typography.min,
-    color: colors.muted,
+    color: colors.textPrimary,
     lineHeight: 22,
   },
   platformNote: {
     fontSize: typography.chip,
-    color: colors.textSecondary,
+    color: colors.textPrimary,
     lineHeight: 18,
   },
   controlGroup: {
@@ -381,12 +381,12 @@ const styles = StyleSheet.create({
   controlLabel: {
     fontSize: typography.min,
     fontWeight: '700',
-    color: colors.forest,
+    color: colors.textPrimary,
   },
   linkAction: {
     fontSize: typography.chip,
     fontWeight: '700',
-    color: colors.orange,
+    color: colors.textPrimary,
     textDecorationLine: 'underline',
   },
   searchInput: {
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
   },
   voiceLoadingText: {
     fontSize: typography.chip,
-    color: colors.textSecondary,
+    color: colors.textPrimary,
   },
   voiceSelectBtn: {
     flexDirection: 'row',
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
   },
   voiceSelectChevron: {
     fontSize: typography.min,
-    color: colors.forest,
+    color: colors.textPrimary,
     fontWeight: '700',
   },
   modalWrap: {
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: typography.refLarge,
     fontWeight: '700',
-    color: colors.forest,
+    color: colors.textPrimary,
   },
   voiceListModal: {
     maxHeight: 340,
@@ -480,7 +480,7 @@ const styles = StyleSheet.create({
   modalDoneText: {
     fontSize: typography.min,
     fontWeight: '700',
-    color: colors.white,
+    color: colors.textOnDark,
   },
   voiceList: {
     maxHeight: 220,
@@ -514,17 +514,17 @@ const styles = StyleSheet.create({
   },
   voiceMeta: {
     fontSize: typography.chip,
-    color: colors.textSecondary,
+    color: colors.textPrimary,
   },
   emptyVoices: {
     padding: 16,
     fontSize: typography.chip,
-    color: colors.textSecondary,
+    color: colors.textPrimary,
     textAlign: 'center',
   },
   selectedVoiceCaption: {
     fontSize: typography.chip,
-    color: colors.forest,
+    color: colors.textPrimary,
     lineHeight: 18,
   },
   sliderHeader: {
@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
   sliderValue: {
     fontSize: typography.min,
     fontWeight: '700',
-    color: colors.orange,
+    color: colors.textPrimary,
     minWidth: 40,
     textAlign: 'right',
   },
@@ -549,7 +549,7 @@ const styles = StyleSheet.create({
   },
   sliderEndText: {
     fontSize: typography.chip,
-    color: colors.textSecondary,
+    color: colors.textPrimary,
   },
   actions: {
     flexDirection: 'row',
@@ -575,7 +575,7 @@ const styles = StyleSheet.create({
   previewBtnText: {
     fontSize: typography.min,
     fontWeight: '700',
-    color: colors.white,
+    color: colors.textOnDark,
   },
   resetBtn: {
     minHeight: touchTarget.min,
@@ -593,6 +593,6 @@ const styles = StyleSheet.create({
   resetBtnText: {
     fontSize: typography.min,
     fontWeight: '600',
-    color: colors.forest,
+    color: colors.textPrimary,
   },
 });

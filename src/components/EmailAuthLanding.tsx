@@ -110,7 +110,7 @@ export type EmailAuthLandingProps = {
   onSessionEstablished?: () => void;
 };
 
-/** 시작 화면: 앱 소개 후 로그인·회원가입. 회원가입은 이름·이메일·비번만 받고 Supabase 이메일 인증 플로우 사용. */
+/** ?? ??: ? ?? ? ???�????. ????? ??�???�??? ?? Supabase ??? ?? ??? ??. */
 export function EmailAuthLanding({
   onSessionEstablished,
 }: EmailAuthLandingProps) {
@@ -357,7 +357,7 @@ export function EmailAuthLanding({
           accessibilityLabel={t('auth.backToWelcome')}
           hitSlop={12}
         >
-          <Text style={styles.backLink}>‹ {t('auth.backToWelcome')}</Text>
+          <Text style={styles.backLink}>? {t('auth.backToWelcome')}</Text>
         </Pressable>
 
         <Text style={styles.title}>
@@ -387,7 +387,7 @@ export function EmailAuthLanding({
               value={fullName}
               onChangeText={setFullName}
               placeholder={t('account.phName')}
-              placeholderTextColor={`${colors.forest}55`}
+              placeholderTextColor={`${colors.textPrimary}55`}
               autoCapitalize="words"
               autoCorrect={false}
               editable={!busy}
@@ -404,7 +404,7 @@ export function EmailAuthLanding({
               value={email}
               onChangeText={setEmail}
               placeholder={t('account.phEmail')}
-              placeholderTextColor={`${colors.forest}55`}
+              placeholderTextColor={`${colors.textPrimary}55`}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
@@ -422,7 +422,7 @@ export function EmailAuthLanding({
               value={password}
               onChangeText={setPassword}
               placeholder={t('account.phPassword')}
-              placeholderTextColor={`${colors.forest}55`}
+              placeholderTextColor={`${colors.textPrimary}55`}
               secureTextEntry
               autoCapitalize="none"
               autoCorrect={false}
@@ -452,7 +452,7 @@ export function EmailAuthLanding({
                 ]}
               >
                 {privacyConsent ? (
-                  <Text style={styles.checkMark}>✓</Text>
+                  <Text style={styles.checkMark}>?</Text>
                 ) : null}
               </View>
               <Text style={styles.consentLabel}>
@@ -469,7 +469,7 @@ export function EmailAuthLanding({
               value={email}
               onChangeText={setEmail}
               placeholder={t('account.phEmail')}
-              placeholderTextColor={`${colors.forest}55`}
+              placeholderTextColor={`${colors.textPrimary}55`}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
@@ -487,7 +487,7 @@ export function EmailAuthLanding({
               value={password}
               onChangeText={setPassword}
               placeholder={t('account.phPassword')}
-              placeholderTextColor={`${colors.forest}55`}
+              placeholderTextColor={`${colors.textPrimary}55`}
               secureTextEntry
               autoCapitalize="none"
               autoCorrect={false}
@@ -581,13 +581,13 @@ const styles = StyleSheet.create({
   welcomeAppTitle: {
     fontSize: typography.headline,
     fontWeight: '800',
-    color: colors.forest,
+    color: colors.textPrimary,
     textAlign: 'center',
   },
   welcomeTagline: {
     fontSize: typography.body,
     fontWeight: '600',
-    color: colors.muted,
+    color: colors.textPrimary,
     textAlign: 'center',
   },
   welcomeBlurb: {
@@ -618,7 +618,7 @@ const styles = StyleSheet.create({
   btnOutlinedText: {
     fontSize: typography.min,
     fontWeight: '700',
-    color: colors.forest,
+    color: colors.textPrimary,
   },
   formScrollInner: {
     flexGrow: 1,
@@ -629,7 +629,7 @@ const styles = StyleSheet.create({
   },
   backLink: {
     ...labelTypography,
-    color: colors.forest,
+    color: colors.textPrimary,
     textDecorationLine: 'underline',
     marginBottom: 8,
     fontWeight: '600',
@@ -637,7 +637,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.headline,
     fontWeight: '800',
-    color: colors.forest,
+    color: colors.textPrimary,
     textAlign: 'center',
     marginBottom: 8,
   },
@@ -651,14 +651,14 @@ const styles = StyleSheet.create({
   body: {
     fontSize: typography.min,
     lineHeight: 22,
-    color: colors.muted,
+    color: colors.textPrimary,
     textAlign: 'center',
     marginBottom: 12,
   },
   devHint: {
     fontSize: typography.caption,
     lineHeight: 20,
-    color: colors.orange,
+    color: colors.textPrimary,
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: 8,
@@ -669,12 +669,12 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: typography.caption,
     fontWeight: '700',
-    color: colors.forest,
+    color: colors.textPrimary,
   },
   fieldHint: {
     fontSize: typography.caption,
     lineHeight: 18,
-    color: colors.muted,
+    color: colors.textPrimary,
     alignSelf: 'flex-start',
     marginBottom: 2,
     marginTop: -2,
@@ -682,7 +682,7 @@ const styles = StyleSheet.create({
   progressLine: {
     fontSize: typography.min,
     lineHeight: 22,
-    color: colors.forest,
+    color: colors.textPrimary,
     fontWeight: '600',
     textAlign: 'center',
   },
@@ -717,7 +717,7 @@ const styles = StyleSheet.create({
   },
   working: {
     fontSize: typography.min,
-    color: colors.muted,
+    color: colors.textPrimary,
   },
   privacyNoticeBox: {
     marginTop: 10,
@@ -730,7 +730,7 @@ const styles = StyleSheet.create({
   privacyNoticeText: {
     fontSize: typography.caption,
     lineHeight: 20,
-    color: colors.textSecondary,
+    color: colors.textPrimary,
   },
   consentRow: {
     flexDirection: 'row',
@@ -754,7 +754,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.forest,
   },
   checkMark: {
-    color: colors.white,
+    color: colors.textOnDark,
     fontSize: 13,
     fontWeight: '800',
     lineHeight: 16,
@@ -770,7 +770,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: typography.caption,
     lineHeight: 20,
-    color: colors.orange,
+    color: colors.textPrimary,
     fontWeight: '600',
     textAlign: 'center',
   },

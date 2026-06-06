@@ -54,21 +54,21 @@ const styles = StyleSheet.create({
   primary: {
     fontSize: typography.body,
     fontWeight: '600',
-    color: colors.forest,
+    color: colors.textPrimary,
   },
   secondary: {
     fontSize: typography.body,
     fontWeight: '600',
-    color: colors.forest,
+    color: colors.textPrimary,
     opacity: 0.85,
   },
   emphasis: {
-    color: colors.orange,
+    color: colors.textPrimary,
     fontWeight: '800',
     fontSize: typography.title,
   },
   emphasisDue: {
-    color: colors.forest,
+    color: colors.textPrimary,
     fontWeight: '800',
     fontSize: typography.title,
   },

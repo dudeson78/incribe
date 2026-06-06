@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   chipRefText: {
     fontSize: typography.min,
     fontWeight: '600',
-    color: colors.forest,
+    color: colors.textPrimary,
     flexShrink: 1,
   },
   chipSolved: {
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
   },
   muted: {
     fontSize: typography.min,
-    color: colors.textSecondary,
+    color: colors.textPrimary,
   },
   scrollContent: {
     paddingHorizontal: screenPadding,
@@ -244,6 +244,6 @@ const styles = StyleSheet.create({
   chev: {
     fontSize: 22,
     fontWeight: '300',
-    color: colors.orange,
+    color: colors.textPrimary,
   },
 });

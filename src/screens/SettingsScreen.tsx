@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
   myProfileSignOutText: {
     fontSize: typography.caption,
     fontWeight: '700',
-    color: colors.forest,
+    color: colors.textPrimary,
     textDecorationLine: 'underline',
   },
   scroll: {
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
   blockTitle: settingsSectionTitle,
   hint: {
     fontSize: typography.min,
-    color: colors.muted,
+    color: colors.textPrimary,
     marginBottom: 8,
     lineHeight: 24,
   },
@@ -338,34 +338,34 @@ const styles = StyleSheet.create({
   accountStatus: {
     fontSize: typography.body,
     fontWeight: '700',
-    color: colors.forest,
+    color: colors.textPrimary,
     lineHeight: 24,
   },
   accountMutedInline: {
     fontSize: typography.min,
     lineHeight: 22,
-    color: colors.muted,
+    color: colors.textPrimary,
   },
   authBtnGhost: {
     opacity: 0.45,
   },
   accountWorking: {
     fontSize: typography.caption,
-    color: colors.orange,
+    color: colors.textPrimary,
     fontWeight: '600',
     marginTop: 2,
   },
   accountMsgOk: {
     fontSize: typography.min,
     lineHeight: 22,
-    color: colors.successBorder,
+    color: colors.textPrimary,
     marginTop: 4,
     fontWeight: '600',
   },
   accountMsgErr: {
     fontSize: typography.min,
     lineHeight: 22,
-    color: colors.errorBorder,
+    color: colors.textPrimary,
     marginTop: 4,
     fontWeight: '600',
   },
@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: typography.body,
-    color: colors.forest,
+    color: colors.textPrimary,
     backgroundColor: colors.card,
     minHeight: touchTarget.min,
   },

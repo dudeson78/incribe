@@ -356,10 +356,10 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   progressHeader: {
-    fontSize: typography.caption,
-    fontWeight: '600',
-    color: colors.textSecondary,
-    letterSpacing: 0.3,
+    fontSize: typography.min,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    letterSpacing: 0.2,
   },
   loader: {
     marginTop: 14,
@@ -399,8 +399,8 @@ const styles = StyleSheet.create({
   refHeroText: {
     width: '100%',
     fontSize: typography.goalNumber,
-    fontWeight: '700',
-    color: colors.forest,
+    fontWeight: '800',
+    color: colors.textPrimary,
     textAlign: 'center',
     lineHeight: 44,
   },

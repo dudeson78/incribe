@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   },
   triggerTextAid: {
     fontWeight: '600',
-    color: colors.textSecondary,
+    color: colors.textPrimary,
   },
   body: {
     ...modalTheme.body,
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   emptyKeywords: {
     fontSize: typography.min,
     lineHeight: 24,
-    color: colors.textSecondary,
+    color: colors.textPrimary,
     textAlign: 'center',
     paddingVertical: 8,
   },
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
     fontSize: typography.min,
     lineHeight: 22,
     fontWeight: '600',
-    color: colors.forest,
+    color: colors.textPrimary,
     textAlign: 'center',
   },
 });

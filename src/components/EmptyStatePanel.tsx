@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.refLarge,
     fontWeight: '700',
-    color: colors.forest,
+    color: colors.textPrimary,
     textAlign: 'center',
   },
   body: {

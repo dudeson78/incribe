@@ -69,7 +69,14 @@ export function QuizModeSelector({ active, onChange, labels }: Props) {
             accessibilityLabel={title}
           >
             <Text
-              style={[styles.label, on ? styles.labelOn : styles.labelOff]}
+              style={[
+                styles.label,
+                on ? styles.labelOn : styles.labelOff,
+                on && {
+                  color:
+                    mode === 'order' ? colors.textOnDark : colors.textPrimary,
+                },
+              ]}
               numberOfLines={1}
             >
               {title}
@@ -104,13 +111,13 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   label: {
-    fontSize: typography.chip,
+    fontSize: typography.caption,
     fontWeight: '700',
     textAlign: 'center',
     letterSpacing: 0.1,
   },
   labelOn: {
-    color: colors.white,
+    fontWeight: '800',
   },
   labelOff: {
     color: colors.textPrimary,

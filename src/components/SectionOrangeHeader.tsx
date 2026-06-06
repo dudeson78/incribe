@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: typography.min,
-    fontWeight: '600',
-    color: colors.white,
+    fontWeight: '700',
+    color: colors.textPrimary,
     textAlign: 'left',
     lineHeight: 22,
   },

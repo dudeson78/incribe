@@ -65,11 +65,11 @@ function VersesStackNavigator() {
     <VersesStack.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: colors.background },
-        headerTintColor: colors.forest,
+        headerTintColor: colors.textPrimary,
         headerTitleStyle: {
           fontWeight: '500',
           fontSize: typography.refLarge,
-          color: colors.forest,
+          color: colors.textPrimary,
         },
         headerShadowVisible: false,
         contentStyle: { backgroundColor: colors.background },
@@ -104,8 +104,8 @@ function MainTabs() {
         /** 탭 전환 시 씬이 좌우로 밀리는 애니메이션 비활성 — 스와이프·스크롤과 겹치면 탭바가 따라 움직이는 듯 보일 수 있음 */
         animation: 'none',
         headerShown: false,
-        tabBarActiveTintColor: colors.forest,
-        tabBarInactiveTintColor: colors.textSecondary,
+        tabBarActiveTintColor: colors.textPrimary,
+        tabBarInactiveTintColor: colors.textPrimary,
         /** 라벨이 아래에 오도록 명시(iPad/가로폭 넓음에서 아이콘 옆으로 붙으면 줄바꿈·잘림이 생김). */
         tabBarLabelPosition: 'below-icon',
         tabBarShowLabel: true,

@@ -95,8 +95,10 @@ function tokensMatchAt(
 }
 
 /**
- * 본문 토큰 중 키워드 구문과 일치하는 인덱스(오름차순·중복 제거).
- * 아무 구간도 매칭되지 않으면 null (무작위 빈칸으로 대체).
+ * 본문 토큰 중 키워드가 들어 있는 어절 인덱스(오름차순·중복 제거).
+ * - 단일 키워드: 해당 문자열을 포함하는 어절 전체(예: 키워드 「하나님」 → 「하나님의」도 빈칸)
+ * - 여러 어절 키워드: 연속 어절이 구문과 일치할 때 각 어절을 빈칸
+ * 매칭 없으면 null (무작위 빈칸으로 대체).
  */
 export function blankIndicesFromKeywords(
   text: string,
@@ -112,9 +114,21 @@ export function blankIndicesFromKeywords(
     const pattern = tokenizeWords(phrase);
     if (pattern.length === 0) continue;
 
-    for (let i = 0; i <= tokens.length - pattern.length; i++) {
-      if (!tokensMatchAt(tokens, i, pattern)) continue;
-      for (let j = 0; j < pattern.length; j++) idxSet.add(i + j);
+    if (pattern.length >= 2) {
+      for (let i = 0; i <= tokens.length - pattern.length; i++) {
+        if (!tokensMatchAt(tokens, i, pattern)) continue;
+        for (let j = 0; j < pattern.length; j++) idxSet.add(i + j);
+      }
+      continue;
+    }
+
+    const kwNorm = comparableTokenForKeyword(pattern[0]!);
+    if (!kwNorm) continue;
+    for (let i = 0; i < tokens.length; i++) {
+      const tokNorm = comparableTokenForKeyword(tokens[i] ?? '');
+      if (tokNorm === kwNorm || tokNorm.includes(kwNorm)) {
+        idxSet.add(i);
+      }
     }
   }
 

@@ -22,7 +22,7 @@ type Props = {
   row: ScheduledRow;
   onBack: () => void;
   embedded?: boolean;
-  /** 순서 정답일 때 — 상위에서 구절 칩 완료 색 표시 */
+  /** ?? ??? ? ? ???? ?? ? ?? ? ?? */
   onOrderSolved?: (verseId: string) => void;
 };
 
@@ -112,7 +112,7 @@ export function QuizOrderMode({
             accessibilityRole="button"
             accessibilityLabel={t('quiz.backToList')}
           >
-            <Text style={styles.backChipTxt}>{'‹ '} {t('quiz.back')}</Text>
+            <Text style={styles.backChipTxt}>{'? '} {t('quiz.back')}</Text>
           </Pressable>
         </View>
       ) : null}
@@ -143,7 +143,7 @@ export function QuizOrderMode({
                 accessibilityRole="button"
                 accessibilityLabel={t('quiz.orderMoveUpA11y')}
               >
-                <Text style={styles.arrowTxt}>▲</Text>
+                <Text style={styles.arrowTxt}>?</Text>
               </Pressable>
               <Pressable
                 style={({ pressed }) => [
@@ -157,7 +157,7 @@ export function QuizOrderMode({
                 accessibilityRole="button"
                 accessibilityLabel={t('quiz.orderMoveDownA11y')}
               >
-                <Text style={styles.arrowTxt}>▼</Text>
+                <Text style={styles.arrowTxt}>?</Text>
               </Pressable>
             </View>
           </View>
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   ghostTxt: {
     fontSize: typography.body,
     fontWeight: '700',
-    color: colors.orange,
+    color: colors.textPrimary,
   },
   topBar: { marginBottom: 6 },
   backChip: {
@@ -250,11 +250,11 @@ const styles = StyleSheet.create({
   backChipTxt: {
     fontSize: typography.min,
     fontWeight: '700',
-    color: colors.orange,
+    color: colors.textPrimary,
   },
   dragHint: {
     fontSize: typography.min,
-    color: colors.textSecondary,
+    color: colors.textPrimary,
     lineHeight: 20,
     marginBottom: 2,
   },
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   segIx: {
     fontSize: typography.min,
     fontWeight: '800',
-    color: colors.white,
+    color: colors.textOnDark,
     backgroundColor: colors.forest,
     minWidth: 26,
     textAlign: 'center',
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
   arrowTxt: {
     fontSize: 12,
     fontWeight: '700',
-    color: colors.forest,
+    color: colors.textPrimary,
   },
   fb: {
     padding: 14,
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
   fbOkTxt: {
     fontSize: typography.min,
     fontWeight: '700',
-    color: colors.successBorder,
+    color: colors.textPrimary,
     textAlign: 'center',
   },
   fbBad: {
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
   fbBadTitle: {
     fontWeight: '700',
     fontSize: typography.min,
-    color: colors.errorBorder,
+    color: colors.textPrimary,
     marginBottom: 6,
   },
   fbReveal: {

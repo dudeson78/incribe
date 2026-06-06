@@ -27,20 +27,25 @@ export const colors = {
   creamBorder: '#E0E0E0',
 
   white: '#FFFFFF',
-  textPrimary: '#1E2822',
-  textSecondary: '#5C665E',
+  /** UI 글자 — 밝은 배경용 검정 */
+  text: '#000000',
+  textPrimary: '#000000',
+  /** 밝은 배경에서도 동일(회색 글자 금지) */
+  textSecondary: '#000000',
+  /** 어두운·채움 버튼·카드용 흰 글자 */
+  textOnDark: '#FFFFFF',
   borderSecondary: '#D8DCD9',
   borderTertiary: '#E8E8E8',
-  muted: '#5C665E',
+  muted: '#000000',
 
   /** 단기 트랙 — dawn 틴트 */
   badgeShortBg: '#F5E8D8',
-  badgeShortText: '#8B6B4A',
+  badgeShortText: '#000000',
 
   /** 장기·성장 — sage */
   sage: '#DDE8DC',
   badgeLongBg: '#DDE8DC',
-  badgeLongText: '#4A6B52',
+  badgeLongText: '#000000',
   circleNumBg: '#DDE8DC',
   successBg: '#DDE8DC',
   successBorder: '#5A7D62',
@@ -64,7 +69,7 @@ export const colors = {
   pastelBlueBg: '#D6E8F5',
   pastelBlueBorderSoft: '#B8D4E8',
   pastelBlueBorder: '#7AADC8',
-  pastelBlueText: '#4A7A94',
+  pastelBlueText: '#000000',
 } as const;
 
 export const typography = {
@@ -86,7 +91,7 @@ export const typography = {
 export const settingsSectionTitle = {
   fontSize: typography.headline,
   fontWeight: '700' as const,
-  color: colors.forest,
+  color: colors.textPrimary,
 } as const;
 
 /** Field labels above inputs — prototype `.input-label` */

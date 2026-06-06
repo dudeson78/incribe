@@ -49,12 +49,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.title,
     fontWeight: '800',
-    color: colors.forest,
+    color: colors.textPrimary,
     textAlign: 'center',
   },
   hint: {
     fontSize: typography.min,
-    color: colors.textSecondary,
+    color: colors.textPrimary,
     textAlign: 'center',
     marginBottom: 8,
   },
@@ -71,6 +71,6 @@ const styles = StyleSheet.create({
   body: {
     fontSize: typography.caption,
     lineHeight: 20,
-    color: colors.errorBorder,
+    color: colors.textPrimary,
   },
 });

@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   backChipTxt: {
     fontSize: typography.min,
     fontWeight: '700',
-    color: colors.orange,
+    color: colors.textPrimary,
   },
   versePaper: {
     ...parchmentCard,
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
   fbOkTxt: {
     fontSize: typography.min,
     fontWeight: '700',
-    color: colors.pastelBlueText,
+    color: colors.textPrimary,
     textAlign: 'center',
   },
   fbBad: {
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
   fbBadTitle: {
     fontWeight: '700',
     fontSize: typography.min,
-    color: colors.errorBorder,
+    color: colors.textPrimary,
     marginBottom: 6,
   },
   fbReveal: {
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   },
   btnGhostTxt: {
     fontSize: typography.body,
-    color: colors.orange,
+    color: colors.textPrimary,
     fontWeight: '700',
   },
 });

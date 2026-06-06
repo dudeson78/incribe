@@ -28,7 +28,7 @@ export const verseTypography = {
   reference: {
     fontSize: typography.caption,
     fontWeight: '600',
-    color: colors.forest,
+    color: colors.textPrimary,
     letterSpacing: 0.2,
   } satisfies TextStyle,
 } as const;

@@ -36,20 +36,20 @@ export const modalTheme = StyleSheet.create({
   title: {
     fontSize: typography.refLarge,
     fontWeight: '800',
-    color: colors.forest,
+    color: colors.textPrimary,
     textAlign: 'center',
     lineHeight: 28,
   },
   hint: {
     fontSize: typography.min,
     lineHeight: 21,
-    color: colors.muted,
+    color: colors.textPrimary,
     marginTop: -4,
   },
   ref: {
     fontSize: typography.caption,
     fontWeight: '600',
-    color: colors.forest,
+    color: colors.textPrimary,
     textAlign: 'center',
   },
   scroll: {

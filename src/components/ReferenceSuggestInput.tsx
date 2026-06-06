@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: typography.body,
-    color: colors.forest,
+    color: colors.textPrimary,
     backgroundColor: colors.card,
     minHeight: 48,
   },
@@ -142,6 +142,6 @@ const styles = StyleSheet.create({
   },
   suggestionText: {
     fontSize: typography.body,
-    color: colors.forest,
+    color: colors.textPrimary,
   },
 });

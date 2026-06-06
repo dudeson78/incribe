@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.min,
     fontWeight: '800',
-    color: colors.forest,
+    color: colors.textPrimary,
   },
   body: {
     fontSize: typography.caption,

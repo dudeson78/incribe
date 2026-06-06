@@ -66,28 +66,27 @@ const styles = StyleSheet.create({
   },
   goalLarge: {
     fontSize: typography.goalNumber,
-    fontWeight: '500',
-    color: colors.white,
+    fontWeight: '700',
+    color: colors.textOnDark,
   },
   goalSlash: {
     fontSize: 16,
-    fontWeight: '500',
-    color: colors.white,
-    opacity: 0.75,
+    fontWeight: '600',
+    color: colors.textOnDark,
   },
   rightGoal: {
     alignItems: 'flex-end',
   },
   rightCaption: {
     fontSize: typography.caption,
-    color: colors.white,
-    opacity: 0.8,
+    fontWeight: '600',
+    color: colors.textOnDark,
   },
   pct: {
     marginTop: 2,
     fontSize: 16,
-    fontWeight: '500',
-    color: colors.white,
+    fontWeight: '700',
+    color: colors.textOnDark,
   },
   track: {
     height: 6,

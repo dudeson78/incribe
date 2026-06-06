@@ -79,10 +79,10 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '500',
-    color: colors.textSecondary,
+    color: colors.textPrimary,
   },
   labelActive: {
     fontWeight: '500',
-    color: colors.forest,
+    color: colors.textPrimary,
   },
 });

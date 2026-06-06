@@ -102,8 +102,8 @@ const VARIANTS: Record<
 > = {
   primary: {
     container: { backgroundColor: colors.forest },
-    label: { color: colors.white, fontWeight: '700' },
-    spinner: colors.white,
+    label: { color: colors.textOnDark, fontWeight: '700' },
+    spinner: colors.textOnDark,
   },
   secondary: {
     container: {
@@ -111,19 +111,19 @@ const VARIANTS: Record<
       borderWidth: 1,
       borderColor: colors.creamBorder,
     },
-    label: { color: colors.forest, fontWeight: '600' },
-    spinner: colors.forest,
+    label: { color: colors.textPrimary, fontWeight: '600' },
+    spinner: colors.textPrimary,
   },
   danger: {
     container: { backgroundColor: colors.dangerSolid },
-    label: { color: colors.white, fontWeight: '700' },
-    spinner: colors.white,
+    label: { color: colors.textOnDark, fontWeight: '700' },
+    spinner: colors.textOnDark,
   },
   /** 긍정적 1차 CTA — 연간 목표 적용·축하 모달 등 */
   accent: {
     container: { backgroundColor: colors.orange },
-    label: { color: colors.white, fontWeight: '700' },
-    spinner: colors.white,
+    label: { color: colors.textPrimary, fontWeight: '700' },
+    spinner: colors.textPrimary,
   },
   /** 취소·보조 텍스트 버튼 */
   ghost: {
@@ -132,8 +132,8 @@ const VARIANTS: Record<
       borderWidth: 1,
       borderColor: colors.borderSecondary,
     },
-    label: { color: colors.forest, fontWeight: '600' },
-    spinner: colors.forest,
+    label: { color: colors.textPrimary, fontWeight: '600' },
+    spinner: colors.textPrimary,
   },
 };
 

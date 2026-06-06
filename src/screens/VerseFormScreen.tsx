@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   },
   errText: {
     fontSize: typography.body,
-    color: colors.forest,
+    color: colors.textPrimary,
   },
   field: {
     marginBottom: 16,
@@ -200,14 +200,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     fontSize: typography.body,
     lineHeight: 28,
-    color: colors.forest,
+    color: colors.textPrimary,
     backgroundColor: colors.card,
     minHeight: 120,
   },
   hint: {
     fontSize: typography.min,
     lineHeight: 24,
-    color: colors.muted,
+    color: colors.textPrimary,
     marginBottom: 20,
   },
 });

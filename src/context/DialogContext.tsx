@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.refLarge,
     fontWeight: '800',
-    color: colors.forest,
+    color: colors.textPrimary,
     lineHeight: 28,
   },
   message: {

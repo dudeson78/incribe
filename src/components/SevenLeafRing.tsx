@@ -146,26 +146,26 @@ const styles = StyleSheet.create({
   centerDone: {
     fontSize: typography.headline,
     fontWeight: '700',
-    color: colors.forest,
+    color: colors.textPrimary,
     lineHeight: 32,
   },
   centerSlash: {
     fontSize: typography.min,
     fontWeight: '500',
-    color: colors.muted,
+    color: colors.textPrimary,
     marginTop: 4,
   },
   centerTotal: {
     fontSize: typography.refLarge,
     fontWeight: '600',
-    color: colors.muted,
+    color: colors.textPrimary,
     lineHeight: 28,
     marginTop: 6,
   },
   caption: {
     fontSize: typography.caption,
     fontWeight: '500',
-    color: colors.textSecondary,
+    color: colors.textPrimary,
     textAlign: 'center',
   },
 });

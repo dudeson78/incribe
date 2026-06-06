@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   bannerTitle: {
     fontSize: typography.min,
     fontWeight: '700',
-    color: colors.forest,
+    color: colors.textPrimary,
     marginBottom: 6,
   },
   bannerBody: {
