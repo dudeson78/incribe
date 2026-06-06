@@ -42,6 +42,35 @@ function listedRowLineKind(row: ScheduledRow): 'short' | 'long' {
   return 'long';
 }
 
+function sessionChipLabel(
+  row: ScheduledRow,
+  lineKind: 'short' | 'long',
+  recordedToday: boolean,
+  t: TFunction,
+): string {
+  const { schedule } = row;
+  if (lineKind === 'short') {
+    const s = schedule.short_success_count;
+    const n = recordedToday
+      ? Math.min(Math.max(s, 1), 7)
+      : Math.min(s + 1, 7);
+    return t('home.reviewListSessionPractice', { n });
+  }
+  if (
+    schedule.review_phase === 'short' &&
+    schedule.current_interval_days > 1
+  ) {
+    const s = schedule.short_success_count;
+    const n = recordedToday
+      ? Math.min(Math.max(s, 1), 7)
+      : Math.min(s + 1, 7);
+    return t('home.reviewListSessionPractice', { n });
+  }
+  const lc = schedule.long_success_count ?? 0;
+  const n = recordedToday ? Math.max(1, lc) : Math.max(1, lc + 1);
+  return t('home.reviewListSessionPractice', { n });
+}
+
 function remarkLine(
   row: ScheduledRow,
   recorded: boolean,
@@ -85,6 +114,7 @@ export function HomeGroupedReview({
           lineKind === 'short'
             ? t('home.sectionShort')
             : t('home.sectionLong');
+        const sessionText = sessionChipLabel(row, lineKind, recorded, t);
         const statusLabel = recorded
           ? t('home.reviewListTrainingDoneStatus')
           : t('home.reviewListTrainingPendingStatus');
@@ -92,7 +122,7 @@ export function HomeGroupedReview({
         const a11y = t('home.reviewListRowA11y', {
           phase: phaseText,
           ref: verse.reference,
-          session: '',
+          session: sessionText,
           status: statusLabel,
           remark,
         });
@@ -122,6 +152,9 @@ export function HomeGroupedReview({
                 ellipsizeMode="tail"
               >
                 {verse.reference}
+              </Text>
+              <Text style={styles.sessionText} numberOfLines={1}>
+                {sessionText}
               </Text>
               <View
                 style={[
@@ -199,6 +232,14 @@ const styles = StyleSheet.create({
     fontSize: tokens.fontSize.sm,
     fontWeight: '600',
     color: tokens.color.textPrimary,
+  },
+  sessionText: {
+    minWidth: 40,
+    flexShrink: 0,
+    fontSize: tokens.fontSize.xs,
+    fontWeight: '600',
+    color: tokens.color.textSecondary,
+    textAlign: 'center',
   },
   statusChip: {
     paddingHorizontal: 8,

@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import Svg, { Line, Path } from 'react-native-svg';
 
 import { useSettings } from '../context/SettingsContext';
 import { splitKeywordCsv } from '../lib/quizTextUtils';
@@ -20,6 +21,68 @@ import { FadeModal } from './ui/FadeModal';
 import { colors, typography } from '../theme/colors';
 import { radius, touchTarget } from '../theme/layout';
 import { modalTheme } from '../theme/modal';
+
+const VERIFY_BTN_ICON_SIZE = typography.body;
+
+function verifyStrokeProps(color: string) {
+  return {
+    stroke: color,
+    strokeWidth: 1.75,
+    fill: 'none' as const,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+  };
+}
+
+/** 펼쳐진 성경 — 말씀확인 버튼 */
+function OpenBibleIcon({
+  color,
+  size = VERIFY_BTN_ICON_SIZE,
+}: {
+  color: string;
+  size?: number;
+}) {
+  const s = verifyStrokeProps(color);
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      accessibilityElementsHidden
+    >
+      <Path {...s} d="M12 4v16" />
+      <Path {...s} d="M12 4C9.2 4 6.5 5 5 6.8V19c2.2-.9 4.5-1.5 7-1.5" />
+      <Path {...s} d="M12 4c2.8 0 5.5 1 7 2.8V19c-2.2-.9-4.5-1.5-7-1.5" />
+      <Line {...s} x1="7.5" y1="10" x2="9.8" y2="10" />
+      <Line {...s} x1="7.5" y1="13" x2="9.8" y2="13" />
+      <Line {...s} x1="14.2" y1="10" x2="16.5" y2="10" />
+      <Line {...s} x1="14.2" y1="13" x2="16.5" y2="13" />
+    </Svg>
+  );
+}
+
+/** 스피커 — 말씀듣기 버튼 */
+function SpeakerIcon({
+  color,
+  size = VERIFY_BTN_ICON_SIZE,
+}: {
+  color: string;
+  size?: number;
+}) {
+  const s = verifyStrokeProps(color);
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      accessibilityElementsHidden
+    >
+      <Path {...s} d="M9 9H6v6h3l5 4V5L9 9z" />
+      <Path {...s} d="M16 9.5a3.5 3.5 0 0 1 0 5" />
+      <Path {...s} d="M18.5 7a6.5 6.5 0 0 1 0 10" />
+    </Svg>
+  );
+}
 
 type VerseVerifyModalTriggerProps = {
   reference: string;
@@ -152,6 +215,8 @@ export function VerseVerifyModalTrigger({
     ? t('seven.verifyVerseListenStopA11y')
     : t('seven.verifyVerseListenA11y');
 
+  const verifyBtnIconColor = colors.pastelGreenText;
+
   return (
     <>
       <View style={styles.triggerWrap}>
@@ -167,6 +232,9 @@ export function VerseVerifyModalTrigger({
             fullWidth={false}
             disabled={disabled}
             style={styles.primaryBtn}
+            leading={
+              <OpenBibleIcon color={verifyBtnIconColor} />
+            }
             accessibilityLabel={t('seven.verifyScriptureA11y')}
           />
           <AppButton
@@ -177,6 +245,7 @@ export function VerseVerifyModalTrigger({
             fullWidth={false}
             disabled={disabled || !body}
             style={styles.primaryBtn}
+            leading={<SpeakerIcon color={verifyBtnIconColor} />}
             accessibilityLabel={listenA11y}
           />
         </View>
