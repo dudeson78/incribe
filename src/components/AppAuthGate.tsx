@@ -1,17 +1,19 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { AppButton } from './ui/AppButton';
 import { AppIntroSplash } from './AppIntroSplash';
 import { EmailAuthLanding } from './EmailAuthLanding';
+import { FadeModal } from './ui/FadeModal';
 import { primeAuthSession } from '../lib/primeAuthSession';
 import {
   isSupabaseConfigured,
   supabase,
 } from '../supabase/client';
 import { colors, typography } from '../theme/colors';
-import { touchTarget } from '../theme/layout';
+import { radius, touchTarget } from '../theme/layout';
+import { modalTheme } from '../theme/modal';
 
 /**
  * `EXPO_PUBLIC_BYPASS_EMAIL_AUTH_GATE=true` ?? ??? ?? ?? ?? ??.
@@ -39,6 +41,7 @@ export function AppAuthGate({ children }: { children: ReactNode }) {
   const [bootstrapNonce, setBootstrapNonce] = useState(0);
   const [introVisible, setIntroVisible] = useState(true);
   const [authForm, setAuthForm] = useState<AuthForm>('none');
+  const [authBusy, setAuthBusy] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -122,7 +125,7 @@ export function AppAuthGate({ children }: { children: ReactNode }) {
     }
   }, [phase]);
 
-  /** ??? ?????? ?? ??? ???? ?? ?? ?? */
+  /** ??? ???·?? ?? ??? ???? ?? ?? ?? */
   useEffect(() => {
     if (phase === 'ready' && authForm !== 'none') {
       setIntroVisible(false);
@@ -130,14 +133,18 @@ export function AppAuthGate({ children }: { children: ReactNode }) {
     }
   }, [phase, authForm]);
 
+  function closeAuthModal() {
+    if (authBusy) return;
+    setAuthForm('none');
+  }
+
   const showIntroOverlay =
-    introVisible &&
-    (phase === 'loading' ||
-      (phase === 'auth' && authForm === 'none') ||
-      phase === 'ready');
+    introVisible && (phase === 'loading' || phase === 'auth' || phase === 'ready');
 
   const showAuthButtons = phase === 'auth' && authForm === 'none';
   const autoFadeOut = phase === 'ready' && introVisible && authForm === 'none';
+  const authModalOpen =
+    phase === 'auth' && authForm !== 'none' && !BYPASS_EMAIL_AUTH_GATE;
 
   if (phase === 'error') {
     return (
@@ -165,18 +172,6 @@ export function AppAuthGate({ children }: { children: ReactNode }) {
     );
   }
 
-  if (phase === 'auth' && authForm !== 'none' && !BYPASS_EMAIL_AUTH_GATE) {
-    return (
-      <View style={gateStyles.fullBleed}>
-        <EmailAuthLanding
-          initialStep={authForm}
-          onBackToSplash={() => setAuthForm('none')}
-          onSessionEstablished={() => setPhase('ready')}
-        />
-      </View>
-    );
-  }
-
   return (
     <View style={gateStyles.shell}>
       {phase === 'ready' ? children : null}
@@ -190,6 +185,26 @@ export function AppAuthGate({ children }: { children: ReactNode }) {
           onSignUp={() => setAuthForm('signUp')}
         />
       ) : null}
+
+      <FadeModal visible={authModalOpen} onRequestClose={closeAuthModal}>
+        <View style={gateStyles.authModalRoot}>
+          <Pressable
+            style={modalTheme.backdrop}
+            onPress={closeAuthModal}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.cancel')}
+          />
+          <View style={gateStyles.authModalSheet}>
+            <EmailAuthLanding
+              initialStep={authForm === 'signUp' ? 'signUp' : 'signIn'}
+              presentation="modal"
+              onBackToSplash={closeAuthModal}
+              onBusyChange={setAuthBusy}
+              onSessionEstablished={() => setPhase('ready')}
+            />
+          </View>
+        </View>
+      </FadeModal>
     </View>
   );
 }
@@ -203,9 +218,18 @@ const gateStyles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     zIndex: 10,
   },
-  fullBleed: {
+  authModalRoot: {
     flex: 1,
+    justifyContent: 'flex-end',
+  },
+  authModalSheet: {
+    flex: 1,
+    maxHeight: '94%',
     backgroundColor: colors.background,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
+    overflow: 'hidden',
+    zIndex: 1,
   },
   fill: {
     flex: 1,

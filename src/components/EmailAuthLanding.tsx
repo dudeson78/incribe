@@ -108,15 +108,20 @@ type AuthFormStep = 'signIn' | 'signUp';
 
 export type EmailAuthLandingProps = {
   initialStep?: AuthFormStep;
+  /** ?? ?? ??? ?? */
+  presentation?: 'screen' | 'modal';
   onBackToSplash?: () => void;
   onSessionEstablished?: () => void;
+  onBusyChange?: (busy: boolean) => void;
 };
 
 /** ??? ???????? ?. ? ??(????)? AppIntroSplash?? ??. */
 export function EmailAuthLanding({
   initialStep = 'signIn',
+  presentation = 'screen',
   onBackToSplash,
   onSessionEstablished,
+  onBusyChange,
 }: EmailAuthLandingProps) {
   const { t } = useTranslation();
   const dialog = useDialog();
@@ -139,6 +144,10 @@ export function EmailAuthLanding({
     setPasswordConfirm('');
     if (initialStep === 'signIn') setPrivacyConsent(false);
   }, [initialStep]);
+
+  useEffect(() => {
+    onBusyChange?.(busy);
+  }, [busy, onBusyChange]);
 
   function goBackToSplash() {
     if (busy) return;
@@ -311,8 +320,11 @@ export function EmailAuthLanding({
     void p.catch((e) => notifyError(e, t, dialog));
   }
 
+  const topPad =
+    presentation === 'modal' ? Math.max(insets.top, 12) : insets.top;
+
   return (
-    <View style={[styles.shell, { paddingTop: insets.top }]}>
+    <View style={[styles.shell, { paddingTop: topPad }]}>
       <ScrollView
         style={styles.flex}
         contentContainerStyle={styles.formScrollInner}

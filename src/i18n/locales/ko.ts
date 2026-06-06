@@ -15,6 +15,7 @@ export const ko = {
     settings: 'MY',
   },
   splash: {
+    tagline: '성경암송훈련 프로그램',
     verse:
       '" 오늘 내가 네게 명하는 이 말씀을 너는 마음에 새기고 (신 6:6) "',
   },

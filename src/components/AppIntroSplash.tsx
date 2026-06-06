@@ -70,9 +70,14 @@ export function AppIntroSplash({
       pointerEvents={showAuthButtons ? 'auto' : 'box-none'}
     >
       <View style={styles.center}>
-        <Text style={styles.brand} accessibilityRole="header">
-          {BRAND_MARK}
-        </Text>
+        <View style={styles.hero}>
+          <Text style={styles.tagline} accessibilityRole="text">
+            {t('splash.tagline')}
+          </Text>
+          <Text style={styles.brand} accessibilityRole="header">
+            {BRAND_MARK}
+          </Text>
+        </View>
         <Text style={styles.verse} accessibilityRole="text">
           {t('splash.verse')}
         </Text>
@@ -123,6 +128,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 28,
     gap: 20,
+  },
+  hero: {
+    alignItems: 'center',
+    gap: 6,
+  },
+  tagline: {
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 0.4,
+    color: colors.textPrimary,
+    textAlign: 'center',
   },
   brand: {
     fontSize: typography.goalNumber,
