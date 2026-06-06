@@ -14,6 +14,10 @@ export const ko = {
     verses: '관리',
     settings: 'MY',
   },
+  splash: {
+    verse:
+      '" 오늘 내가 네게 명하는 이 말씀을 너는 마음에 새기고 (신 6:6) "',
+  },
   verses: {
     manageScreenTitle: '말씀 관리',
     addButton: '추가',
@@ -414,9 +418,12 @@ export const ko = {
     fullNameA11y: '이름',
     email: '이메일',
     password: '비밀번호',
+    passwordConfirm: '비밀번호 확인',
     phEmail: 'you@example.com',
     emailIdHint: '로그인 시 이메일이 아이디로 사용됩니다.',
     phPassword: '6자 이상',
+    phPasswordConfirm: '비밀번호 다시 입력',
+    passwordConfirmA11y: '비밀번호 확인',
     signIn: '로그인',
     signUp: '회원가입',
     signOut: '로그아웃',
@@ -431,8 +438,10 @@ export const ko = {
     hintAfterSignOut:
       '로그아웃 후에는 다시 로그인해야 앱을 사용할 수 있습니다.',
     weakPassword: '비밀번호는 6자 이상으로 입력해 주세요.',
+    passwordMismatch: '비밀번호가 서로 일치하지 않습니다. 다시 확인해 주세요.',
     fillBoth: '이메일과 비밀번호를 입력해 주세요.',
-    fillSignUp: '이름, 이메일, 비밀번호를 모두 입력해 주세요.',
+    fillSignUp:
+      '이름, 이메일, 비밀번호, 비밀번호 확인을 모두 입력해 주세요.',
     badEmail: '올바른 이메일 형식인지 확인해 주세요.',
     signedInOk: '로그인되었습니다.',
     signedOutOk: '로그아웃했습니다.',

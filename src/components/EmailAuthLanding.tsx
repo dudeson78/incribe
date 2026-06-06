@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import type { TFunction } from 'i18next';
 import {
@@ -104,52 +104,68 @@ function promptSignUpSuccessThenEnter(params: {
     .then(() => params.onDone());
 }
 
-type WelcomeStep = 'welcome' | 'signIn' | 'signUp';
+type AuthFormStep = 'signIn' | 'signUp';
 
 export type EmailAuthLandingProps = {
+  initialStep?: AuthFormStep;
+  onBackToSplash?: () => void;
   onSessionEstablished?: () => void;
 };
 
-/** ?? ??: ? ?? ? ???·????. ????? ??·???·??? ?? Supabase ??? ?? ??? ??. */
+/** ??? ???????? ?. ? ??(????)? AppIntroSplash?? ??. */
 export function EmailAuthLanding({
+  initialStep = 'signIn',
+  onBackToSplash,
   onSessionEstablished,
 }: EmailAuthLandingProps) {
   const { t } = useTranslation();
   const dialog = useDialog();
   const insets = useSafeAreaInsets();
-  const [step, setStep] = useState<WelcomeStep>('welcome');
+  const [step, setStep] = useState<AuthFormStep>(initialStep);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [privacyConsent, setPrivacyConsent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [progressLine, setProgressLine] = useState<string | null>(null);
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
+  const passwordConfirmRef = useRef<TextInput>(null);
 
-  function goWelcome() {
-    if (busy) return;
-    setStep('welcome');
+  useEffect(() => {
+    setStep(initialStep);
     setPassword('');
+    setPasswordConfirm('');
+    if (initialStep === 'signIn') setPrivacyConsent(false);
+  }, [initialStep]);
+
+  function goBackToSplash() {
+    if (busy) return;
+    setPassword('');
+    setPasswordConfirm('');
     setPrivacyConsent(false);
+    onBackToSplash?.();
   }
 
-  function returnToWelcomeAfterSignUp() {
+  function returnToSplashAfterSignUp() {
     setFullName('');
     setPassword('');
+    setPasswordConfirm('');
     setPrivacyConsent(false);
     setProgressLine(null);
-    setStep('welcome');
+    onBackToSplash?.();
   }
 
   async function onSignUp() {
     const nm = fullName.trim();
     const em = email.trim();
     const pw = password;
+    const pwConfirm = passwordConfirm;
     setBusy(true);
     setProgressLine(null);
     try {
-      if (!nm || !em || !pw) {
+      if (!nm || !em || !pw || !pwConfirm) {
         notifyError(new Error(t('account.fillSignUp')), t, dialog);
         return;
       }
@@ -171,6 +187,10 @@ export function EmailAuthLanding({
       }
       if (pw.length < 6) {
         notifyError(new Error(t('account.weakPassword')), t, dialog);
+        return;
+      }
+      if (pw !== pwConfirm) {
+        notifyError(new Error(t('account.passwordMismatch')), t, dialog);
         return;
       }
       if (!privacyConsent) {
@@ -199,6 +219,7 @@ export function EmailAuthLanding({
         );
         if (!sess) return;
         setPassword('');
+        setPasswordConfirm('');
         setProgressLine(null);
         promptSignUpSuccessThenEnter({
           t,
@@ -210,13 +231,14 @@ export function EmailAuthLanding({
       }
 
       setPassword('');
+      setPasswordConfirm('');
       setProgressLine(null);
       void dialog
         .alert({
           title: t('account.signUpSuccessTitle'),
           message: t('account.signUpSuccessVerifyEmail'),
         })
-        .then(() => returnToWelcomeAfterSignUp());
+        .then(() => returnToSplashAfterSignUp());
     } catch (e) {
       notifyError(e, t, dialog);
     } finally {
@@ -276,59 +298,6 @@ export function EmailAuthLanding({
     }
   }
 
-  if (step === 'welcome') {
-    return (
-      <View style={[styles.shell, { paddingTop: insets.top }]}>
-        <ScrollView
-          style={styles.flex}
-          contentContainerStyle={styles.welcomeScrollContent}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.hero}>
-            <Text style={styles.welcomeAppTitle}>{t('tabs.appTitle')}</Text>
-            <Text style={styles.welcomeTagline}>{t('tabs.appSubtitle')}</Text>
-            <Text style={styles.welcomeBlurb}>{t('auth.welcomeBlurb')}</Text>
-          </View>
-        </ScrollView>
-        <View
-          style={[
-            styles.bottomActions,
-            { paddingBottom: insets.bottom + 20 },
-          ]}
-        >
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t('account.signIn')}
-            style={({ pressed }) => [
-              styles.btnOutlined,
-              pressed && pressedOpacity,
-              busy && btnDisabled,
-            ]}
-            onPress={() => {
-              setStep('signIn');
-              setPassword('');
-            }}
-            disabled={busy}
-          >
-            <Text style={styles.btnOutlinedText}>{t('account.signIn')}</Text>
-          </Pressable>
-          <AppButton
-            label={t('account.signUp')}
-            onPress={() => {
-              setStep('signUp');
-              setPassword('');
-              setPrivacyConsent(false);
-            }}
-            variant="accent"
-            size="md"
-            disabled={busy}
-            accessibilityLabel={t('account.signUp')}
-          />
-        </View>
-      </View>
-    );
-  }
-
   const isSignUp = step === 'signUp';
 
   function submitForm() {
@@ -351,7 +320,7 @@ export function EmailAuthLanding({
         keyboardDismissMode="on-drag"
       >
         <Pressable
-          onPress={goWelcome}
+          onPress={goBackToSplash}
           disabled={busy}
           accessibilityRole="button"
           accessibilityLabel={t('auth.backToWelcome')}
@@ -366,9 +335,7 @@ export function EmailAuthLanding({
 
         {isSignUp ? (
           <Text style={styles.intro}>{t('auth.signUpIntro')}</Text>
-        ) : (
-          <Text style={styles.body}>{t('auth.emailGateBodySignIn')}</Text>
-        )}
+        ) : null}
 
         {isDevelopmentRuntime() &&
         getDevEmailLocalPartRestriction() != null ? (
@@ -428,6 +395,23 @@ export function EmailAuthLanding({
               autoCorrect={false}
               editable={!busy}
               accessibilityLabel={t('account.password')}
+              returnKeyType="next"
+              onSubmitEditing={() => passwordConfirmRef.current?.focus()}
+              blurOnSubmit={false}
+            />
+            <Text style={styles.fieldLabel}>{t('account.passwordConfirm')}</Text>
+            <TextInput
+              ref={passwordConfirmRef}
+              style={styles.input}
+              value={passwordConfirm}
+              onChangeText={setPasswordConfirm}
+              placeholder={t('account.phPasswordConfirm')}
+              placeholderTextColor={`${colors.textPrimary}55`}
+              secureTextEntry
+              autoCapitalize="none"
+              autoCorrect={false}
+              editable={!busy}
+              accessibilityLabel={t('account.passwordConfirmA11y')}
               returnKeyType="done"
               onSubmitEditing={submitForm}
             />
@@ -568,58 +552,6 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
   },
-  welcomeScrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: 28,
-    justifyContent: 'center',
-    paddingVertical: 24,
-  },
-  hero: {
-    alignItems: 'center',
-    gap: 14,
-  },
-  welcomeAppTitle: {
-    fontSize: typography.headline,
-    fontWeight: '800',
-    color: colors.textPrimary,
-    textAlign: 'center',
-  },
-  welcomeTagline: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.textPrimary,
-    textAlign: 'center',
-  },
-  welcomeBlurb: {
-    fontSize: typography.min,
-    lineHeight: 24,
-    color: colors.textPrimary,
-    textAlign: 'center',
-    marginTop: 8,
-  },
-  bottomActions: {
-    paddingHorizontal: 24,
-    gap: 12,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: `${colors.forest}22`,
-    paddingTop: 16,
-    backgroundColor: colors.background,
-  },
-  btnOutlined: {
-    minHeight: touchTarget.min,
-    borderRadius: radius.md,
-    borderWidth: 2,
-    borderColor: colors.forest,
-    backgroundColor: colors.card,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-  },
-  btnOutlinedText: {
-    fontSize: typography.min,
-    fontWeight: '700',
-    color: colors.textPrimary,
-  },
   formScrollInner: {
     flexGrow: 1,
     paddingHorizontal: 24,
@@ -642,13 +574,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   intro: {
-    fontSize: typography.min,
-    lineHeight: 22,
-    color: colors.textPrimary,
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  body: {
     fontSize: typography.min,
     lineHeight: 22,
     color: colors.textPrimary,

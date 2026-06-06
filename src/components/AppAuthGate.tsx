@@ -1,14 +1,9 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { AppButton } from './ui/AppButton';
+import { AppIntroSplash } from './AppIntroSplash';
 import { EmailAuthLanding } from './EmailAuthLanding';
 import { primeAuthSession } from '../lib/primeAuthSession';
 import {
@@ -19,8 +14,8 @@ import { colors, typography } from '../theme/colors';
 import { touchTarget } from '../theme/layout';
 
 /**
- * `EXPO_PUBLIC_BYPASS_EMAIL_AUTH_GATE=true` 이면 로그인 화면 없이 바로 메인.
- * 세션이 없으면 Supabase 불러오기는 그대로 실패하므로(필요: 실제 로그인 또는 개발 자동 로그인 env).
+ * `EXPO_PUBLIC_BYPASS_EMAIL_AUTH_GATE=true` ?? ??? ?? ?? ?? ??.
+ * ??? ??? Supabase ????? ??? ?????(??: ?? ??? ?? ?? ?? ??? env).
  */
 function bypassEmailAuthGateFromEnv(): boolean {
   const v =
@@ -32,6 +27,8 @@ function bypassEmailAuthGateFromEnv(): boolean {
 
 const BYPASS_EMAIL_AUTH_GATE = bypassEmailAuthGateFromEnv();
 
+type AuthForm = 'none' | 'signIn' | 'signUp';
+
 export function AppAuthGate({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
   const [phase, setPhase] = useState<'loading' | 'ready' | 'auth' | 'error'>(
@@ -40,6 +37,8 @@ export function AppAuthGate({ children }: { children: ReactNode }) {
   const [primeDetail, setPrimeDetail] = useState<string | undefined>();
   const [bootstrapMissingEnv, setBootstrapMissingEnv] = useState(false);
   const [bootstrapNonce, setBootstrapNonce] = useState(0);
+  const [introVisible, setIntroVisible] = useState(true);
+  const [authForm, setAuthForm] = useState<AuthForm>('none');
 
   useEffect(() => {
     let mounted = true;
@@ -89,12 +88,20 @@ export function AppAuthGate({ children }: { children: ReactNode }) {
         async (_event, session) => {
           if (!mounted) return;
           if (!session?.user) {
-            if (!BYPASS_EMAIL_AUTH_GATE) setPhase('auth');
+            if (!BYPASS_EMAIL_AUTH_GATE) {
+              setPhase('auth');
+              setAuthForm('none');
+              setIntroVisible(true);
+            }
             return;
           }
           if (session.user.is_anonymous) {
             await supabase.auth.signOut();
-            if (mounted && !BYPASS_EMAIL_AUTH_GATE) setPhase('auth');
+            if (mounted && !BYPASS_EMAIL_AUTH_GATE) {
+              setPhase('auth');
+              setAuthForm('none');
+              setIntroVisible(true);
+            }
             return;
           }
           if (mounted) setPhase('ready');
@@ -109,21 +116,28 @@ export function AppAuthGate({ children }: { children: ReactNode }) {
     };
   }, [bootstrapNonce]);
 
-  if (phase === 'loading') {
-    return (
-      <View style={gateStyles.fill}>
-        <ActivityIndicator size="large" color={colors.forest} />
-      </View>
-    );
-  }
+  useEffect(() => {
+    if (phase === 'error') {
+      setIntroVisible(false);
+    }
+  }, [phase]);
 
-  if (phase === 'auth' && !BYPASS_EMAIL_AUTH_GATE) {
-    return (
-      <View style={gateStyles.fullBleed}>
-        <EmailAuthLanding onSessionEstablished={() => setPhase('ready')} />
-      </View>
-    );
-  }
+  /** ??? ?????? ?? ??? ???? ?? ?? ?? */
+  useEffect(() => {
+    if (phase === 'ready' && authForm !== 'none') {
+      setIntroVisible(false);
+      setAuthForm('none');
+    }
+  }, [phase, authForm]);
+
+  const showIntroOverlay =
+    introVisible &&
+    (phase === 'loading' ||
+      (phase === 'auth' && authForm === 'none') ||
+      phase === 'ready');
+
+  const showAuthButtons = phase === 'auth' && authForm === 'none';
+  const autoFadeOut = phase === 'ready' && introVisible && authForm === 'none';
 
   if (phase === 'error') {
     return (
@@ -151,10 +165,44 @@ export function AppAuthGate({ children }: { children: ReactNode }) {
     );
   }
 
-  return children;
+  if (phase === 'auth' && authForm !== 'none' && !BYPASS_EMAIL_AUTH_GATE) {
+    return (
+      <View style={gateStyles.fullBleed}>
+        <EmailAuthLanding
+          initialStep={authForm}
+          onBackToSplash={() => setAuthForm('none')}
+          onSessionEstablished={() => setPhase('ready')}
+        />
+      </View>
+    );
+  }
+
+  return (
+    <View style={gateStyles.shell}>
+      {phase === 'ready' ? children : null}
+      {showIntroOverlay ? (
+        <AppIntroSplash
+          style={gateStyles.introOverlay}
+          showAuthButtons={showAuthButtons}
+          autoFadeOut={autoFadeOut}
+          onFadeComplete={() => setIntroVisible(false)}
+          onSignIn={() => setAuthForm('signIn')}
+          onSignUp={() => setAuthForm('signUp')}
+        />
+      ) : null}
+    </View>
+  );
 }
 
 const gateStyles = StyleSheet.create({
+  shell: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  introOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 10,
+  },
   fullBleed: {
     flex: 1,
     backgroundColor: colors.background,
