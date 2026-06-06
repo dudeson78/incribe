@@ -6,6 +6,7 @@ import { colors, typography } from './colors';
 export const fontFamilies = {
   verse: 'NotoSerifKR_400Regular',
   verseMedium: 'NotoSerifKR_500Medium',
+  verseBlack: 'NotoSerifKR_900Black',
 } as const;
 
 /** 구절·말씀 영역 타이포 — serif, line-height 1.65 */

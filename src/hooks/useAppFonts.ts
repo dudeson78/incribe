@@ -1,6 +1,7 @@
 import {
   NotoSerifKR_400Regular,
   NotoSerifKR_500Medium,
+  NotoSerifKR_900Black,
   useFonts,
 } from '@expo-google-fonts/noto-serif-kr';
 
@@ -9,6 +10,7 @@ export function useAppFonts(): boolean {
   const [loaded] = useFonts({
     NotoSerifKR_400Regular,
     NotoSerifKR_500Medium,
+    NotoSerifKR_900Black,
   });
   return loaded;
 }

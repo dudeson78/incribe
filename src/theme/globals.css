@@ -4,7 +4,8 @@
  * React Native 컴포넌트는 아직 src/theme/colors.ts 등을 사용합니다.
  * 웹(incribe.vercel.app) 및 향후 CSS 기반 UI의 단일 토큰 소스입니다.
  */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;500;600;700;900&display=swap');
+@import './splash.css';
 
 :root {
   /* ── Color ── */
