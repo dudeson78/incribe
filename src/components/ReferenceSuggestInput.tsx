@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import { filterReferenceSuggestions } from '../constants/referenceSuggestions';
+import { canonicalizeReference } from '../lib/bibleReference';
 import { colors, labelTypography, typography } from '../theme/colors';
 import { radius } from '../theme/layout';
 import { useTranslation } from 'react-i18next';
@@ -65,6 +66,10 @@ export function ReferenceSuggestInput({
         }}
         onBlur={() => {
           blurTimer.current = setTimeout(() => setFocused(false), 200);
+          const normalized = canonicalizeReference(value);
+          if (normalized && normalized !== value) {
+            onChangeText(normalized);
+          }
         }}
         autoCorrect={false}
         autoCapitalize="none"

@@ -8,6 +8,7 @@ import {
 } from 'date-fns';
 import { useMemo } from 'react';
 
+import { canonicalizeReference } from '../lib/bibleReference';
 import { supabase } from '../supabase/client';
 import type {
   AddVerseInput,
@@ -22,6 +23,10 @@ import type {
 
 function ymd(d: Date): string {
   return format(startOfDay(d), 'yyyy-MM-dd');
+}
+
+function withCanonicalReference<T extends { reference: string }>(row: T): T {
+  return { ...row, reference: canonicalizeReference(row.reference) };
 }
 
 function normalizeSchedule(
@@ -172,11 +177,13 @@ async function addVerse(input: AddVerseInput): Promise<VerseRow> {
   const user = await requireUser();
   const today = ymd(new Date());
 
+  const reference = canonicalizeReference(input.reference);
+
   const { data: verse, error: verseError } = await supabase
     .from('verses')
     .insert({
       user_id: user.id,
-      reference: input.reference,
+      reference,
       text: input.text,
       rema: input.rema ?? null,
       keywords: input.keywords ?? null,
@@ -201,7 +208,7 @@ async function addVerse(input: AddVerseInput): Promise<VerseRow> {
 
   if (schedError) throw schedError;
 
-  return verse;
+  return withCanonicalReference(verse);
 }
 
 async function updateVerse(
@@ -209,9 +216,13 @@ async function updateVerse(
   updates: UpdateVerseInput
 ): Promise<VerseRow> {
   const user = await requireUser();
+  const payload: UpdateVerseInput = { ...updates };
+  if (updates.reference !== undefined) {
+    payload.reference = canonicalizeReference(updates.reference);
+  }
   const { data, error } = await supabase
     .from('verses')
-    .update(updates)
+    .update(payload)
     .eq('id', verseId)
     .eq('user_id', user.id)
     .select()
@@ -219,7 +230,7 @@ async function updateVerse(
 
   if (error) throw error;
   if (!data) throw new Error('Verse not found');
-  return data;
+  return withCanonicalReference(data);
 }
 
 async function deleteVerse(verseId: string): Promise<void> {
@@ -242,7 +253,7 @@ async function getAllVerses(): Promise<VerseWithSchedule[]> {
     .order('created_at', { ascending: false });
 
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []).map((row) => withCanonicalReference(row));
 }
 
 async function getReviewLogsForVerseIds(
@@ -537,7 +548,7 @@ async function getScheduledToday(): Promise<ScheduledRow[]> {
     const { verses, ...sched } = r;
     const verse = Array.isArray(verses) ? verses[0]! : verses;
     dueOrdered.push({
-      verse,
+      verse: withCanonicalReference(verse),
       schedule: sched as ReviewScheduleRow,
       todaySessionRecordedSuccess: successTodayIds.has(verse.id),
     });
@@ -565,7 +576,7 @@ async function getScheduledToday(): Promise<ScheduledRow[]> {
     const { verses, ...sched } = r;
     const verse = Array.isArray(verses) ? verses[0]! : verses;
     appended.push({
-      verse,
+      verse: withCanonicalReference(verse),
       schedule: sched as ReviewScheduleRow,
       todaySessionRecordedSuccess: true,
     });

@@ -17,6 +17,7 @@ import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
 import { useDialog } from '../context/DialogContext';
 import { useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
+import { canonicalizeReference } from '../lib/bibleReference';
 import type { VersesStackParamList } from '../navigation/types';
 import { colors, labelTypography, typography } from '../theme/colors';
 import { radius } from '../theme/layout';
@@ -67,7 +68,7 @@ export function VerseFormScreen({ navigation, route }: Props) {
   }, [loadVerse]);
 
   async function onSave() {
-    const refTrim = reference.trim();
+    const refTrim = canonicalizeReference(reference);
     const textTrim = text.trim();
     if (!refTrim || !textTrim) {
       setError(t('verseForm.requiredFields'));

@@ -76,10 +76,10 @@ export const ko = {
     titleEdit: '구절 편집',
     reference: '참조',
     body: '본문',
-    phReference: '예: 로마서 8:28',
+    phReference: '예: 롬 8:28 또는 롬 8:28~29',
     phBody: '암송할 구절을 입력하세요',
     hintShortTrack:
-      '새로 저장하면 단기(short)로 등록되고, 복습 일정은 오늘부터 시작합니다.',
+      '신규 저장하면 단기기억 그룹에 편성되어 1주일 동안 매일 반복 훈련 합니다. 1주일 후부터는 장기기억 그룹에 편성되어 점점 긴 주기로 복습하게 되어 완전히 암송하게 됩니다.',
     save: '저장하기',
     saveEdit: '수정 저장',
     saving: '저장 중…',
