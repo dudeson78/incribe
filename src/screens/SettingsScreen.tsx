@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -17,11 +17,8 @@ import {
   SettingsApplyButton,
   settingsStyles,
 } from '../components/settings/SettingsUi';
-import { AppButton } from '../components/ui/AppButton';
 import { useSettings } from '../context/SettingsContext';
-import { useDialog } from '../context/DialogContext';
 import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
-import { useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import { supabase } from '../supabase/client';
 import { tokens } from '../theme/tokens';
@@ -31,9 +28,7 @@ const DEFAULT_GOAL = 52;
 export function SettingsScreen() {
   const tabScrollPadding = useBottomTabScrollPadding(40);
   const { t } = useTranslation();
-  const dialog = useDialog();
   const authProfile = useAuthProfile();
-  const { resetAllPracticeToNewVerseState } = useVerses();
   const {
     annualGoal,
     setAnnualGoal,
@@ -52,7 +47,6 @@ export function SettingsScreen() {
   });
   const [authBusy, setAuthBusy] = useState(false);
   const [signOutPressed, setSignOutPressed] = useState(false);
-  const [resetPracticeBusy, setResetPracticeBusy] = useState(false);
   const [accountBanner, setAccountBanner] = useState<{
     kind: 'ok' | 'error';
     message: string;
@@ -105,41 +99,6 @@ export function SettingsScreen() {
     if (Number.isNaN(n)) return;
     setAnnualGoal(n);
   }
-
-  const runResetPractice = useCallback(async () => {
-    setResetPracticeBusy(true);
-    try {
-      const n = await resetAllPracticeToNewVerseState();
-
-      if (n === 0) {
-        await dialog.alert({
-          title: t('settings.resetPracticeNothingTitle'),
-          message: t('settings.resetPracticeNothingBody'),
-        });
-        return;
-      }
-
-      await dialog.alert({
-        title: t('common.success'),
-        message: t('settings.resetPracticeDone'),
-      });
-    } catch (e) {
-      await dialog.alert({ title: t('errors.title'), message: mapAppError(e, t) });
-    } finally {
-      setResetPracticeBusy(false);
-    }
-  }, [dialog, resetAllPracticeToNewVerseState, t]);
-
-  const confirmResetPractice = useCallback(async () => {
-    const ok = await dialog.confirm({
-      title: t('settings.resetPracticeTitle'),
-      message: t('settings.resetPracticeMessage'),
-      confirmText: t('settings.resetPracticeConfirm'),
-      cancelText: t('verses.cancel'),
-      destructive: true,
-    });
-    if (ok) void runResetPractice();
-  }, [dialog, runResetPractice, t]);
 
   async function handleSignOut() {
     setAccountBanner(null);
@@ -229,22 +188,6 @@ export function SettingsScreen() {
         <VoiceReadingSettings />
 
         <View style={settingsStyles.card}>
-          <Text style={settingsStyles.sectionTitle}>
-            {t('settings.resetPracticeSection')}
-          </Text>
-          <Text style={styles.resetSubtitle}>
-            {t('settings.resetPracticeHint')}
-          </Text>
-          <AppButton
-            label={t('settings.resetPracticeBtn')}
-            onPress={() => void confirmResetPractice()}
-            variant="danger"
-            loading={resetPracticeBusy}
-            accessibilityLabel={t('settings.resetPracticeA11y')}
-          />
-        </View>
-
-        <View style={settingsStyles.card}>
           <Text style={settingsStyles.sectionTitle}>{t('account.section')}</Text>
           <View style={styles.accountInner}>
             {sessionOk ? (
@@ -320,12 +263,6 @@ const styles = StyleSheet.create({
   },
   authBusy: {
     opacity: 0.45,
-  },
-  resetSubtitle: {
-    fontSize: tokens.fontSize.sm,
-    color: tokens.color.textMuted,
-    lineHeight: 20,
-    marginBottom: 16,
   },
   accountInner: {
     gap: 10,

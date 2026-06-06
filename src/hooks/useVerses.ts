@@ -627,59 +627,6 @@ async function getDashboardSummary(
   };
 }
 
-/**
- * 활성 구절 전부: 복습 일정을 처음 저장한 직후와 같이 되돌리고 `review_logs`를 비웁니다.
- * (단기 0/7·오늘 복습, 장기 구간·실패 카운트 초기화 — 프로그램 테스트용)
- * @returns 활성 구절 id 수(스케줄 행 유무와 관계없이 대상을 정한 규모)
- */
-async function resetAllPracticeToNewVerseState(): Promise<number> {
-  const user = await requireUser();
-  const today = ymd(new Date());
-
-  const { data: verses, error: vErr } = await supabase
-    .from('verses')
-    .select('id')
-    .eq('user_id', user.id)
-    .eq('is_active', true);
-
-  if (vErr) throw vErr;
-
-  const ids = (verses ?? []).map((v) => v.id);
-  if (ids.length === 0) return 0;
-
-  const { error: delErr } = await supabase
-    .from('review_logs')
-    .delete()
-    .in('verse_id', ids);
-
-  if (delErr) throw delErr;
-
-  const legacyPatch = {
-    next_review_date: today,
-    current_interval_days: 1,
-    consecutive_failures: 0,
-    review_phase: 'short' as const,
-    short_success_count: 0,
-  };
-
-  const { error: updErr } = await supabase
-    .from('review_schedule')
-    .update({ ...legacyPatch, long_success_count: 0 })
-    .in('verse_id', ids);
-
-  if (updErr) {
-    const { error: retryErr } = await supabase
-      .from('review_schedule')
-      .update(legacyPatch)
-      .in('verse_id', ids);
-
-    if (retryErr) throw retryErr;
-  }
-
-  return ids.length;
-}
-
-
 async function updateSchedule(
   verseId: string,
   updates: UpdateScheduleInput
@@ -719,7 +666,6 @@ export function useVerses() {
       getScheduledToday,
       getDashboardSummary,
       updateSchedule,
-      resetAllPracticeToNewVerseState,
       completeLongRemediation,
     }),
     []
@@ -737,7 +683,6 @@ export {
   getScheduledToday,
   logReview,
   normalizeSchedule,
-  resetAllPracticeToNewVerseState,
   updateSchedule,
   updateVerse,
   ymd,

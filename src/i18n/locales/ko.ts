@@ -134,7 +134,7 @@ export const ko = {
   seven: {
     sectionLabel: '7회 체크',
     sectionLabelLongRemedial: '재연습 암송 7회',
-    captionRecite: '완벽하게 7회 암송합니다',
+    captionRecite: '7회 암송합니다',
     captionLongRemedial:
       '장기 간격 검사 미달 후 재연습입니다. {{days}}일 간격 검사까지 7번 암송할 때만 체크하세요.',
     progress: '{{done}} / {{total}} 완료',
@@ -362,19 +362,6 @@ export const ko = {
     annualGoal: '연간 목표',
     annualGoalHint: '올해 추가할 암송 구절 목표 (기본 52)',
     apply: '적용',
-    resetPracticeSection: '연습 초기화',
-    resetPracticeHint:
-      '활성 구절의 복습 일정·연습 기록을 초기화합니다. 구절 본문·참조는 그대로입니다.',
-    resetPracticeBtn: '연습초기화',
-    resetPracticeA11y: '모든 활성 구절의 단기·장기 연습 상태를 새로 저장한 직후로 초기화합니다.',
-    resetPracticeTitle: '연습 초기화',
-    resetPracticeMessage:
-      '저장된 모든 활성 구절의 복습 일정을 초기 상태(단기 Day 1, 오늘 복습)로 되돌리고 연습 기록을 지웁니다. 구절 본문·참조는 그대로입니다. 테스트용 기능입니다.',
-    resetPracticeConfirm: '초기화',
-    resetPracticeDone: '연습 상태를 초기화했습니다.',
-    resetPracticeNothingTitle: '초기화할 구절 없음',
-    resetPracticeNothingBody:
-      '활성으로 저장된 구절이 없습니다. 「관리」에서 구절을 추가한 뒤 다시 시도해 주세요.',
     syncNeedAuth: '로그인하면 동기화가 활성화됩니다.',
     speechSection: '음성 낭독',
     speechHint:
