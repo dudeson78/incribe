@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   label: {
-    fontSize: typography.caption,
+    fontSize: typography.versePreview,
     fontWeight: '700',
     textAlign: 'center',
     letterSpacing: 0.1,
