@@ -9,21 +9,21 @@
 
 :root {
   /* ── Color ── */
-  --color-primary: #2D5016;
-  --color-primary-light: #3D6B20;
-  --color-primary-dark: #1A3A0A;
+  --color-primary: #2B6B8F;
+  --color-primary-light: #4A8FB2;
+  --color-primary-dark: #1A4A66;
   --color-accent: #C8A96E;
   --color-accent-light: #DEC08A;
   --color-accent-muted: #F5EDD8;
-  --color-bg: #FAFAF7;
-  --color-bg-secondary: #F3F3EE;
+  --color-bg: #F5F8FA;
+  --color-bg-secondary: #EEF2F6;
   --color-surface: #FFFFFF;
   --color-text-primary: #1C1C1E;
   --color-text-secondary: #4B5563;
   --color-text-muted: #9CA3AF;
-  --color-border: #E8E8E2;
-  --color-success: #4A7C59;
-  --color-success-bg: #EDF5F0;
+  --color-border: #E0E6EB;
+  --color-success: #3A7D96;
+  --color-success-bg: #E0EEF5;
   --color-warning: #C8A96E;
   --color-warning-bg: #FDF6E8;
   --color-danger: #DC2626;

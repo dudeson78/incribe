@@ -3,7 +3,6 @@ import {
   Animated,
   Easing,
   Image,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -22,16 +21,10 @@ import { SPLASH_FADE_MS, SPLASH_HOLD_MS } from '../theme/motion';
 import { tokens } from '../theme/tokens';
 
 const BRAND_MARK = 'INCRIBE';
-const IS_WEB = Platform.OS === 'web';
 
-/** react-native-web className — TS 기본 ViewProps에는 없음 */
-function webClass(name: string | undefined): Record<string, string> {
-  return IS_WEB && name ? { className: name } : {};
-}
+const SPLASH_GRADIENT = ['#1A4A66', '#2B6B8F', '#1E3D56'] as const;
 
-const SPLASH_GRADIENT = ['#1A3A0A', '#2D5016', '#1C2E0A'] as const;
-
-/** CSS grain pseudo-element와 동일한 SVG 노이즈 패턴 (네이티브) */
+/** SVG 노이즈 패턴 오버레이 */
 const NOISE_PATTERN_URI =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E";
 
@@ -47,8 +40,8 @@ type Props = {
 };
 
 /**
- * 앱 첫 화면 — 진한 녹색 그라데이션, INCRIBE 워드마크, 신 6:6.
- * 웹: splash.css @keyframes. 네이티브: Animated + LinearGradient.
+ * 앱 첫 화면 — 진한 하늘색 그라데이션, INCRIBE 워드마크, 신 6:6.
+ * 웹·네이티브 동일 StyleSheet (CSS 파일 의존 없음).
  */
 export function AppIntroSplash({
   style,
@@ -63,13 +56,11 @@ export function AppIntroSplash({
   const screenOpacity = useRef(new Animated.Value(1)).current;
   const fadeStarted = useRef(false);
 
-  const heroOpacity = useRef(new Animated.Value(IS_WEB ? 1 : 0)).current;
-  const heroTranslateY = useRef(new Animated.Value(IS_WEB ? 0 : 16)).current;
-  const verseOpacity = useRef(new Animated.Value(IS_WEB ? 1 : 0)).current;
+  const heroOpacity = useRef(new Animated.Value(0)).current;
+  const heroTranslateY = useRef(new Animated.Value(16)).current;
+  const verseOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (IS_WEB) return;
-
     Animated.parallel([
       Animated.timing(heroOpacity, {
         toValue: 1,
@@ -111,106 +102,63 @@ export function AppIntroSplash({
     return () => clearTimeout(holdTimer);
   }, [autoFadeOut, onFadeComplete, screenOpacity]);
 
-  const heroBlock = (
-    <>
-      <Text
-        {...webClass('app-intro-splash__tagline')}
-        style={IS_WEB ? undefined : styles.tagline}
-        accessibilityRole="text"
-      >
-        {t('splash.tagline')}
-      </Text>
-      <Text
-        {...webClass('app-intro-splash__brand')}
-        style={IS_WEB ? undefined : styles.brand}
-        accessibilityRole="header"
-      >
-        {BRAND_MARK}
-      </Text>
-    </>
-  );
-
-  const verseBlock = (
-    <>
-      <Text
-        {...webClass('app-intro-splash__verse-body')}
-        style={IS_WEB ? undefined : styles.verseBody}
-        accessibilityRole="text"
-      >
-        {t('splash.verseBody')}
-      </Text>
-      <Text
-        {...webClass('app-intro-splash__verse-ref')}
-        style={IS_WEB ? undefined : styles.verseRef}
-        accessibilityRole="text"
-      >
-        {t('splash.verseRef')}
-      </Text>
-    </>
-  );
-
   return (
     <Animated.View
-      {...webClass('app-intro-splash')}
       style={[
-        !IS_WEB && styles.rootNative,
+        styles.root,
         style,
         { opacity: autoFadeOut ? screenOpacity : 1 },
       ]}
       pointerEvents={showAuthButtons ? 'auto' : 'box-none'}
     >
-      {!IS_WEB ? (
-        <>
-          <LinearGradient
-            colors={[...SPLASH_GRADIENT]}
-            locations={[0, 0.5, 1]}
-            start={{ x: 0.15, y: 0 }}
-            end={{ x: 0.85, y: 1 }}
-            style={StyleSheet.absoluteFill}
-          />
-          <Image
-            source={{ uri: NOISE_PATTERN_URI }}
-            style={styles.noiseOverlay}
-            resizeMode="repeat"
-            accessibilityIgnoresInvertColors
-          />
-        </>
-      ) : null}
+      <LinearGradient
+        colors={[...SPLASH_GRADIENT]}
+        locations={[0, 0.5, 1]}
+        start={{ x: 0.15, y: 0 }}
+        end={{ x: 0.85, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
+      <Image
+        source={{ uri: NOISE_PATTERN_URI }}
+        style={styles.noiseOverlay}
+        resizeMode="repeat"
+        accessibilityIgnoresInvertColors
+      />
 
-      <View
-        {...webClass('app-intro-splash__center')}
-        style={!IS_WEB ? styles.centerNative : undefined}
-      >
-        {IS_WEB ? (
-          <View {...webClass('app-intro-splash__hero')}>{heroBlock}</View>
-        ) : (
-          <Animated.View
-            style={{
-              alignItems: 'center',
+      <View style={styles.center}>
+        <Animated.View
+          style={[
+            styles.hero,
+            {
               opacity: heroOpacity,
               transform: [{ translateY: heroTranslateY }],
-            }}
-          >
-            {heroBlock}
-          </Animated.View>
-        )}
+            },
+          ]}
+        >
+          <Text style={styles.tagline} accessibilityRole="text">
+            {t('splash.tagline')}
+          </Text>
+          <Text style={styles.brand} accessibilityRole="header">
+            {BRAND_MARK}
+          </Text>
+        </Animated.View>
 
-        {IS_WEB ? (
-          <View {...webClass('app-intro-splash__verse-wrap')}>{verseBlock}</View>
-        ) : (
-          <Animated.View
-            style={[styles.verseWrapNative, { opacity: verseOpacity }]}
-          >
-            {verseBlock}
-          </Animated.View>
-        )}
+        <Animated.View
+          style={[styles.verseWrap, { opacity: verseOpacity }]}
+        >
+          <Text style={styles.verseBody} accessibilityRole="text">
+            {t('splash.verseBody')}
+          </Text>
+          <Text style={styles.verseRef} accessibilityRole="text">
+            {t('splash.verseRef')}
+          </Text>
+        </Animated.View>
       </View>
 
       {showAuthButtons ? (
         <View
-          {...webClass('app-intro-splash__auth')}
           style={[
-            !IS_WEB && styles.authRowNative,
+            styles.authRow,
             {
               paddingBottom: insets.bottom + 24,
               paddingHorizontal: 24,
@@ -245,7 +193,7 @@ export function AppIntroSplash({
 }
 
 const styles = StyleSheet.create({
-  rootNative: {
+  root: {
     flex: 1,
     overflow: 'hidden',
   },
@@ -253,12 +201,15 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     opacity: 0.03,
   },
-  centerNative: {
+  center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 28,
     gap: 24,
+  },
+  hero: {
+    alignItems: 'center',
   },
   tagline: {
     fontSize: tokens.fontSize.sm,
@@ -279,7 +230,7 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 40,
   },
-  verseWrapNative: {
+  verseWrap: {
     alignItems: 'center',
     gap: 10,
     maxWidth: 280,
@@ -299,7 +250,7 @@ const styles = StyleSheet.create({
     color: tokens.color.accent,
     textAlign: 'center',
   },
-  authRowNative: {
+  authRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
     gap: 12,

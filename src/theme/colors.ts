@@ -1,18 +1,18 @@
 /**
- * 「말씀의 정원」 팔레트 v2 — Deep Forest · Warm Gold · Warm Off-White
+ * 「말씀의 정원」 팔레트 — Deep Sky · Warm Gold · Cool Off-White
  *
  * 기존 키(forest, orange, cream…)는 유지하되 값만 새 팔레트로 매핑해
  * 전역 import 변경 없이 톤 전환.
  */
 const palette = {
-  primary: '#2D5016',
-  surface: '#1A3A0A',
+  primary: '#2B6B8F',
+  surface: '#1A4A66',
   accent: '#C8A96E',
   text: '#1C1C1E',
   muted: '#6B7280',
-  bg: '#FAFAF7',
+  bg: '#F5F8FA',
   card: '#FFFFFF',
-  success: '#4A7C59',
+  success: '#3A7D96',
   warning: '#C8A96E',
 } as const;
 
@@ -24,7 +24,7 @@ export const colors = {
   success: palette.success,
   warning: palette.warning,
 
-  /** 브랜드 — Deep Forest */
+  /** 브랜드 — Deep Sky */
   forest: palette.primary,
   olive: palette.primary,
 
@@ -32,17 +32,17 @@ export const colors = {
   orange: palette.accent,
   dawn: palette.accent,
 
-  /** 캔버스 — Warm Off-White */
+  /** 캔버스 — Cool Off-White */
   mist: palette.bg,
   background: palette.bg,
   backgroundPrimary: palette.card,
-  backgroundSecondary: '#F0EFE9',
+  backgroundSecondary: '#EEF2F6',
 
   /** 카드·양피지 */
   parchment: palette.card,
   cream: palette.card,
   card: palette.card,
-  creamBorder: '#E8E6E0',
+  creamBorder: '#E0E6EB',
 
   white: '#FFFFFF',
   text: palette.text,
@@ -50,19 +50,19 @@ export const colors = {
   textSecondary: palette.muted,
   textOnDark: '#FFFFFF',
   muted: palette.muted,
-  borderSecondary: '#E0DDD6',
-  borderTertiary: '#EBE9E4',
+  borderSecondary: '#D8DEE5',
+  borderTertiary: '#E8ECF0',
 
   /** 단기 트랙 — 골드 틴트 */
   badgeShortBg: '#F5F0E6',
   badgeShortText: palette.text,
 
-  /** 장기·완료 — Success Green 틴트 */
-  sage: '#E8F0EB',
-  badgeLongBg: '#E8F0EB',
+  /** 장기·완료 — Sky 틴트 */
+  sage: '#E0EEF5',
+  badgeLongBg: '#E0EEF5',
   badgeLongText: palette.text,
-  circleNumBg: '#E8F0EB',
-  successBg: '#E8F0EB',
+  circleNumBg: '#E0EEF5',
+  successBg: '#E0EEF5',
   successBorder: palette.success,
 
   /** 주의·오류 */
@@ -72,21 +72,21 @@ export const colors = {
   dangerSolid: '#9E4B55',
 
   /** 모달 딤 + 버튼 틴트 */
-  overlayBackdrop: 'rgba(26, 58, 10, 0.45)',
-  forestTint: 'rgba(45, 80, 22, 0.10)',
-  forestTintBorder: 'rgba(45, 80, 22, 0.28)',
-  forestTintActive: 'rgba(45, 80, 22, 0.18)',
+  overlayBackdrop: 'rgba(26, 74, 102, 0.45)',
+  forestTint: 'rgba(43, 107, 143, 0.10)',
+  forestTintBorder: 'rgba(43, 107, 143, 0.28)',
+  forestTintActive: 'rgba(43, 107, 143, 0.18)',
   orangeTint: 'rgba(200, 169, 110, 0.20)',
   orangeTintBorder: 'rgba(200, 169, 110, 0.42)',
 
-  /** 말씀 하이라이트 — 웜 톤 보조 */
-  sky: '#EDE8DC',
+  /** 말씀 하이라이트 — 스카이 톤 */
+  sky: '#D6E8F5',
   /** 스플래시·다크 서피스 */
-  skyDeep: palette.surface,
-  pastelBlueBg: '#EDE8DC',
-  pastelBlueBorderSoft: '#DDD6C8',
-  pastelBlueBorder: '#C8A96E',
-  pastelBlueText: palette.text,
+  skyDeep: '#1A4A66',
+  pastelBlueBg: '#D6E8F5',
+  pastelBlueBorderSoft: '#B8D4E8',
+  pastelBlueBorder: '#7AADC8',
+  pastelBlueText: '#4A7A94',
 } as const;
 
 /** 카드 — 흰 배경 + 은은한 그림자 */
