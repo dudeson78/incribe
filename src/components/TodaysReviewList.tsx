@@ -321,10 +321,10 @@ const styles = StyleSheet.create({
     ...shadowMd,
   },
   refHeroBox: {
-    backgroundColor: colors.pastelGreenBg,
+    backgroundColor: colors.pastelApricotBg,
     borderRadius: tokens.radius.md,
     borderWidth: 1,
-    borderColor: colors.pastelGreenBorderSoft,
+    borderColor: colors.pastelApricotBorderSoft,
     minHeight: 120,
     paddingHorizontal: 16,
     paddingVertical: 20,

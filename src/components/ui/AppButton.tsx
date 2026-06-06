@@ -155,8 +155,8 @@ const VARIANTS: Record<
       borderWidth: 1,
       borderColor: colors.pastelApricotBorderSoft,
     },
-    label: { color: colors.pastelApricotText, fontWeight: '700' },
-    spinner: colors.pastelApricotText,
+    label: { color: colors.textPrimary, fontWeight: '700' },
+    spinner: colors.textPrimary,
   },
   /** 키워드 버튼과 동일 — accentMuted 배경 */
   accentMuted: {

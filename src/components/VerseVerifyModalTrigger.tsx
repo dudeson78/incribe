@@ -97,7 +97,7 @@ function VerifyModal({
   visible,
   title,
   onClose,
-  confirmVariant = 'accentMuted',
+  confirmVariant = 'ghost',
   children,
 }: {
   visible: boolean;
@@ -218,7 +218,7 @@ export function VerseVerifyModalTrigger({
     ? t('seven.verifyVerseListenStopA11y')
     : t('seven.verifyVerseListenA11y');
 
-  const verifyBtnIconColor = colors.pastelApricotText;
+  const verifyBtnIconColor = colors.textPrimary;
 
   return (
     <>
@@ -432,8 +432,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   triggerTextAid: {
-    fontWeight: '500',
-    color: colors.orange,
+    fontWeight: '600',
+    color: colors.textPrimary,
   },
   body: {
     ...modalTheme.body,
