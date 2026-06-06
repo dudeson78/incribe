@@ -130,9 +130,6 @@ export function QuizBlankMode({
   const blankChip = feedback === 'bad';
   const hasKeywords = (row.verse.keywords ?? '').trim().length > 0;
   const keywordOnly = roundKey === 0 && hasKeywords;
-  const blankPrompt = keywordOnly
-    ? t('quiz.blankHintKeywords')
-    : t('quiz.blankHint');
 
   const blankInner = (
     <>
@@ -157,7 +154,6 @@ export function QuizBlankMode({
           blankChip && styles.verseCardBad,
         ]}
       >
-        <Text style={quizStyles.prompt}>{blankPrompt}</Text>
         <View style={styles.tokenFlow}>
           {C.tokens.map((tok, ti) => {
             if (!blankSet.has(ti)) {

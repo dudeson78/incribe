@@ -25,11 +25,7 @@ type Props = {
 const MODES: QuizSurfaceMode[] = ['reference', 'blank', 'order'];
 const TRACK_PADDING = 4;
 
-const MODE_ACCENT: Record<QuizSurfaceMode, string> = {
-  reference: tokens.color.primary,
-  blank: tokens.color.accent,
-  order: tokens.color.success,
-};
+const ACTIVE_LABEL_COLOR = tokens.color.primary;
 
 export function QuizModeSelector({ active, onChange, labels }: Props) {
   const labelByMode: Record<QuizSurfaceMode, string> = {
@@ -77,7 +73,6 @@ export function QuizModeSelector({ active, onChange, labels }: Props) {
       {MODES.map((mode) => {
         const on = active === mode;
         const title = labelByMode[mode];
-        const accent = MODE_ACCENT[mode];
         return (
           <Pressable
             key={mode}
@@ -94,7 +89,7 @@ export function QuizModeSelector({ active, onChange, labels }: Props) {
               style={[
                 styles.label,
                 on
-                  ? { color: accent, fontWeight: '600' }
+                  ? { color: ACTIVE_LABEL_COLOR, fontWeight: '600' }
                   : styles.labelIdle,
               ]}
               numberOfLines={1}

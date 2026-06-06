@@ -217,10 +217,6 @@ export const ko = {
     goToVersesCtaA11y: '말씀 관리 탭으로 이동',
     pickVerseA11y: '{{ref}} 퀴즈 시작',
     verseChipSolvedA11y: '{{ref}} 정답 맞춤',
-    blankHint:
-      '빈 칸에는 가려졌던 그대로의 표기를 입력하세요.(띄어쓰기·맞춤법)',
-    blankHintKeywords:
-      '설정해 둔 키워드가 빈 칸입니다. 본문과 같은 표기로 채워 주세요.',
     blankCheck: '정답 확인',
     blankCorrect: '멋져요. 전부 정확해요!',
     blankWrong: '틀린 칸이 있어요. 아래 참고해 보세요.',
