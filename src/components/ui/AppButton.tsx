@@ -119,11 +119,11 @@ const VARIANTS: Record<
     label: { color: colors.textOnDark, fontWeight: '700' },
     spinner: colors.textOnDark,
   },
-  /** 긍정적 1차 CTA — 연간 목표 적용·축하 모달 등 */
+  /** 긍정적 1차 CTA — 브랜드 컬러와 동일하게 통일 */
   accent: {
-    container: { backgroundColor: colors.orange },
-    label: { color: colors.textPrimary, fontWeight: '700' },
-    spinner: colors.textPrimary,
+    container: { backgroundColor: colors.forest },
+    label: { color: colors.textOnDark, fontWeight: '700' },
+    spinner: colors.textOnDark,
   },
   /** 취소·보조 텍스트 버튼 */
   ghost: {

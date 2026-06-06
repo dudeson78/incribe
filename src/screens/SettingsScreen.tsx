@@ -222,8 +222,8 @@ export function SettingsScreen() {
             <AppButton
               label={t('settings.apply')}
               onPress={applyGoal}
-              variant="accent"
-              size="md"
+              variant="primary"
+              size="sm"
               fullWidth={false}
               style={styles.applyBtn}
             />
@@ -354,8 +354,9 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    gap: 10,
+    gap: 8,
     alignItems: 'center',
+    alignSelf: 'flex-start',
     marginBottom: 0,
   },
   accountInner: {
@@ -396,19 +397,21 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   goalInput: {
-    flex: 1,
+    width: 96,
     borderWidth: 1,
     borderColor: `${colors.forest}44`,
     borderRadius: radius.md,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     fontSize: typography.min,
-    fontWeight: '500',
+    fontWeight: '600',
     color: colors.textPrimary,
     backgroundColor: colors.card,
-    minHeight: touchTarget.min,
+    minHeight: touchTarget.min * 0.74,
+    textAlign: 'center',
   },
   applyBtn: {
-    minWidth: touchTarget.min,
+    minWidth: 72,
+    borderRadius: radius.pill,
   },
 });

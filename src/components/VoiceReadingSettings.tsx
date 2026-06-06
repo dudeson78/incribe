@@ -29,6 +29,7 @@ import {
   SPEECH_RATE_MIN,
   type SpeechVoiceOption,
 } from '../types/speechSettings';
+import { AppButton } from './ui/AppButton';
 import { colors, settingsSectionTitle, typography } from '../theme/colors';
 import { cardPadding, cardRadius, radius, touchTarget } from '../theme/layout';
 
@@ -50,7 +51,14 @@ export function VoiceReadingSettings() {
   const [voiceQuery, setVoiceQuery] = useState('');
   const [previewing, setPreviewing] = useState(false);
   const [voicePickerVisible, setVoicePickerVisible] = useState(false);
+  const [draftRate, setDraftRate] = useState(speechSettings.rate);
+  const [draftPitch, setDraftPitch] = useState(speechSettings.pitch);
   const previewRunRef = useRef(0);
+
+  useEffect(() => {
+    setDraftRate(speechSettings.rate);
+    setDraftPitch(speechSettings.pitch);
+  }, [speechSettings.rate, speechSettings.pitch]);
 
   const loadVoices = useCallback(async () => {
     setVoicesLoading(true);
@@ -96,15 +104,24 @@ export function VoiceReadingSettings() {
     ? selectedVoice.name
     : t('settings.speechVoiceSystem');
 
+  function applyDraft() {
+    patchSpeechSettings({ rate: draftRate, pitch: draftPitch });
+  }
+
+  function handleReset() {
+    resetSpeechSettings();
+  }
+
   async function previewSpeech() {
     const runId = ++previewRunRef.current;
     stopSpeech();
     setPreviewing(true);
     try {
-      await speakWithSettings(
-        t('settings.speechPreviewSample'),
-        speechSettings,
-      );
+      await speakWithSettings(t('settings.speechPreviewSample'), {
+        ...speechSettings,
+        rate: draftRate,
+        pitch: draftPitch,
+      });
     } finally {
       if (previewRunRef.current === runId) {
         const still = await isSpeechSpeaking();
@@ -142,20 +159,23 @@ export function VoiceReadingSettings() {
       </View>
 
       <View style={styles.controlGroup}>
-        <View style={styles.sliderHeader}>
-          <Text style={styles.controlLabel}>{t('settings.speechRate')}</Text>
-          <Text style={styles.sliderValue}>{formatSliderValue(speechSettings.rate)}</Text>
-        </View>
+        <Text style={styles.controlLabel}>
+          {t('settings.speechRate')}
+          <Text style={styles.sliderValueInline}>
+            {' '}
+            {formatSliderValue(draftRate)}
+          </Text>
+        </Text>
         <Slider
           style={styles.slider}
           minimumValue={SPEECH_RATE_MIN}
           maximumValue={SPEECH_RATE_MAX}
           step={0.05}
-          value={speechSettings.rate}
-          onValueChange={(rate) => patchSpeechSettings({ rate })}
+          value={draftRate}
+          onValueChange={setDraftRate}
           minimumTrackTintColor={colors.forest}
           maximumTrackTintColor={colors.borderSecondary}
-          thumbTintColor={colors.orange}
+          thumbTintColor={colors.forest}
           accessibilityLabel={t('settings.speechRateA11y')}
         />
         <View style={styles.sliderEnds}>
@@ -165,20 +185,23 @@ export function VoiceReadingSettings() {
       </View>
 
       <View style={styles.controlGroup}>
-        <View style={styles.sliderHeader}>
-          <Text style={styles.controlLabel}>{t('settings.speechPitch')}</Text>
-          <Text style={styles.sliderValue}>{formatSliderValue(speechSettings.pitch)}</Text>
-        </View>
+        <Text style={styles.controlLabel}>
+          {t('settings.speechPitch')}
+          <Text style={styles.sliderValueInline}>
+            {' '}
+            {formatSliderValue(draftPitch)}
+          </Text>
+        </Text>
         <Slider
           style={styles.slider}
           minimumValue={SPEECH_PITCH_MIN}
           maximumValue={SPEECH_PITCH_MAX}
           step={0.05}
-          value={speechSettings.pitch}
-          onValueChange={(pitch) => patchSpeechSettings({ pitch })}
+          value={draftPitch}
+          onValueChange={setDraftPitch}
           minimumTrackTintColor={colors.forest}
           maximumTrackTintColor={colors.borderSecondary}
-          thumbTintColor={colors.orange}
+          thumbTintColor={colors.forest}
           accessibilityLabel={t('settings.speechPitchA11y')}
         />
         <View style={styles.sliderEnds}>
@@ -187,39 +210,44 @@ export function VoiceReadingSettings() {
         </View>
       </View>
 
-      <View style={styles.actions}>
-        <Pressable
-          onPress={() => (previewing ? stopPreview() : void previewSpeech())}
-          style={({ pressed }) => [
-            styles.previewBtn,
-            previewing && styles.previewBtnActive,
-            pressed && styles.previewBtnPressed,
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={
-            previewing
-              ? t('settings.speechPreviewStopA11y')
-              : t('settings.speechPreviewA11y')
-          }
-        >
-          {previewing ? (
-            <ActivityIndicator color={colors.white} size="small" />
-          ) : (
-            <Text style={styles.previewBtnText}>{t('settings.speechPreview')}</Text>
-          )}
-        </Pressable>
+      <Pressable
+        onPress={() => (previewing ? stopPreview() : void previewSpeech())}
+        style={({ pressed }) => [
+          styles.previewLink,
+          pressed && styles.previewLinkPressed,
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel={
+          previewing
+            ? t('settings.speechPreviewStopA11y')
+            : t('settings.speechPreviewA11y')
+        }
+      >
+        {previewing ? (
+          <ActivityIndicator color={colors.forest} size="small" />
+        ) : (
+          <Text style={styles.previewLinkText}>{t('settings.speechPreview')}</Text>
+        )}
+      </Pressable>
 
-        <Pressable
-          onPress={() => resetSpeechSettings()}
-          style={({ pressed }) => [
-            styles.resetBtn,
-            pressed && styles.resetBtnPressed,
-          ]}
-          accessibilityRole="button"
+      <View style={styles.footerActions}>
+        <AppButton
+          label={t('settings.apply')}
+          onPress={applyDraft}
+          variant="primary"
+          size="sm"
+          fullWidth={false}
+          style={styles.miniBtn}
+        />
+        <AppButton
+          label={t('settings.speechReset')}
+          onPress={handleReset}
+          variant="secondary"
+          size="sm"
+          fullWidth={false}
+          style={styles.miniBtn}
           accessibilityLabel={t('settings.speechResetA11y')}
-        >
-          <Text style={styles.resetBtnText}>{t('settings.speechReset')}</Text>
-        </Pressable>
+        />
       </View>
 
       <Modal
@@ -332,7 +360,7 @@ export function VoiceReadingSettings() {
               onPress={() => setVoicePickerVisible(false)}
               style={({ pressed }) => [
                 styles.modalDoneBtn,
-                pressed && styles.previewBtnPressed,
+                pressed && styles.previewLinkPressed,
               ]}
               accessibilityRole="button"
               accessibilityLabel={t('settings.speechVoiceModalDone')}
@@ -370,7 +398,8 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   controlGroup: {
-    gap: 8,
+    gap: 2,
+    marginBottom: 4,
   },
   controlHeader: {
     flexDirection: 'row',
@@ -499,9 +528,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   voiceRowSelected: {
-    backgroundColor: `${colors.orange}16`,
+    backgroundColor: colors.forestTint,
     borderLeftWidth: 3,
-    borderLeftColor: colors.orange,
+    borderLeftColor: colors.forest,
   },
   voiceRowPressed: {
     opacity: 0.9,
@@ -527,72 +556,50 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     lineHeight: 18,
   },
-  sliderHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  sliderValue: {
-    fontSize: typography.min,
-    fontWeight: '700',
+  sliderValueInline: {
+    fontSize: typography.caption,
+    fontWeight: '600',
     color: colors.textPrimary,
-    minWidth: 40,
-    textAlign: 'right',
+    opacity: 0.72,
   },
   slider: {
     width: '100%',
-    height: 40,
+    height: 28,
+    marginVertical: -2,
   },
   sliderEnds: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: -2,
   },
   sliderEndText: {
     fontSize: typography.chip,
     color: colors.textPrimary,
+    opacity: 0.65,
   },
-  actions: {
-    flexDirection: 'row',
-    gap: 10,
-    flexWrap: 'wrap',
-  },
-  previewBtn: {
-    flexGrow: 1,
-    minWidth: 140,
-    minHeight: touchTarget.min,
-    borderRadius: radius.lg,
-    backgroundColor: colors.forest,
-    alignItems: 'center',
+  previewLink: {
+    alignSelf: 'flex-start',
+    minHeight: touchTarget.min * 0.65,
     justifyContent: 'center',
-    paddingHorizontal: 16,
+    paddingVertical: 2,
   },
-  previewBtnActive: {
-    backgroundColor: `${colors.forest}cc`,
+  previewLinkPressed: {
+    opacity: 0.75,
   },
-  previewBtnPressed: {
-    opacity: 0.92,
-  },
-  previewBtnText: {
-    fontSize: typography.min,
+  previewLinkText: {
+    fontSize: typography.caption,
     fontWeight: '700',
-    color: colors.textOnDark,
+    color: colors.forest,
+    textDecorationLine: 'underline',
   },
-  resetBtn: {
-    minHeight: touchTarget.min,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.borderSecondary,
-    backgroundColor: colors.backgroundSecondary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
+  footerActions: {
+    flexDirection: 'row',
+    gap: 8,
+    justifyContent: 'flex-end',
+    marginTop: 2,
   },
-  resetBtnPressed: {
-    opacity: 0.9,
-  },
-  resetBtnText: {
-    fontSize: typography.min,
-    fontWeight: '600',
-    color: colors.textPrimary,
+  miniBtn: {
+    borderRadius: radius.pill,
+    minWidth: 72,
   },
 });
