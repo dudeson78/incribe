@@ -185,28 +185,30 @@ export function HomeScreen() {
           </View>
         ) : null}
 
-        {!loading && !error && savedVerses.length === 0 ? (
-          <EmptyStatePanel
-            variant="seedling"
-            body={t('home.emptyVersesHint', { tab: t('tabs.verses') })}
-          >
-            <AppButton
-              label={t('home.emptyVersesCta', { tab: t('tabs.verses') })}
-              onPress={() => navigation.navigate('VersesTab')}
-              size="md"
-              accessibilityLabel={t('home.emptyVersesCta', {
-                tab: t('tabs.verses'),
-              })}
-            />
-          </EmptyStatePanel>
-        ) : null}
-
         <AnnualGoalCard
           goalTarget={dash.goalTarget}
           versesThisYear={dash.versesThisYear}
         />
 
         {!loading && !error ? <TodayPracticeVerseBadge /> : null}
+
+        {!loading && !error && savedVerses.length === 0 ? (
+          <View style={styles.emptyBelowTrainingBadge}>
+            <EmptyStatePanel
+              variant="seedling"
+              body={t('home.emptyVersesHint', { tab: t('tabs.verses') })}
+            >
+              <AppButton
+                label={t('home.emptyVersesCta', { tab: t('tabs.verses') })}
+                onPress={() => navigation.navigate('VersesTab')}
+                size="md"
+                accessibilityLabel={t('home.emptyVersesCta', {
+                  tab: t('tabs.verses'),
+                })}
+              />
+            </EmptyStatePanel>
+          </View>
+        ) : null}
 
         {!loading && !error && scheduled.length > 0 ? (
           <>
@@ -287,5 +289,8 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     color: colors.textPrimary,
     opacity: 0.92,
+  },
+  emptyBelowTrainingBadge: {
+    marginTop: 12,
   },
 });

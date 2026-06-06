@@ -7,7 +7,7 @@ import {
   type ScheduledRow,
 } from '../hooks/useVerses';
 import { colors, typography } from '../theme/colors';
-import { radius } from '../theme/layout';
+import { cardRadius, radius } from '../theme/layout';
 
 type HomeGroupedReviewProps = {
   items: ScheduledRow[];
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.backgroundPrimary,
-    borderRadius: radius.lg,
+    borderRadius: cardRadius,
     borderWidth: 0.5,
     borderColor: colors.borderTertiary,
     paddingHorizontal: 12,

@@ -7,7 +7,7 @@ import {
 } from './illustrations/EmptyStateIllustration';
 import { FadeIn } from './ui/FadeIn';
 import { colors, typography } from '../theme/colors';
-import { radius } from '../theme/layout';
+import { cardPadding, cardRadius } from '../theme/layout';
 
 type Props = {
   variant: EmptyIllustrationVariant;
@@ -31,11 +31,10 @@ export function EmptyStatePanel({ variant, title, body, children }: Props) {
 const styles = StyleSheet.create({
   wrap: {
     alignItems: 'center',
-    paddingVertical: 20,
-    paddingHorizontal: 16,
-    gap: 10,
+    padding: cardPadding,
+    gap: 8,
     backgroundColor: colors.parchment,
-    borderRadius: radius.xl,
+    borderRadius: cardRadius,
     borderWidth: 1,
     borderColor: colors.creamBorder,
   },

@@ -1,9 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,97 +10,58 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { EmptyStatePanel } from '../EmptyStatePanel';
 import { AppButton } from '../ui/AppButton';
-import { useVerses } from '../../hooks/useVerses';
+import type { ScheduledRow } from '../../hooks/useVerses';
 import { referencesMatch } from '../../lib/referenceMatch';
-import type { VerseWithSchedule } from '../../types/verses';
 import { colors, typography } from '../../theme/colors';
 import { verseTypography } from '../../theme/fonts';
 import { cardPadding, radius } from '../../theme/layout';
 import { parchmentCard } from '../../theme/surfaces';
 
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j]!, a[i]!];
-  }
-  return a;
-}
-
 type Phase = 'input' | 'feedback';
 
-/** 구절 맞추기 (약어 참조 입력) · `embedded`면 상위 스크롤에 붙임 */
-export function QuizReferenceMode({ embedded = false }: { embedded?: boolean }) {
+type Props = {
+  row: ScheduledRow;
+  onBack?: () => void;
+  embedded?: boolean;
+  /** 참조 정답일 때 — 상위에서 구절 칩 완료 색 표시 */
+  onReferenceSolved?: (verseId: string) => void;
+};
+
+/** 구절 맞추기 — 선택한 오늘 훈련 구절의 본문으로 참조 입력 */
+export function QuizReferenceMode({
+  row,
+  embedded = false,
+  onReferenceSolved,
+}: Props) {
   const { t } = useTranslation();
-  const { getAllVerses } = useVerses();
-  const [pool, setPool] = useState<VerseWithSchedule[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState('');
   const [phase, setPhase] = useState<Phase>('input');
   const [lastCorrect, setLastCorrect] = useState<boolean | null>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const rows = await getAllVerses();
-      const active = rows.filter((r) => r.is_active);
-      setPool(shuffle(active));
-      setIndex(0);
-      setAnswer('');
-      setPhase('input');
-      setLastCorrect(null);
-    } catch {
-      setPool([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [getAllVerses]);
+  const text = row.verse.text ?? '';
+  const reference = row.verse.reference ?? '';
 
   useEffect(() => {
-    void load();
-  }, [load]);
-
-  const current = pool[index];
-
-  function onNext() {
-    if (!current || pool.length === 0) return;
-
-    if (phase === 'input') {
-      const ok = referencesMatch(answer, current.reference);
-      setLastCorrect(ok);
-      setPhase('feedback');
-      return;
-    }
-
-    const nextI = (index + 1) % pool.length;
-    setIndex(nextI);
     setAnswer('');
     setPhase('input');
     setLastCorrect(null);
-  }
+  }, [row.verse.id]);
 
-  if (loading) {
-    return (
-      <View style={[styles.loader, embedded && styles.embeddedSection]}>
-        <ActivityIndicator size="large" color={colors.forest} />
-        <Text style={styles.loaderTxt}>{t('quiz.loadingVerses')}</Text>
-      </View>
-    );
-  }
+  function onNext() {
+    if (phase === 'input') {
+      const ok = referencesMatch(answer, reference);
+      setLastCorrect(ok);
+      setPhase('feedback');
+      if (ok) {
+        onReferenceSolved?.(row.verse.id);
+      }
+      return;
+    }
 
-  if (!current || pool.length === 0) {
-    return (
-      <View style={[styles.emptyWrap, embedded && styles.embeddedSection]}>
-        <EmptyStatePanel
-          variant="quiz"
-          title={t('quiz.emptyTitle')}
-          body={t('quiz.emptyBody')}
-        />
-      </View>
-    );
+    setAnswer('');
+    setPhase('input');
+    setLastCorrect(null);
   }
 
   const body = (
@@ -115,7 +74,7 @@ export function QuizReferenceMode({ embedded = false }: { embedded?: boolean }) 
 
       <View style={styles.verseCard}>
         <Text style={styles.quizVerse} selectable>
-          “{current.text}”
+          “{text}”
         </Text>
       </View>
 
@@ -151,7 +110,7 @@ export function QuizReferenceMode({ embedded = false }: { embedded?: boolean }) 
             <Text style={styles.feedbackSub}>
               {t('quiz.answerLine', {
                 label: t('quiz.answerLabel'),
-                ref: current.reference,
+                ref: reference,
               })}
             </Text>
           ) : null}
@@ -195,20 +154,6 @@ const styles = StyleSheet.create({
   scroll: {
     padding: 16,
     paddingBottom: 40,
-  },
-  loader: {
-    paddingVertical: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-  },
-  loaderTxt: {
-    fontSize: typography.min,
-    color: colors.textPrimary,
-  },
-  emptyWrap: {
-    padding: 8,
-    alignItems: 'stretch',
   },
   instructionBox: {
     width: '100%',

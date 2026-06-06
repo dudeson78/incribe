@@ -186,8 +186,8 @@ export const ko = {
     wrong: '아쉬워요',
     answerLabel: '정답',
     answerLine: '{{label}}: {{ref}}',
-    emptyTitle: '퀴즈할 구절이 없습니다',
-    emptyBody: '구절 탭에서 암송할 말씀을 먼저 추가해 주세요.',
+    emptyTitle: '오늘 훈련한 말씀이 없습니다',
+    emptyBody: '오늘 훈련한 말씀이 없으면 이 목록이 비게 됩니다.',
     hintBtn: '힌트',
     check: '확인',
     next: '다음',
@@ -202,14 +202,13 @@ export const ko = {
     modeBlank: '빈칸넣기',
     modeOrder: '순서 맞추기',
     modeDescReference:
-      '본문만 보고 성경 참조를 입력합니다. 활성 저장 구절이 무작위로 출제됩니다.',
+      '오늘 훈련한 말씀을 고른 뒤, 본문만 보고 성경 참조를 입력합니다.',
     modeDescBlank:
-      '오늘 훈련 대상 구절을 선택한 뒤, 일부 단어가 가려진 본문의 빈칸을 채웁니다.',
+      '오늘 훈련한 말씀을 고른 뒤, 일부 단어가 가려진 본문의 빈칸을 채웁니다.',
     modeDescOrder:
-      '오늘 훈련 구절을 고른 뒤, 섞여 있는 문장 조각들을 원래 순서로 맞춥니다.',
-    noTrainingToday: '오늘 훈련할 구절이 없습니다',
-    noTrainingTodayHint:
-      '홈 「말씀훈련」에 오늘 예정 구절이 없으면 이 목록이 비게 됩니다. 새 구절을 추가했거나 다음 복습일만 남았다면, 내일 다시 확인해 보세요.',
+      '오늘 훈련한 말씀을 고른 뒤, 섞여 있는 문장 조각들을 원래 순서로 맞춥니다.',
+    noTrainingToday: '오늘 훈련한 말씀이 없습니다',
+    noTrainingTodayHint: '오늘 훈련한 말씀이 없으면 이 목록이 비게 됩니다.',
     pickVerseA11y: '{{ref}} 퀴즈 시작',
     verseChipSolvedA11y: '{{ref}} 정답 맞춤',
     blankHint:
@@ -352,6 +351,7 @@ export const ko = {
   },
   settings: {
     title: 'MY',
+    screenTitle: '설정',
     annualGoal: '연간 목표',
     annualGoalHint: '올해 추가할 암송 구절 목표 (기본 52)',
     apply: '적용',

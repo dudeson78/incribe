@@ -17,7 +17,7 @@ import { computeAfterReview } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import { useDialog } from '../context/DialogContext';
 import { colors, typography } from '../theme/colors';
-import { cardPadding, radius } from '../theme/layout';
+import { cardPadding, cardRadius, radius } from '../theme/layout';
 import { differenceInCalendarDays, startOfDay } from 'date-fns';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -378,21 +378,20 @@ const styles = StyleSheet.create({
   versePaper: {
     alignSelf: 'stretch',
     backgroundColor: colors.parchment,
-    borderRadius: radius.xl,
+    borderRadius: cardRadius,
     borderWidth: 1,
     borderColor: colors.creamBorder,
     padding: cardPadding,
     alignItems: 'stretch',
-    gap: 14,
+    gap: 10,
   },
   refHeroBox: {
     backgroundColor: colors.sky,
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.pastelBlueBorderSoft,
-    minHeight: 120,
-    paddingHorizontal: 16,
-    paddingVertical: 20,
+    minHeight: 100,
+    padding: cardPadding,
     alignItems: 'center',
     justifyContent: 'center',
   },

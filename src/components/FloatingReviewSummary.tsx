@@ -3,7 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import { colors, typography } from '../theme/colors';
-import { radius, screenPadding } from '../theme/layout';
+import { cardPadding, cardRadius, screenPadding } from '../theme/layout';
 
 type FloatingReviewSummaryProps = {
   doneToday: number;
@@ -42,9 +42,8 @@ const styles = StyleSheet.create({
     left: screenPadding,
     right: screenPadding,
     backgroundColor: colors.parchment,
-    borderRadius: radius.lg,
-    paddingVertical: 14,
-    paddingHorizontal: 18,
+    borderRadius: cardRadius,
+    padding: cardPadding,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

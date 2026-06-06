@@ -87,13 +87,26 @@ export const typography = {
   title: 22,
   goalNumber: 36,
   headline: 26,
+  /** 탭 화면 최상단 목적 타이틀 (24–28px 권장) */
+  screenTitle: 26,
+  /** 카드·블록 내부 섹션 제목 (16–18px) */
+  cardTitle: 17,
 } as const;
 
-/** MY(설정) 화면 섹션 제목 — 연간 목표 등 블록 라벨 */
-export const settingsSectionTitle = {
-  fontSize: typography.headline,
+/** 탭 화면 최상단 — 화면 목적(설정, 훈련 등) */
+export const screenTitleTypography = {
+  fontSize: typography.screenTitle,
   fontWeight: '700' as const,
   color: colors.textPrimary,
+  lineHeight: Math.round(typography.screenTitle * 1.2),
+} as const;
+
+/** 설정·카드 블록 내부 제목 — 연간 목표, 음성 낭독 등 */
+export const settingsSectionTitle = {
+  fontSize: typography.cardTitle,
+  fontWeight: '700' as const,
+  color: colors.textPrimary,
+  lineHeight: Math.round(typography.cardTitle * 1.35),
 } as const;
 
 /** Field labels above inputs — prototype `.input-label` */

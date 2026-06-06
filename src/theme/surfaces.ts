@@ -1,12 +1,12 @@
 import type { ViewStyle } from 'react-native';
 
 import { colors } from './colors';
-import { cardPadding, radius } from './layout';
+import { cardPadding, cardRadius } from './layout';
 
 /** 양피지 말씀·퀴즈 카드 공통 표면 */
 export const parchmentCard: ViewStyle = {
   backgroundColor: colors.parchment,
-  borderRadius: radius.xl,
+  borderRadius: cardRadius,
   borderWidth: 1,
   borderColor: colors.creamBorder,
   padding: cardPadding,
@@ -16,7 +16,7 @@ export const parchmentCard: ViewStyle = {
 export const scrollCardRow: ViewStyle = {
   flexDirection: 'row',
   backgroundColor: colors.parchment,
-  borderRadius: radius.xl,
+  borderRadius: cardRadius,
   borderWidth: 1,
   borderColor: colors.creamBorder,
   marginBottom: 12,

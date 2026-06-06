@@ -31,51 +31,65 @@ export function QuizScreen() {
   const [todayRows, setTodayRows] = useState<ScheduledRow[]>([]);
   const [todayLoading, setTodayLoading] = useState(false);
   const [playRow, setPlayRow] = useState<ScheduledRow | null>(null);
-  /** 빈칸·순서 모드에서 한 번 이상 맞춘 오늘 훈련 구절 id (칩 색 표시) */
+  const [referenceSolvedIds, setReferenceSolvedIds] = useState(
+    () => new Set<string>(),
+  );
   const [blankSolvedIds, setBlankSolvedIds] = useState(() => new Set<string>());
   const [orderSolvedIds, setOrderSolvedIds] = useState(() => new Set<string>());
 
+  /** 세 모드 공통 — 홈에서 오늘 훈련 완료한 구절만 */
+  const quizVerseRows = useMemo(
+    () => todayRows.filter((r) => r.todaySessionRecordedSuccess ?? false),
+    [todayRows],
+  );
+
   const solvedVerseSet = useMemo(() => {
+    if (mode === 'reference') return referenceSolvedIds;
     if (mode === 'blank') return blankSolvedIds;
     if (mode === 'order') return orderSolvedIds;
     return null;
-  }, [mode, blankSolvedIds, orderSolvedIds]);
+  }, [mode, referenceSolvedIds, blankSolvedIds, orderSolvedIds]);
 
   const loadToday = useCallback(async () => {
     setTodayLoading(true);
     try {
       const rows = await getScheduledToday();
       setTodayRows(rows);
-      /** 로드 완료 시에만 초기 선택(뒤로/오류 해제 후에는 사용자가 목록만 볼 수 있도록 자동 재선택 안 함) */
-      if (mode === 'blank' || mode === 'order') {
-        setPlayRow((prev) => {
-          if (rows.length === 0) return null;
-          if (prev && rows.some((r) => r.verse.id === prev.verse.id)) {
-            return prev;
-          }
-          return null;
-        });
-      }
+      const trainedRows = rows.filter(
+        (r) => r.todaySessionRecordedSuccess ?? false,
+      );
+      setPlayRow((prev) => {
+        if (trainedRows.length === 0) return null;
+        if (prev && trainedRows.some((r) => r.verse.id === prev.verse.id)) {
+          return prev;
+        }
+        return null;
+      });
     } catch {
       setTodayRows([]);
-      if (mode === 'blank' || mode === 'order') {
-        setPlayRow(null);
-      }
+      setPlayRow(null);
     } finally {
       setTodayLoading(false);
     }
-  }, [getScheduledToday, mode]);
+  }, [getScheduledToday]);
 
   useEffect(() => {
-    if (mode === 'blank' || mode === 'order') {
-      void loadToday();
-    }
-  }, [mode, loadToday]);
+    void loadToday();
+  }, [loadToday]);
 
   function onModeChange(next: QuizSurfaceMode) {
     setMode(next);
     setPlayRow(null);
   }
+
+  const onReferenceSolved = useCallback((verseId: string) => {
+    setReferenceSolvedIds((prev) => {
+      if (prev.has(verseId)) return prev;
+      const next = new Set(prev);
+      next.add(verseId);
+      return next;
+    });
+  }, []);
 
   const onBlankSolved = useCallback((verseId: string) => {
     setBlankSolvedIds((prev) => {
@@ -98,6 +112,10 @@ export function QuizScreen() {
   function clearDailyPlaySelection() {
     setPlayRow(null);
   }
+
+  const playRowInList =
+    playRow != null &&
+    quizVerseRows.some((r) => r.verse.id === playRow.verse.id);
 
   return (
     <SafeAreaView style={styles.shell} edges={['top']}>
@@ -124,50 +142,48 @@ export function QuizScreen() {
               order: t('quiz.modeOrder'),
             }}
           />
-          {mode === 'reference' ? (
-            <QuizReferenceMode embedded />
+
+          {todayLoading ? (
+            <View style={styles.loader}>
+              <ActivityIndicator size="large" color={colors.forest} />
+              <Text style={styles.loaderTxt}>{t('quiz.loadingToday')}</Text>
+            </View>
           ) : (
-            <>
-              {todayLoading ? (
-                <View style={styles.loader}>
-                  <ActivityIndicator size="large" color={colors.forest} />
-                  <Text style={styles.loaderTxt}>{t('quiz.loadingToday')}</Text>
-                </View>
-              ) : (
-                <QuizTodayVerseList
-                  rows={todayRows}
-                  loading={false}
-                  embedded
-                  compactChipRow
-                  selectedVerseId={playRow?.verse.id ?? null}
-                  solvedVerseIds={solvedVerseSet}
-                  onPick={setPlayRow}
-                />
-              )}
-              {!todayLoading &&
-              playRow &&
-              mode === 'blank' &&
-              todayRows.some((r) => r.verse.id === playRow.verse.id) ? (
-                <QuizBlankMode
-                  embedded
-                  row={playRow}
-                  onBack={clearDailyPlaySelection}
-                  onBlankSolved={onBlankSolved}
-                />
-              ) : null}
-              {!todayLoading &&
-              playRow &&
-              mode === 'order' &&
-              todayRows.some((r) => r.verse.id === playRow.verse.id) ? (
-                <QuizOrderMode
-                  embedded
-                  row={playRow}
-                  onBack={clearDailyPlaySelection}
-                  onOrderSolved={onOrderSolved}
-                />
-              ) : null}
-            </>
+            <QuizTodayVerseList
+              rows={quizVerseRows}
+              loading={false}
+              embedded
+              compactChipRow
+              selectedVerseId={playRow?.verse.id ?? null}
+              solvedVerseIds={solvedVerseSet}
+              onPick={setPlayRow}
+            />
           )}
+
+          {!todayLoading && playRow && playRowInList && mode === 'reference' ? (
+            <QuizReferenceMode
+              embedded
+              row={playRow}
+              onBack={clearDailyPlaySelection}
+              onReferenceSolved={onReferenceSolved}
+            />
+          ) : null}
+          {!todayLoading && playRow && playRowInList && mode === 'blank' ? (
+            <QuizBlankMode
+              embedded
+              row={playRow}
+              onBack={clearDailyPlaySelection}
+              onBlankSolved={onBlankSolved}
+            />
+          ) : null}
+          {!todayLoading && playRow && playRowInList && mode === 'order' ? (
+            <QuizOrderMode
+              embedded
+              row={playRow}
+              onBack={clearDailyPlaySelection}
+              onOrderSolved={onOrderSolved}
+            />
+          ) : null}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

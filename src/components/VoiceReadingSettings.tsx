@@ -30,7 +30,7 @@ import {
   type SpeechVoiceOption,
 } from '../types/speechSettings';
 import { colors, settingsSectionTitle, typography } from '../theme/colors';
-import { radius, touchTarget } from '../theme/layout';
+import { cardPadding, cardRadius, radius, touchTarget } from '../theme/layout';
 
 function formatSliderValue(n: number): string {
   return n.toFixed(2).replace(/\.?0+$/, '');
@@ -350,11 +350,11 @@ export function VoiceReadingSettings() {
 
 const styles = StyleSheet.create({
   block: {
-    gap: 12,
-    padding: 18,
-    marginBottom: 14,
+    gap: 8,
+    padding: cardPadding,
+    marginBottom: 10,
     backgroundColor: colors.card,
-    borderRadius: radius.lg,
+    borderRadius: cardRadius,
     borderWidth: 1,
     borderColor: `${colors.forest}18`,
   },
@@ -444,12 +444,12 @@ const styles = StyleSheet.create({
   },
   modalCard: {
     backgroundColor: colors.parchment,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingHorizontal: 18,
-    paddingTop: 16,
-    paddingBottom: 24,
-    gap: 12,
+    borderTopLeftRadius: cardRadius,
+    borderTopRightRadius: cardRadius,
+    paddingHorizontal: cardPadding,
+    paddingTop: cardPadding,
+    paddingBottom: cardPadding,
+    gap: 8,
     maxHeight: '82%',
   },
   modalHeader: {

@@ -18,8 +18,19 @@ import { useBottomTabScrollPadding } from '../hooks/useBottomTabScrollPadding';
 import { useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import { supabase } from '../supabase/client';
-import { colors, settingsSectionTitle, typography } from '../theme/colors';
-import { radius, screenPadding, touchTarget } from '../theme/layout';
+import {
+  colors,
+  screenTitleTypography,
+  settingsSectionTitle,
+  typography,
+} from '../theme/colors';
+import {
+  cardPadding,
+  cardRadius,
+  radius,
+  screenPadding,
+  touchTarget,
+} from '../theme/layout';
 
 const DEFAULT_GOAL = 52;
 
@@ -156,36 +167,41 @@ export function SettingsScreen() {
 
   return (
     <SafeAreaView style={styles.shell} edges={['top']}>
-      {showMyAccountBar ? (
-        <View style={styles.myProfileBar}>
-          <Text
-            style={styles.myProfileName}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            accessibilityLabel={t('account.headerSignedInAsA11y', {
-              name: authProfile.displayName,
-            })}
-          >
-            {authProfile.displayName}
-          </Text>
-          <Pressable
-            onPress={() => void handleSignOut()}
-            hitSlop={10}
-            style={({ pressed }) => [
-              styles.myProfileSignOut,
-              pressed && { opacity: 0.82 },
-              authBusy && styles.authBtnGhost,
-            ]}
-            disabled={authBusy}
-            accessibilityRole="button"
-            accessibilityLabel={t('account.signOut')}
-          >
-            <Text style={styles.myProfileSignOutText}>
-              {t('account.signOut')}
+      <View style={styles.pageHeader}>
+        <Text style={styles.screenTitle} accessibilityRole="header">
+          {t('settings.screenTitle')}
+        </Text>
+        {showMyAccountBar ? (
+          <View style={styles.myProfileBar}>
+            <Text
+              style={styles.myProfileName}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              accessibilityLabel={t('account.headerSignedInAsA11y', {
+                name: authProfile.displayName,
+              })}
+            >
+              {authProfile.displayName}
             </Text>
-          </Pressable>
-        </View>
-      ) : null}
+            <Pressable
+              onPress={() => void handleSignOut()}
+              hitSlop={10}
+              style={({ pressed }) => [
+                styles.myProfileSignOut,
+                pressed && { opacity: 0.82 },
+                authBusy && styles.authBtnGhost,
+              ]}
+              disabled={authBusy}
+              accessibilityRole="button"
+              accessibilityLabel={t('account.signOut')}
+            >
+              <Text style={styles.myProfileSignOutText}>
+                {t('account.signOut')}
+              </Text>
+            </Pressable>
+          </View>
+        ) : null}
+      </View>
       <ScrollView
         contentContainerStyle={[
           styles.scroll,
@@ -278,21 +294,31 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  pageHeader: {
+    paddingHorizontal: screenPadding,
+    paddingTop: 8,
+    paddingBottom: 10,
+    gap: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.borderTertiary,
+    backgroundColor: colors.background,
+  },
+  screenTitle: {
+    ...screenTitleTypography,
+  },
   myProfileBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: screenPadding,
-    paddingVertical: 10,
     gap: 12,
-    backgroundColor: colors.backgroundPrimary,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.borderTertiary,
+    paddingTop: 2,
   },
   myProfileName: {
     flex: 1,
     minWidth: 0,
-    ...settingsSectionTitle,
+    fontSize: typography.caption,
+    fontWeight: '600',
+    color: colors.textPrimary,
   },
   myProfileSignOut: {
     flexShrink: 0,
@@ -307,15 +333,15 @@ const styles = StyleSheet.create({
   },
   scroll: {
     paddingHorizontal: screenPadding,
-    paddingTop: screenPadding,
+    paddingTop: 14,
     flexGrow: 1,
   },
   settingBlock: {
-    gap: 12,
-    padding: 18,
-    marginBottom: 14,
+    gap: 8,
+    padding: cardPadding,
+    marginBottom: 10,
     backgroundColor: colors.card,
-    borderRadius: radius.lg,
+    borderRadius: cardRadius,
     borderWidth: 1,
     borderColor: colors.forestTint,
   },
@@ -376,7 +402,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    fontSize: typography.body,
+    fontSize: typography.min,
+    fontWeight: '500',
     color: colors.textPrimary,
     backgroundColor: colors.card,
     minHeight: touchTarget.min,

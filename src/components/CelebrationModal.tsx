@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { AppButton } from './ui/AppButton';
 import { FadeModal } from './ui/FadeModal';
 import { colors, typography } from '../theme/colors';
-import { radius } from '../theme/layout';
+import { cardPadding, cardRadius } from '../theme/layout';
 
 export type CelebrationVariant =
   | 'shortDailyComplete'
@@ -151,12 +151,12 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.parchment,
-    borderRadius: radius.xl,
-    padding: 28,
+    borderRadius: cardRadius,
+    padding: cardPadding,
     alignItems: 'center',
     borderWidth: 1.5,
     borderColor: colors.creamBorder,
-    gap: 12,
+    gap: 8,
     zIndex: 1,
     width: '100%',
     maxWidth: 360,

@@ -29,13 +29,20 @@ import type { VersesStackParamList } from '../navigation/types';
 import { colors, typography } from '../theme/colors';
 import { verseTypography } from '../theme/fonts';
 import { modalTheme } from '../theme/modal';
-import { cardPadding, hitSlopComfortable, radius, screenPadding, touchTarget } from '../theme/layout';
+import {
+  cardPadding,
+  cardRadius,
+  hitSlopComfortable,
+  radius,
+  screenPadding,
+  touchTarget,
+} from '../theme/layout';
 import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<VersesStackParamList, 'VerseList'>;
 
 export function VerseListScreen({ navigation }: Props) {
-  // 안드로이드는 탭바가 화면에 겹쳐 떠서(absolute) 목록 맨 아래(가장 먼저 추가한) 구절이 가려질 수 있어 여유를 넉넉히 둔다.
+  // ?????? ??? ??? ?? ??(absolute) ?? ? ??(?? ?? ???) ??? ??? ? ?? ??? ??? ??.
   const tabScrollPadding = useBottomTabScrollPadding(56);
   const { t } = useTranslation();
   const dialog = useDialog();
@@ -418,7 +425,7 @@ export function VerseListScreen({ navigation }: Props) {
                 <Text style={styles.keywordModalBodyText} selectable>
                   {(keywordModal.text ?? '').trim().length > 0
                     ? keywordModal.text
-                    : '—'}
+                    : '?'}
                 </Text>
               </ScrollView>
             ) : null}
@@ -496,7 +503,7 @@ export function VerseListScreen({ navigation }: Props) {
                 <Text style={styles.keywordModalBodyText} selectable>
                   {(mnemonicsModal.text ?? '').trim().length > 0
                     ? mnemonicsModal.text
-                    : '—'}
+                    : '?'}
                 </Text>
               </ScrollView>
             ) : null}
@@ -574,7 +581,7 @@ export function VerseListScreen({ navigation }: Props) {
                 <Text style={styles.keywordModalBodyText} selectable>
                   {(remaModal.text ?? '').trim().length > 0
                     ? remaModal.text
-                    : '—'}
+                    : '?'}
                 </Text>
               </ScrollView>
             ) : null}
@@ -641,7 +648,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'stretch',
     backgroundColor: colors.parchment,
-    borderRadius: radius.xl,
+    borderRadius: cardRadius,
     marginBottom: 12,
     borderWidth: 1,
     borderColor: colors.creamBorder,

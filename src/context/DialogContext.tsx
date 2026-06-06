@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { AppButton } from '../components/ui/AppButton';
 import { FadeModal } from '../components/ui/FadeModal';
 import { colors, typography } from '../theme/colors';
-import { radius } from '../theme/layout';
+import { cardPadding, cardRadius } from '../theme/layout';
 
 type ConfirmOptions = {
   title?: string;
@@ -157,16 +157,16 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 400,
     backgroundColor: colors.parchment,
-    borderRadius: radius.xl,
+    borderRadius: cardRadius,
     borderWidth: 1.5,
     borderColor: colors.creamBorder,
     overflow: 'hidden',
   },
   body: {
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    paddingBottom: 20,
-    gap: 10,
+    paddingHorizontal: cardPadding,
+    paddingTop: cardPadding,
+    paddingBottom: cardPadding,
+    gap: 8,
   },
   title: {
     fontSize: typography.refLarge,
@@ -180,9 +180,9 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   actions: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-    paddingTop: 12,
+    paddingHorizontal: cardPadding,
+    paddingBottom: cardPadding,
+    paddingTop: 10,
     borderTopWidth: 1,
     borderTopColor: colors.borderTertiary,
     backgroundColor: colors.backgroundSecondary,

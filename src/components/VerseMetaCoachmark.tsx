@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { AppButton } from './ui/AppButton';
 import { colors, typography } from '../theme/colors';
-import { radius } from '../theme/layout';
+import { cardPadding, cardRadius } from '../theme/layout';
 
 const STORAGE_KEY = '@inscribe/coachmark_verse_meta_v1';
 
@@ -60,8 +60,8 @@ export function VerseMetaCoachmark() {
 const styles = StyleSheet.create({
   card: {
     marginBottom: 14,
-    padding: 16,
-    borderRadius: radius.lg,
+    padding: cardPadding,
+    borderRadius: cardRadius,
     backgroundColor: colors.sky,
     borderWidth: 1,
     borderColor: colors.pastelBlueBorderSoft,

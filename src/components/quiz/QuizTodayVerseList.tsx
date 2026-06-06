@@ -5,7 +5,13 @@ import type { ScheduledRow } from '../../hooks/useVerses';
 import { EmptyStatePanel } from '../EmptyStatePanel';
 import { colors, typography } from '../../theme/colors';
 import { verseTypography } from '../../theme/fonts';
-import { radius, screenPadding, touchTarget } from '../../theme/layout';
+import {
+  cardPadding,
+  cardRadius,
+  radius,
+  screenPadding,
+  touchTarget,
+} from '../../theme/layout';
 
 type Props = {
   rows: ScheduledRow[];
@@ -212,11 +218,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: colors.parchment,
-    borderRadius: radius.xl,
+    borderRadius: cardRadius,
     borderWidth: 1,
     borderColor: colors.creamBorder,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    padding: cardPadding,
     minHeight: touchTarget.min + 4,
     marginBottom: 4,
     gap: 10,

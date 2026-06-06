@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import { colors, typography } from './colors';
 import { verseTypography } from './fonts';
-import { radius } from './layout';
+import { cardPadding, cardRadius, radius } from './layout';
 
 /** 앱 전역 모달 톤 — parchment·overlay·serif 본문 통일 */
 export const modalTheme = StyleSheet.create({
@@ -25,11 +25,11 @@ export const modalTheme = StyleSheet.create({
     width: '100%',
     maxWidth: 400,
     backgroundColor: colors.parchment,
-    borderRadius: radius.xl,
+    borderRadius: cardRadius,
     borderWidth: 1,
     borderColor: colors.creamBorder,
-    padding: 20,
-    gap: 14,
+    padding: cardPadding,
+    gap: 10,
     zIndex: 1,
     maxHeight: '82%',
   },
