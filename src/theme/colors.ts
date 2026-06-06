@@ -87,11 +87,17 @@ export const colors = {
   pastelBlueBorderSoft: '#B8D4E8',
   pastelBlueBorder: '#7AADC8',
   pastelBlueText: '#4A7A94',
-  /** 말씀확인·말씀듣기 등 — 파스텔 연두 */
+  /** 말씀 참조 박스 등 — 파스텔 연두 */
   pastelGreenBg: '#D4EFC8',
   pastelGreenBorderSoft: '#A8D8A0',
   pastelGreenBorder: '#7CB87A',
   pastelGreenText: '#2D5038',
+  /** 키워드·연상기법·레마 보조 버튼 */
+  accentMuted: '#F5EDD8',
+  /** 말씀확인·말씀듣기 — 미완료 칩과 동일 살구 파스텔 */
+  pastelApricotBg: '#FDF6E8',
+  pastelApricotBorderSoft: 'rgba(200, 169, 110, 0.42)',
+  pastelApricotText: '#C8A96E',
 } as const;
 
 /** 카드 — 흰 배경 + 은은한 그림자 */

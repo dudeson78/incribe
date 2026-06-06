@@ -18,7 +18,9 @@ export type AppButtonVariant =
   | 'danger'
   | 'accent'
   | 'ghost'
-  | 'pastelGreen';
+  | 'pastelGreen'
+  | 'pastelApricot'
+  | 'accentMuted';
 export type AppButtonSize = 'sm' | 'md' | 'lg';
 
 type Props = {
@@ -136,7 +138,7 @@ const VARIANTS: Record<
     label: { color: colors.textPrimary, fontWeight: '600' },
     spinner: colors.textPrimary,
   },
-  /** 파스텔 연두 — 말씀확인·말씀듣기 등 */
+  /** 파스텔 연두 */
   pastelGreen: {
     container: {
       backgroundColor: colors.pastelGreenBg,
@@ -145,6 +147,24 @@ const VARIANTS: Record<
     },
     label: { color: colors.pastelGreenText, fontWeight: '700' },
     spinner: colors.pastelGreenText,
+  },
+  /** 파스텔 살구 — 말씀확인·말씀듣기 (미완료 칩 톤) */
+  pastelApricot: {
+    container: {
+      backgroundColor: colors.pastelApricotBg,
+      borderWidth: 1,
+      borderColor: colors.pastelApricotBorderSoft,
+    },
+    label: { color: colors.pastelApricotText, fontWeight: '700' },
+    spinner: colors.pastelApricotText,
+  },
+  /** 키워드 버튼과 동일 — accentMuted 배경 */
+  accentMuted: {
+    container: {
+      backgroundColor: colors.accentMuted,
+    },
+    label: { color: colors.orange, fontWeight: '700' },
+    spinner: colors.orange,
   },
 };
 

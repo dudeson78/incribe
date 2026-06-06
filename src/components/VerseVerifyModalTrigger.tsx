@@ -16,7 +16,7 @@ import {
   speakVerseOnce,
 } from '../lib/verseCardSpeech';
 import { toSpeakableReference } from '../lib/speakableReference';
-import { AppButton } from './ui/AppButton';
+import { AppButton, type AppButtonVariant } from './ui/AppButton';
 import { FadeModal } from './ui/FadeModal';
 import { colors, typography } from '../theme/colors';
 import { radius, touchTarget } from '../theme/layout';
@@ -97,11 +97,13 @@ function VerifyModal({
   visible,
   title,
   onClose,
+  confirmVariant = 'accentMuted',
   children,
 }: {
   visible: boolean;
   title: string;
   onClose: () => void;
+  confirmVariant?: AppButtonVariant;
   children: ReactNode;
 }) {
   const { t } = useTranslation();
@@ -128,6 +130,7 @@ function VerifyModal({
           <AppButton
             label={t('common.ok')}
             onPress={onClose}
+            variant={confirmVariant}
             size="md"
             accessibilityLabel={t('common.ok')}
           />
@@ -215,7 +218,7 @@ export function VerseVerifyModalTrigger({
     ? t('seven.verifyVerseListenStopA11y')
     : t('seven.verifyVerseListenA11y');
 
-  const verifyBtnIconColor = colors.pastelGreenText;
+  const verifyBtnIconColor = colors.pastelApricotText;
 
   return (
     <>
@@ -227,7 +230,7 @@ export function VerseVerifyModalTrigger({
               if (disabled) return;
               setScriptureVisible(true);
             }}
-            variant="pastelGreen"
+            variant="pastelApricot"
             size="lg"
             fullWidth={false}
             disabled={disabled}
@@ -240,7 +243,7 @@ export function VerseVerifyModalTrigger({
           <AppButton
             label={listenLabel}
             onPress={onListenPress}
-            variant="pastelGreen"
+            variant="pastelApricot"
             size="lg"
             fullWidth={false}
             disabled={disabled || !body}
@@ -320,6 +323,7 @@ export function VerseVerifyModalTrigger({
         visible={scriptureVisible}
         title={refTrimmed}
         onClose={() => setScriptureVisible(false)}
+        confirmVariant="pastelApricot"
       >
         <Text style={styles.body} selectable>
           {body}
@@ -428,8 +432,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   triggerTextAid: {
-    fontWeight: '600',
-    color: colors.textPrimary,
+    fontWeight: '500',
+    color: colors.orange,
   },
   body: {
     ...modalTheme.body,
