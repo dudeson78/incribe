@@ -18,7 +18,6 @@ import { TodayPracticeVerseBadge } from '../components/TodayPracticeVerseBadge';
 import { TodaysReviewList } from '../components/TodaysReviewList';
 import {
   useVerses,
-  orderTodayScheduledRows,
   sortScheduledForMemorizeOrder,
   type DashboardSummary,
   type ScheduledRow,
@@ -118,14 +117,6 @@ export function HomeScreen() {
     if (scheduled.length === 0 || pendingSessions.length > 0) return undefined;
     return t('memorize.allSessionsDoneForToday');
   }, [pendingSessions.length, scheduled.length, t]);
-
-  const homeTrainingOrderVerseIds = useMemo(
-    () =>
-      scheduled.length === 0
-        ? ([] as string[])
-        : orderTodayScheduledRows(scheduled).map((r) => r.verse.id),
-    [scheduled],
-  );
 
   const itemsForTraining = useMemo(() => {
     const base = sortScheduledForMemorizeOrder(pendingSessions);
@@ -240,12 +231,6 @@ export function HomeScreen() {
               }
               items={itemsForTraining}
               loading={loading}
-              plannedSessionTotal={scheduled.length}
-              homeTrainingOrderVerseIds={
-                homeTrainingOrderVerseIds.length > 0
-                  ? homeTrainingOrderVerseIds
-                  : undefined
-              }
               logReview={logReview}
               completeLongRemediation={completeLongRemediation}
               alternateEmptyCaption={trainingEmptyCaption}

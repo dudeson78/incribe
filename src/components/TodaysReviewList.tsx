@@ -71,16 +71,6 @@ type SessionEndPrompt = {
 type TodaysReviewListProps = {
   items: ScheduledRow[];
   loading: boolean;
-  /**
-   * 오늘 훈련 일정 구절 수(완료·미완료 포함 전체).
-   * 주면 훈련카드 제목 current/total이 홈 「오늘 훈련구절」과 같은 기준으로 유지된다.
-   */
-  plannedSessionTotal?: number;
-  /**
-   * 홈 「오늘 훈련구절」과 같은 순서의 verse id 목록이면,
-   * 훈련카드 제목의 순번(current)이 해당 목록 안에서 몇 번째인지 표시된다.
-   */
-  homeTrainingOrderVerseIds?: readonly string[];
   /** 빈 목록일 때 우선 표시할 문구(예: 오늘 목록 구절은 모두 세션 완료) */
   alternateEmptyCaption?: string;
   onLogged?: () => void | Promise<void>;
@@ -91,8 +81,6 @@ type TodaysReviewListProps = {
 export function TodaysReviewList({
   items,
   loading,
-  plannedSessionTotal,
-  homeTrainingOrderVerseIds,
   alternateEmptyCaption,
   onLogged,
   logReview,
@@ -108,8 +96,6 @@ export function TodaysReviewList({
   const sessionEndRef = useRef<SessionEndPrompt | null>(null);
   sessionEndRef.current = sessionEnd;
   const [sessionBusy, setSessionBusy] = useState(false);
-  /** 이번 암송 훈련 진입 후 한 번이라도 불러온 최대 예정 건수(복습 후에도 분모 유지) */
-  const [sessionPeakTotal, setSessionPeakTotal] = useState(0);
   /** 현재 순서 중 몇 번째 훈련 카드만 표시할지 */
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -119,14 +105,6 @@ export function TodaysReviewList({
     if (!row) return null;
     return buildShortDailyNextTrainingSubtitle(row.schedule, t);
   }, [sessionEnd, items, t]);
-
-  useEffect(() => {
-    if (items.length === 0) {
-      setSessionPeakTotal(0);
-      return;
-    }
-    setSessionPeakTotal((p) => Math.max(p, items.length));
-  }, [items.length]);
 
   useEffect(() => {
     setActiveIndex((i) =>
@@ -224,30 +202,6 @@ export function TodaysReviewList({
   const safeIndex = Math.min(activeIndex, Math.max(0, items.length - 1));
   const { verse, schedule } = items[safeIndex]!;
 
-  /** 분모: 부모 계획 수·큐 참고 */
-  const plannedTotalNormalized =
-    typeof plannedSessionTotal === 'number' && plannedSessionTotal > 0
-      ? plannedSessionTotal
-      : undefined;
-  const queueTotalShown = plannedTotalNormalized ?? Math.max(sessionPeakTotal, items.length);
-
-  const homeIx =
-    homeTrainingOrderVerseIds && homeTrainingOrderVerseIds.length > 0
-      ? homeTrainingOrderVerseIds.indexOf(verse.id)
-      : -1;
-
-  /** 홈 목록 순서 우선 · 없거나 찾기 실패 시 기존 «남은 큐 순」 공식 */
-  const rawSequentialOrdinal =
-    queueTotalShown - items.length + 1 + safeIndex;
-  const ordinalFromSequential = Math.min(
-    queueTotalShown,
-    Math.max(1, rawSequentialOrdinal),
-  );
-  const queueOrdinalShown =
-    homeIx >= 0
-      ? Math.min(queueTotalShown, homeIx + 1)
-      : ordinalFromSequential;
-
   const remedialShort =
     schedule.review_phase === 'short' &&
     schedule.current_interval_days > 1;
@@ -266,21 +220,6 @@ export function TodaysReviewList({
 
   return (
     <View style={styles.list}>
-      <Text
-        style={styles.progressHeader}
-        accessibilityRole="text"
-        accessibilityLiveRegion="polite"
-        accessibilityLabel={t('memorize.trainingCardProgressA11y', {
-          current: queueOrdinalShown,
-          total: queueTotalShown,
-        })}
-      >
-        {t('memorize.trainingCardProgress', {
-          current: queueOrdinalShown,
-          total: queueTotalShown,
-        })}
-      </Text>
-
       <FadeIn key={verse.id} style={styles.block}>
         <View style={styles.versePaper}>
           <View
@@ -356,12 +295,6 @@ const styles = StyleSheet.create({
     marginTop: 14,
     marginBottom: 24,
   },
-  progressHeader: {
-    fontSize: tokens.fontSize.xl,
-    fontWeight: '700',
-    color: tokens.color.textPrimary,
-    letterSpacing: 0.1,
-  },
   loader: {
     marginTop: 14,
     paddingVertical: 32,
@@ -380,15 +313,21 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     backgroundColor: tokens.color.surface,
     borderRadius: tokens.radius.lg,
+    borderWidth: 1,
+    borderColor: tokens.color.border,
     padding: 16,
     alignItems: 'stretch',
-    gap: 16,
+    gap: 14,
     ...shadowMd,
   },
   refHeroBox: {
-    backgroundColor: tokens.color.primary,
-    borderRadius: tokens.radius.lg,
-    padding: 24,
+    backgroundColor: colors.sky,
+    borderRadius: tokens.radius.md,
+    borderWidth: 1,
+    borderColor: colors.pastelBlueBorderSoft,
+    minHeight: 120,
+    paddingHorizontal: 16,
+    paddingVertical: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -396,9 +335,9 @@ const styles = StyleSheet.create({
     width: '100%',
     fontFamily: fontFamilies.verseMedium,
     fontSize: tokens.fontSize.xxxl,
-    fontWeight: '700',
-    color: tokens.color.textOnDark,
+    fontWeight: '800',
+    color: tokens.color.textPrimary,
     textAlign: 'center',
-    lineHeight: Math.round(tokens.fontSize.xxxl * 1.25),
+    lineHeight: Math.round(tokens.fontSize.xxxl * 1.2),
   },
 });

@@ -1,6 +1,14 @@
 import type { NavigationProp } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import type { ScheduledRow } from '../../hooks/useVerses';
@@ -11,6 +19,10 @@ import { colors, typography } from '../../theme/colors';
 import { verseTypography } from '../../theme/fonts';
 import { screenPadding } from '../../theme/layout';
 import { tokens } from '../../theme/tokens';
+
+const VERSE_CHIP_COLUMNS = 4;
+const VERSE_CHIP_GAP = 8;
+const VERSE_CHIP_HEIGHT = 44;
 
 type Props = {
   rows: ScheduledRow[];
@@ -40,6 +52,16 @@ export function QuizTodayVerseList({
 }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp<RootTabParamList>>();
+  const { width: windowWidth } = useWindowDimensions();
+  const [chipWrapWidth, setChipWrapWidth] = useState(0);
+
+  const chipWidth = useMemo(() => {
+    const wrapWidth =
+      chipWrapWidth > 0 ? chipWrapWidth : windowWidth - screenPadding * 2;
+    return (
+      (wrapWidth - VERSE_CHIP_GAP * (VERSE_CHIP_COLUMNS - 1)) / VERSE_CHIP_COLUMNS
+    );
+  }, [chipWrapWidth, windowWidth]);
 
   if (loading) {
     return (
@@ -97,7 +119,10 @@ export function QuizTodayVerseList({
   });
 
   const verseChipRow = (
-    <View style={styles.chipWrap}>
+    <View
+      style={styles.chipWrap}
+      onLayout={(e) => setChipWrapWidth(e.nativeEvent.layout.width)}
+    >
       {rows.map((row) => {
         const selected = selectedVerseId === row.verse.id;
         const solved = solvedVerseIds?.has(row.verse.id) ?? false;
@@ -107,6 +132,7 @@ export function QuizTodayVerseList({
             onPress={() => onPick(row)}
             style={({ pressed }) => [
               styles.chip,
+              { width: chipWidth, height: VERSE_CHIP_HEIGHT },
               selected && styles.chipSelected,
               solved && styles.chipSolved,
               pressed && styles.chipPressed,
@@ -181,13 +207,13 @@ const styles = StyleSheet.create({
   chipWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    alignItems: 'center',
-    gap: 8,
+    alignItems: 'flex-start',
+    gap: VERSE_CHIP_GAP,
     paddingVertical: 2,
   },
   chip: {
-    height: 40,
-    paddingHorizontal: 16,
+    paddingHorizontal: 4,
+    alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: tokens.color.bgSecondary,
     borderRadius: tokens.radius.md,
@@ -195,10 +221,11 @@ const styles = StyleSheet.create({
     borderColor: tokens.color.border,
   },
   chipRefText: {
+    width: '100%',
     fontSize: tokens.fontSize.sm,
     fontWeight: '500',
     color: tokens.color.textPrimary,
-    flexShrink: 1,
+    textAlign: 'center',
   },
   chipRefTextSelected: {
     fontWeight: '600',

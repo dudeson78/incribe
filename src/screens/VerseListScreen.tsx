@@ -252,11 +252,7 @@ export function VerseListScreen({ navigation }: Props) {
             logs={logsByVerse[item.id] ?? []}
           />
         ) : null}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.refActions}
-        >
+        <View style={styles.refActions}>
             <Pressable
               onPress={() =>
                 navigation.navigate('VerseForm', { verseId: item.id })
@@ -373,7 +369,7 @@ export function VerseListScreen({ navigation }: Props) {
                 {t('verses.rema')}
               </Text>
             </Pressable>
-        </ScrollView>
+        </View>
       </View>
     );
   };
@@ -731,12 +727,14 @@ const styles = StyleSheet.create({
   refActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: tokens.space[2],
-    paddingRight: 4,
+    alignSelf: 'stretch',
+    gap: 4,
   },
   actionTextBtn: {
-    paddingHorizontal: 14,
-    height: 36,
+    flex: 1,
+    minWidth: 0,
+    paddingHorizontal: 6,
+    height: 34,
     borderRadius: tokens.radius.full,
     borderWidth: 1,
     justifyContent: 'center',
@@ -750,7 +748,7 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.color.surface,
   },
   editBtnText: {
-    fontSize: tokens.fontSize.sm,
+    fontSize: tokens.fontSize.xs,
     fontWeight: '500',
     color: tokens.color.textSecondary,
   },
@@ -759,13 +757,15 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.color.dangerBg,
   },
   deleteBtnText: {
-    fontSize: tokens.fontSize.sm,
+    fontSize: tokens.fontSize.xs,
     fontWeight: '500',
     color: tokens.color.danger,
   },
   keywordBtn: {
-    paddingHorizontal: 14,
-    height: 36,
+    flex: 1,
+    minWidth: 0,
+    paddingHorizontal: 6,
+    height: 34,
     borderRadius: tokens.radius.full,
     backgroundColor: tokens.color.accentMuted,
     justifyContent: 'center',
@@ -778,7 +778,7 @@ const styles = StyleSheet.create({
     opacity: 0.45,
   },
   keywordBtnText: {
-    fontSize: tokens.fontSize.sm,
+    fontSize: tokens.fontSize.xs,
     fontWeight: '500',
     color: tokens.color.accent,
   },
