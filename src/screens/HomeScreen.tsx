@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AppScreenTitle } from '../components/navigation/AppScreenTitle';
 import { EmptyStatePanel } from '../components/EmptyStatePanel';
 import { AppButton } from '../components/ui/AppButton';
 import { AnnualGoalCard } from '../components/AnnualGoalCard';
@@ -157,6 +158,7 @@ export function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
+      <AppScreenTitle title={t('home.screenTitle')} />
       <ScrollView
         ref={scrollRef}
         style={styles.scroll}

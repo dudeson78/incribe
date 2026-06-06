@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import { AppScreenTitle } from '../components/navigation/AppScreenTitle';
 import { QuizBlankMode } from '../components/quiz/QuizBlankMode';
 import {
   QuizModeSelector,
@@ -119,6 +120,7 @@ export function QuizScreen() {
 
   return (
     <SafeAreaView style={styles.shell} edges={['top']}>
+      <AppScreenTitle title={t('quiz.screenTitle')} />
       <KeyboardAvoidingView
         style={styles.keyboardShell}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}

@@ -175,6 +175,7 @@ export const ko = {
     modalCloseA11y: '닫기',
   },
   quiz: {
+    screenTitle: '퀴즈',
     accuracy: '정확도',
     correctCount: '맞춘 수',
     refInstructionBanner: '다음 성경 말씀의 구절은 어디에 있나요?',
@@ -297,6 +298,7 @@ export const ko = {
       '아래 「개인정보 수집·이용」 동의에 체크한 뒤 다시 시도해 주세요.',
   },
   home: {
+    screenTitle: '암송훈련',
     title: 'Inscribe',
     annualTitle: '올해의 암송 목표',
     annualUnit: '구절',

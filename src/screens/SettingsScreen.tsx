@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useAuthProfile } from '../hooks/useAuthProfile';
+import { AppScreenTitle } from '../components/navigation/AppScreenTitle';
 import { VoiceReadingSettings } from '../components/VoiceReadingSettings';
 import {
   SettingsApplyButton,
@@ -161,50 +162,44 @@ export function SettingsScreen() {
 
   return (
     <SafeAreaView style={settingsStyles.screenShell} edges={['top']}>
-      <View style={settingsStyles.pageHeader}>
-        {showMyAccountBar ? (
-          <View style={settingsStyles.headerRow}>
-            <Text
-              style={settingsStyles.headerName}
-              numberOfLines={2}
-              ellipsizeMode="tail"
-              accessibilityRole="header"
-              accessibilityLabel={t('account.headerSignedInAsA11y', {
-                name: authProfile.displayName,
-              })}
-            >
-              {authProfile.displayName}
-            </Text>
-            <Pressable
-              onPress={() => void handleSignOut()}
-              onPressIn={() => setSignOutPressed(true)}
-              onPressOut={() => setSignOutPressed(false)}
-              hitSlop={10}
-              style={({ pressed }) => [
-                settingsStyles.signOutLink,
-                (pressed || signOutPressed) && settingsStyles.signOutLinkPressed,
-                authBusy && styles.authBusy,
-              ]}
-              disabled={authBusy}
-              accessibilityRole="button"
-              accessibilityLabel={t('account.signOut')}
-            >
-              <Text
-                style={[
-                  settingsStyles.signOutLinkText,
-                  (signOutPressed) && settingsStyles.signOutLinkTextPressed,
-                ]}
-              >
-                {t('account.signOut')}
-              </Text>
-            </Pressable>
-          </View>
-        ) : (
-          <Text style={settingsStyles.screenTitleFallback} accessibilityRole="header">
-            {t('settings.screenTitle')}
+      <AppScreenTitle title={t('settings.screenTitle')} />
+      {showMyAccountBar ? (
+        <View style={styles.profileBar}>
+          <Text
+            style={styles.profileName}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            accessibilityLabel={t('account.headerSignedInAsA11y', {
+              name: authProfile.displayName,
+            })}
+          >
+            {authProfile.displayName}
           </Text>
-        )}
-      </View>
+          <Pressable
+            onPress={() => void handleSignOut()}
+            onPressIn={() => setSignOutPressed(true)}
+            onPressOut={() => setSignOutPressed(false)}
+            hitSlop={10}
+            style={({ pressed }) => [
+              styles.signOutLink,
+              (pressed || signOutPressed) && styles.signOutLinkPressed,
+              authBusy && styles.authBusy,
+            ]}
+            disabled={authBusy}
+            accessibilityRole="button"
+            accessibilityLabel={t('account.signOut')}
+          >
+            <Text
+              style={[
+                styles.signOutLinkText,
+                signOutPressed && styles.signOutLinkTextPressed,
+              ]}
+            >
+              {t('account.signOut')}
+            </Text>
+          </Pressable>
+        </View>
+      ) : null}
       <ScrollView
         contentContainerStyle={[
           settingsStyles.scroll,
@@ -293,6 +288,36 @@ export function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
+  profileBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+    gap: 12,
+  },
+  profileName: {
+    flex: 1,
+    minWidth: 0,
+    fontSize: tokens.fontSize.md,
+    fontWeight: '600',
+    color: tokens.color.textSecondary,
+  },
+  signOutLink: {
+    flexShrink: 0,
+    paddingVertical: 4,
+    paddingHorizontal: 2,
+  },
+  signOutLinkPressed: {
+    opacity: 0.82,
+  },
+  signOutLinkText: {
+    fontSize: tokens.fontSize.sm,
+    color: tokens.color.textMuted,
+  },
+  signOutLinkTextPressed: {
+    textDecorationLine: 'underline',
+  },
   authBusy: {
     opacity: 0.45,
   },

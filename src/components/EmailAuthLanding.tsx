@@ -77,19 +77,6 @@ async function resolveEmailPasswordSession(
   return session;
 }
 
-function promptLoginSuccessThenEnter(
-  t: TFunction,
-  dialog: DialogApi,
-  onSessionEstablished?: () => void,
-) {
-  void dialog
-    .alert({
-      title: t('account.signIn'),
-      message: `${t('account.signedInOk')}\n\n${t('auth.signInProceedHint')}`,
-    })
-    .then(() => onSessionEstablished?.());
-}
-
 function promptSignUpSuccessThenEnter(params: {
   t: TFunction;
   dialog: DialogApi;
@@ -298,7 +285,7 @@ export function EmailAuthLanding({
       if (!sess) return;
       setPassword('');
       setProgressLine(null);
-      promptLoginSuccessThenEnter(t, dialog, onSessionEstablished);
+      onSessionEstablished?.();
     } catch (e) {
       notifyError(e, t, dialog);
     } finally {
