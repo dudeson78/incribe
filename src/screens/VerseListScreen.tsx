@@ -27,16 +27,13 @@ import { normalizeSchedule, useVerses } from '../hooks/useVerses';
 import { mapAppError } from '../i18n/mapAppError';
 import type { VersesStackParamList } from '../navigation/types';
 import { colors, typography } from '../theme/colors';
-import { verseTypography } from '../theme/fonts';
+import { fontFamilies } from '../theme/fonts';
 import { modalTheme } from '../theme/modal';
 import {
-  cardPadding,
-  cardRadius,
   hitSlopComfortable,
-  radius,
   screenPadding,
-  touchTarget,
 } from '../theme/layout';
+import { shadowMd, tokens } from '../theme/tokens';
 import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<VersesStackParamList, 'VerseList'>;
@@ -95,17 +92,28 @@ export function VerseListScreen({ navigation }: Props) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      headerTitleStyle: {
+        fontFamily: fontFamilies.verseMedium,
+        fontSize: tokens.fontSize.xxl,
+        fontWeight: '700',
+        color: tokens.color.textPrimary,
+      },
       headerRight:
         !loading && rows.length > 0
           ? () => (
-              <AppButton
-                label={`+ ${t('verses.addButton')}`}
+              <Pressable
                 onPress={() => navigation.navigate('VerseForm', {})}
-                size="sm"
-                fullWidth={false}
-                style={styles.headerBtnWrap}
+                style={({ pressed }) => [
+                  styles.headerAddBtn,
+                  pressed && styles.headerAddBtnPressed,
+                ]}
+                accessibilityRole="button"
                 accessibilityLabel={t('verses.headerAddA11y')}
-              />
+              >
+                <Text style={styles.headerAddBtnText}>
+                  + {t('verses.addButton')}
+                </Text>
+              </Pressable>
             )
           : undefined,
     });
@@ -225,12 +233,10 @@ export function VerseListScreen({ navigation }: Props) {
     const n = index + 1;
     const schedule = normalizeSchedule(item);
     return (
-      <View style={styles.row}>
-        <View style={styles.oliveBar} />
-        <View style={styles.rowInner}>
-        <View style={styles.refRow}>
-          <View style={styles.circle}>
-            <Text style={styles.circleText}>{n}</Text>
+      <View style={styles.card}>
+        <View style={styles.cardHeader}>
+          <View style={styles.numberBadge}>
+            <Text style={styles.numberBadgeText}>{n}</Text>
           </View>
           <Text style={styles.ref} numberOfLines={2}>
             {item.reference}
@@ -246,7 +252,11 @@ export function VerseListScreen({ navigation }: Props) {
             logs={logsByVerse[item.id] ?? []}
           />
         ) : null}
-          <View style={styles.refActions}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.refActions}
+        >
             <Pressable
               onPress={() =>
                 navigation.navigate('VerseForm', { verseId: item.id })
@@ -284,7 +294,7 @@ export function VerseListScreen({ navigation }: Props) {
               disabled={blocked}
             >
               {deletingId === item.id ? (
-                <ActivityIndicator size="small" color={colors.errorBorder} />
+                <ActivityIndicator size="small" color={tokens.color.danger} />
               ) : (
                 <Text style={styles.deleteBtnText} numberOfLines={1}>
                   {t('verses.delete')}
@@ -363,8 +373,7 @@ export function VerseListScreen({ navigation }: Props) {
                 {t('verses.rema')}
               </Text>
             </Pressable>
-          </View>
-        </View>
+        </ScrollView>
       </View>
     );
   };
@@ -664,71 +673,72 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     minHeight: 360,
   },
-  headerBtnWrap: {
+  headerAddBtn: {
     marginRight: 6,
+    height: 40,
+    paddingHorizontal: 20,
+    borderRadius: tokens.radius.full,
+    backgroundColor: tokens.color.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerAddBtnPressed: {
+    opacity: 0.9,
+  },
+  headerAddBtnText: {
+    fontSize: tokens.fontSize.sm,
+    fontWeight: '600',
+    color: tokens.color.textOnDark,
   },
   modalSaveBtn: {
     minWidth: 100,
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    backgroundColor: colors.parchment,
-    borderRadius: cardRadius,
+  card: {
+    backgroundColor: tokens.color.surface,
+    borderRadius: tokens.radius.lg,
     marginBottom: 12,
-    borderWidth: 1,
-    borderColor: colors.creamBorder,
-    overflow: 'hidden',
+    padding: 16,
+    gap: 12,
+    ...shadowMd,
   },
-  oliveBar: {
-    width: 4,
-    backgroundColor: colors.forest,
-  },
-  rowInner: {
-    flex: 1,
-    minWidth: 0,
-    padding: cardPadding,
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
   },
-  circle: {
+  numberBadge: {
     width: 28,
     height: 28,
-    borderRadius: radius.lg,
-    backgroundColor: colors.circleNumBg,
+    borderRadius: 14,
+    backgroundColor: tokens.color.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  circleText: {
-    color: colors.textPrimary,
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  refRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
+  numberBadgeText: {
+    color: tokens.color.textOnDark,
+    fontSize: tokens.fontSize.sm,
+    fontWeight: '700',
   },
   ref: {
     flex: 1,
     minWidth: 0,
-    ...verseTypography.reference,
-    fontSize: typography.min,
-    lineHeight: 22,
+    fontFamily: fontFamilies.verseMedium,
+    fontSize: tokens.fontSize.lg,
+    fontWeight: '600',
+    color: tokens.color.primary,
+    lineHeight: Math.round(tokens.fontSize.lg * 1.35),
   },
   refActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignSelf: 'stretch',
-    gap: 4,
+    gap: tokens.space[2],
+    paddingRight: 4,
   },
   actionTextBtn: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: radius.sm,
+    paddingHorizontal: 14,
+    height: 36,
+    borderRadius: tokens.radius.full,
     borderWidth: 1,
-    minHeight: touchTarget.min * 0.65,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -736,49 +746,44 @@ const styles = StyleSheet.create({
     opacity: 0.45,
   },
   editBtn: {
-    borderColor: colors.forestTintBorder,
-    backgroundColor: colors.forestTint,
+    borderColor: tokens.color.border,
+    backgroundColor: tokens.color.surface,
   },
   editBtnText: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.textPrimary,
+    fontSize: tokens.fontSize.sm,
+    fontWeight: '500',
+    color: tokens.color.textSecondary,
   },
   deleteBtn: {
-    borderColor: `${colors.errorBorder}80`,
-    backgroundColor: `${colors.errorBorder}12`,
+    borderColor: tokens.color.dangerBorder,
+    backgroundColor: tokens.color.dangerBg,
   },
   deleteBtnText: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.textPrimary,
+    fontSize: tokens.fontSize.sm,
+    fontWeight: '500',
+    color: tokens.color.danger,
   },
   keywordBtn: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: radius.sm,
-    borderWidth: 1,
-    borderColor: `${colors.orange}99`,
-    backgroundColor: `${colors.orange}14`,
-    minHeight: touchTarget.min * 0.65,
+    paddingHorizontal: 14,
+    height: 36,
+    borderRadius: tokens.radius.full,
+    backgroundColor: tokens.color.accentMuted,
     justifyContent: 'center',
     alignItems: 'center',
-    maxWidth: 88,
   },
   keywordBtnPressed: {
     opacity: 0.88,
   },
   keywordBtnDisabled: {
     opacity: 0.45,
-    borderColor: `${colors.orange}44`,
   },
   keywordBtnText: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.textPrimary,
+    fontSize: tokens.fontSize.sm,
+    fontWeight: '500',
+    color: tokens.color.accent,
   },
   keywordBtnTextDisabled: {
-    color: `${colors.textPrimary}99`,
+    opacity: 0.6,
   },
   keywordModalBackdrop: {
     ...modalTheme.shellTop,
@@ -811,7 +816,7 @@ const styles = StyleSheet.create({
     minHeight: 88,
     borderWidth: 0.5,
     borderColor: colors.borderSecondary,
-    borderRadius: radius.md,
+    borderRadius: tokens.radius.md,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: typography.body,
@@ -829,15 +834,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   snippetBox: {
-    backgroundColor: colors.sky,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.pastelBlueBorderSoft,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
+    backgroundColor: tokens.color.bgSecondary,
+    borderRadius: tokens.radius.md,
+    padding: 16,
   },
   snippet: {
-    ...verseTypography.body,
-    color: colors.textPrimary,
+    fontFamily: fontFamilies.verse,
+    fontSize: tokens.fontSize.md,
+    lineHeight: Math.round(tokens.fontSize.md * 1.8),
+    color: tokens.color.textPrimary,
   },
 });

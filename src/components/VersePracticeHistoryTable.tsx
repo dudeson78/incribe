@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -6,7 +6,7 @@ import {
   type PracticeCellKind,
 } from '../lib/practiceHistoryTable';
 import type { ReviewLogRow, ReviewScheduleRow, VerseRow } from '../types/verses';
-import { colors, typography } from '../theme/colors';
+import { tokens } from '../theme/tokens';
 
 const SESSIONS = 7 as const;
 
@@ -16,7 +16,6 @@ type Props = {
   logs: ReviewLogRow[];
 };
 
-/** yyyy-MM-dd → 표시용 초소형 날짜(올해는 월·일만 → 셀 너비 절약) */
 function fmtHistoryDateDisplay(cell: string): string {
   if (!cell.trim()) return '';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(cell)) return cell;
@@ -25,20 +24,18 @@ function fmtHistoryDateDisplay(cell: string): string {
   const m = Number(parts[1]);
   const d = Number(parts[2]);
   try {
-    const tag = 'ko-KR';
     const date = new Date(y, m - 1, d);
     const thisYear = new Date().getFullYear();
     const opts: Intl.DateTimeFormatOptions =
       y !== thisYear
         ? { year: '2-digit', month: 'numeric', day: 'numeric' }
         : { month: 'numeric', day: 'numeric' };
-    return new Intl.DateTimeFormat(tag, opts).format(date);
+    return new Intl.DateTimeFormat('ko-KR', opts).format(date);
   } catch {
     return cell;
   }
 }
 
-/** 접근성·전체 정보용 (연 포함) */
 function fmtHistoryDateA11y(cell: string): string {
   if (!cell.trim()) return '';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(cell)) return cell;
@@ -47,8 +44,7 @@ function fmtHistoryDateA11y(cell: string): string {
   const m = Number(parts[1]);
   const d = Number(parts[2]);
   try {
-    const tag = 'ko-KR';
-    return new Intl.DateTimeFormat(tag, {
+    return new Intl.DateTimeFormat('ko-KR', {
       year: 'numeric',
       month: 'numeric',
       day: 'numeric',
@@ -56,6 +52,109 @@ function fmtHistoryDateA11y(cell: string): string {
   } catch {
     return cell;
   }
+}
+
+function chipTone(kind: PracticeCellKind) {
+  if (kind === 'completed') {
+    return {
+      bg: tokens.color.successBg,
+      fg: tokens.color.success,
+    };
+  }
+  if (kind === 'scheduled') {
+    return {
+      bg: tokens.color.warningBg,
+      fg: tokens.color.warning,
+    };
+  }
+  return {
+    bg: tokens.color.bgSecondary,
+    fg: tokens.color.textMuted,
+  };
+}
+
+function SessionChip({
+  sessionNum,
+  kind,
+  rawCell,
+  scheduledLabel,
+}: {
+  sessionNum: number;
+  kind: PracticeCellKind;
+  rawCell: string;
+  scheduledLabel: string;
+}) {
+  const tone = chipTone(kind);
+  const dateShown = fmtHistoryDateDisplay(rawCell).trim();
+  const dateA11y = fmtHistoryDateA11y(rawCell).trim();
+  const isEmpty = kind === 'empty';
+  const subtitle = kind === 'scheduled' ? scheduledLabel : '';
+
+  const a11y = isEmpty
+    ? `${sessionNum}? -`
+    : [dateA11y || dateShown || rawCell, subtitle].filter(Boolean).join(' ');
+
+  return (
+    <View
+      style={[styles.chip, { backgroundColor: tone.bg }]}
+      accessibilityLabel={a11y}
+    >
+      <Text style={[styles.chipSession, { color: tone.fg }]}>
+        {sessionNum}?
+      </Text>
+      {isEmpty ? (
+        <Text style={[styles.chipDash, { color: tone.fg }]}>?</Text>
+      ) : (
+        <>
+          {dateShown ? (
+            <Text style={[styles.chipDate, { color: tone.fg }]} numberOfLines={1}>
+              {dateShown}
+            </Text>
+          ) : null}
+          {subtitle ? (
+            <Text style={[styles.chipSub, { color: tone.fg }]} numberOfLines={1}>
+              {subtitle}
+            </Text>
+          ) : null}
+        </>
+      )}
+    </View>
+  );
+}
+
+function TrackChipRow({
+  label,
+  cells,
+  kinds,
+  scheduledLabel,
+}: {
+  label: string;
+  cells: string[];
+  kinds: PracticeCellKind[];
+  scheduledLabel: string;
+}) {
+  return (
+    <View style={styles.trackRow}>
+      <Text style={styles.trackLabel} numberOfLines={1}>
+        {label}
+      </Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.chipScroll}
+      >
+        {cells.slice(0, SESSIONS).map((raw, ix) => (
+          <SessionChip
+            key={ix}
+            sessionNum={ix + 1}
+            kind={kinds[ix] ?? 'empty'}
+            rawCell={raw ?? ''}
+            scheduledLabel={scheduledLabel}
+          />
+        ))}
+      </ScrollView>
+    </View>
+  );
 }
 
 export function VersePracticeHistoryTable({ verse, schedule, logs }: Props) {
@@ -66,190 +165,72 @@ export function VersePracticeHistoryTable({ verse, schedule, logs }: Props) {
     logs,
   );
 
-  const headerSession = Array.from({ length: SESSIONS }, (_, i) =>
-    t('verses.historySession', { n: i + 1 }),
-  );
-
-  function subtitleFor(kind: PracticeCellKind): string {
-    if (kind === 'completed') return t('verses.historyDateCompleted');
-    if (kind === 'scheduled') return t('verses.historyDateScheduled');
-    return '';
-  }
-
-  function Row({
-    label,
-    cells,
-    kinds,
-  }: {
-    label: string;
-    cells: string[];
-    kinds: PracticeCellKind[];
-  }) {
-    return (
-      <View style={styles.tr}>
-        <View style={[styles.cell, styles.labelCell]}>
-          <Text style={styles.labelHeadText} numberOfLines={1}>
-            {label}
-          </Text>
-        </View>
-        {cells.slice(0, SESSIONS).map((raw, ix) => {
-          const kind = kinds[ix] ?? 'empty';
-          const rawCell = raw ?? '';
-          const dateShown = fmtHistoryDateDisplay(rawCell).trim();
-          const dateA11y = fmtHistoryDateA11y(rawCell).trim();
-          const subtitle = subtitleFor(kind);
-          const isBlank = !dateShown && !subtitle;
-          const a11y = isBlank
-            ? '-'
-            : [dateA11y || dateShown || rawCell, subtitle]
-                .filter(Boolean)
-                .join(' ');
-          return (
-            <View
-              key={ix}
-              style={[styles.cell, styles.dataCell]}
-              accessibilityLabel={a11y}
-            >
-              {isBlank ? (
-                <Text style={styles.cellDash} accessibilityElementsHidden>
-                  -
-                </Text>
-              ) : (
-                <>
-                  {dateShown ? (
-                    <Text
-                      style={styles.cellText}
-                      numberOfLines={2}
-                      adjustsFontSizeToFit
-                      minimumFontScale={0.65}
-                    >
-                      {dateShown}
-                    </Text>
-                  ) : null}
-                  {subtitle ? (
-                    <Text style={styles.cellSub} numberOfLines={1}>
-                      {subtitle}
-                    </Text>
-                  ) : null}
-                </>
-              )}
-            </View>
-          );
-        })}
-      </View>
-    );
-  }
-
   return (
     <View style={styles.wrap}>
-      <View style={styles.table}>
-        <View style={styles.tr}>
-          <View style={[styles.cell, styles.labelCell, styles.headerLabelCell]}>
-            <Text style={styles.headerCorner} numberOfLines={1}>
-              {t('verses.historyColCategory')}
-            </Text>
-          </View>
-          {headerSession.map((h, i) => (
-            <View key={i} style={[styles.cell, styles.dataCell, styles.headerCell]}>
-              <Text style={styles.headerText} numberOfLines={1}>
-                {h}
-              </Text>
-            </View>
-          ))}
-        </View>
-        <Row
-          label={t('verses.historyShort')}
-          cells={shortRow}
-          kinds={shortKind}
-        />
-        <Row
-          label={t('verses.historyLong')}
-          cells={longRow}
-          kinds={longKind}
-        />
-      </View>
+      <TrackChipRow
+        label={t('verses.historyShort')}
+        cells={shortRow}
+        kinds={shortKind}
+        scheduledLabel={t('verses.historyDateScheduled')}
+      />
+      <TrackChipRow
+        label={t('verses.historyLong')}
+        cells={longRow}
+        kinds={longKind}
+        scheduledLabel={t('verses.historyDateScheduled')}
+      />
     </View>
   );
 }
 
-/** 연습 이력 미니 표 — 카드 너비 안에 7회까지 가로 스크롤 없이 표시 */
 const styles = StyleSheet.create({
   wrap: {
     alignSelf: 'stretch',
-    marginTop: 4,
+    gap: 8,
+    marginTop: 2,
   },
-  table: {
-    alignSelf: 'stretch',
+  trackRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
-  tr: {
+  trackLabel: {
+    width: 28,
+    fontSize: tokens.fontSize.xs,
+    fontWeight: '600',
+    color: tokens.color.textSecondary,
+    textAlign: 'center',
+  },
+  chipScroll: {
     flexDirection: 'row',
     alignItems: 'stretch',
+    gap: 6,
+    paddingRight: 4,
   },
-  cell: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.borderTertiary,
+  chip: {
+    minWidth: 56,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: tokens.radius.full,
+    alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 1,
-    paddingVertical: 1,
-    backgroundColor: colors.backgroundPrimary,
+    gap: 1,
   },
-  labelCell: {
-    width: 26,
-    minHeight: 28,
-    backgroundColor: `${colors.forest}0d`,
-  },
-  headerLabelCell: {
-    backgroundColor: `${colors.orange}18`,
-  },
-  dataCell: {
-    flex: 1,
-    minWidth: 0,
-    minHeight: 28,
-  },
-  headerCell: {
-    backgroundColor: `${colors.forest}0f`,
-    minHeight: 24,
-  },
-  headerCorner: {
-    fontSize: 9,
+  chipSession: {
+    fontSize: tokens.fontSize.xs,
     fontWeight: '700',
-    color: colors.textPrimary,
-    textAlign: 'center',
-    lineHeight: 11,
   },
-  headerText: {
-    fontSize: 9,
-    fontWeight: '600',
-    color: colors.textPrimary,
-    textAlign: 'center',
-    lineHeight: 11,
-  },
-  cellText: {
-    fontSize: 9,
-    color: colors.textPrimary,
-    textAlign: 'center',
-    lineHeight: 11,
-  },
-  cellDash: {
+  chipDate: {
     fontSize: 10,
-    fontWeight: '500',
-    color: colors.textPrimary,
-    textAlign: 'center',
-    lineHeight: 12,
-  },
-  cellSub: {
-    marginTop: 0,
-    fontSize: 7,
     fontWeight: '600',
-    color: colors.textPrimary,
-    textAlign: 'center',
-    lineHeight: 8,
   },
-  labelHeadText: {
+  chipSub: {
     fontSize: 9,
-    fontWeight: '600',
-    color: colors.textPrimary,
-    textAlign: 'center',
-    lineHeight: 11,
+    fontWeight: '500',
+  },
+  chipDash: {
+    fontSize: tokens.fontSize.sm,
+    fontWeight: '500',
+    lineHeight: 16,
   },
 });
