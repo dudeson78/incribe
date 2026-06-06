@@ -95,18 +95,21 @@ export function VerseListScreen({ navigation }: Props) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <AppButton
-          label={`+ ${t('verses.addButton')}`}
-          onPress={() => navigation.navigate('VerseForm', {})}
-          size="sm"
-          fullWidth={false}
-          style={styles.headerBtnWrap}
-          accessibilityLabel={t('verses.headerAddA11y')}
-        />
-      ),
+      headerRight:
+        !loading && rows.length > 0
+          ? () => (
+              <AppButton
+                label={`+ ${t('verses.addButton')}`}
+                onPress={() => navigation.navigate('VerseForm', {})}
+                size="sm"
+                fullWidth={false}
+                style={styles.headerBtnWrap}
+                accessibilityLabel={t('verses.headerAddA11y')}
+              />
+            )
+          : undefined,
     });
-  }, [navigation, t]);
+  }, [navigation, t, loading, rows.length]);
 
   async function confirmDelete(id: string, refLabel: string) {
     const ok = await dialog.confirm({
@@ -380,17 +383,29 @@ export function VerseListScreen({ navigation }: Props) {
         data={rows}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
-        ListHeaderComponent={<VerseMetaCoachmark />}
+        ListHeaderComponent={rows.length > 0 ? <VerseMetaCoachmark /> : null}
         contentContainerStyle={[
           styles.listContent,
+          rows.length === 0 && styles.listContentEmpty,
           { paddingBottom: tabScrollPadding },
         ]}
         ListEmptyComponent={
-          <EmptyStatePanel
-            variant="scroll"
-            title={t('verses.emptyTitle')}
-            body={t('verses.emptyBody')}
-          />
+          <View style={styles.emptyCenter}>
+            <EmptyStatePanel
+              variant="scroll"
+              compact
+              plain
+              title={t('verses.emptyTitle')}
+              body={t('verses.emptyBody')}
+            >
+              <AppButton
+                label={t('verses.emptyCta')}
+                onPress={() => navigation.navigate('VerseForm', {})}
+                size="lg"
+                accessibilityLabel={t('verses.emptyCtaA11y')}
+              />
+            </EmptyStatePanel>
+          </View>
         }
       />
 
@@ -637,6 +652,17 @@ const styles = StyleSheet.create({
   listContent: {
     padding: screenPadding,
     flexGrow: 1,
+  },
+  listContentEmpty: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  emptyCenter: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 24,
+    minHeight: 360,
   },
   headerBtnWrap: {
     marginRight: 6,

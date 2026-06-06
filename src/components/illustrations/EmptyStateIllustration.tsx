@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
 
 import { colors } from '../../theme/colors';
@@ -14,20 +15,25 @@ type Props = {
 };
 
 /**
- * 선 없는 소프트 라인아트 — View·채움색만 (SVG 없음).
- * scroll=양피지, leaves=7잎, quiz=칩, seedling=새싹
+ * 소프트 라인아트 — scroll은 1:1 미니멀 아이콘, 나머지는 View 채움.
  */
 export function EmptyStateIllustration({ variant }: Props) {
   if (variant === 'scroll') {
     return (
-      <View style={styles.frame} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-        <View style={styles.scrollBack} />
-        <View style={styles.scrollFront}>
-          <View style={[styles.textLine, styles.textLineLong]} />
-          <View style={[styles.textLine, styles.textLineMid]} />
-          <View style={[styles.textLine, styles.textLineShort]} />
+      <View
+        style={styles.iconSquare}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      >
+        <View style={styles.iconTile}>
+          <Ionicons
+            name="book-outline"
+            size={38}
+            color={colors.forest}
+            style={styles.scrollIcon}
+          />
+          <View style={styles.scrollAccent} />
         </View>
-        <View style={styles.scrollMark} />
       </View>
     );
   }
@@ -78,6 +84,7 @@ export function EmptyStateIllustration({ variant }: Props) {
 }
 
 const FRAME = 112;
+const ICON_SQUARE = 88;
 
 const styles = StyleSheet.create({
   frame: {
@@ -87,42 +94,34 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 4,
   },
-  scrollBack: {
+  iconSquare: {
+    width: ICON_SQUARE,
+    height: ICON_SQUARE,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 2,
+  },
+  iconTile: {
+    width: ICON_SQUARE,
+    height: ICON_SQUARE,
+    borderRadius: radius.lg,
+    backgroundColor: colors.forestTint,
+    borderWidth: 1,
+    borderColor: colors.forestTintBorder,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scrollIcon: {
+    opacity: 0.88,
+  },
+  scrollAccent: {
     position: 'absolute',
-    width: 72,
-    height: 88,
-    borderRadius: radius.md,
-    backgroundColor: colors.backgroundSecondary,
-    transform: [{ rotate: '-6deg' }, { translateX: -6 }],
-  },
-  scrollFront: {
-    width: 76,
-    height: 92,
-    borderRadius: radius.md,
-    backgroundColor: colors.parchment,
-    paddingHorizontal: 14,
-    paddingVertical: 16,
-    gap: 8,
-    transform: [{ rotate: '4deg' }],
-  },
-  textLine: {
-    height: 6,
-    borderRadius: radius.pill,
-    backgroundColor: colors.sage,
-    opacity: 0.85,
-  },
-  textLineLong: { width: '100%' },
-  textLineMid: { width: '78%', alignSelf: 'center' },
-  textLineShort: { width: '52%', alignSelf: 'center' },
-  scrollMark: {
-    position: 'absolute',
-    bottom: 10,
-    right: 18,
-    width: 14,
-    height: 14,
+    bottom: 14,
+    width: 28,
+    height: 3,
     borderRadius: radius.pill,
     backgroundColor: colors.forest,
-    opacity: 0.35,
+    opacity: 0.28,
   },
   leafRing: {
     width: 80,
